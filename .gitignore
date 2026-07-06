@@ -346,3 +346,58 @@ ehthumbs.db
 ehthumbs_vista.db
 signing/
 Builds/*.zip
+
+# === Дополнения для iSpy ===
+
+# Скомпилированные файлы и папки сборки (повторно для надежности)
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+*.exe
+*.pdb
+*.vshost.exe
+
+# Папки с зависимостями (DLL и пакеты)
+DLLS/
+packages/
+*.nupkg
+
+# Файлы конфигурации пользователя
+App.config
+*.config.user
+*.user
+
+# Временные файлы и логи (если есть в папке проекта)
+*.log
+*.htm
+*.xml.bak
+
+# Файлы установщика
+*.msi
+*.msm
+
+# Медиафайлы (если они есть в папке проекта)
+WebServerRoot/Media/
+WebServerRoot/Media/Audio/
+WebServerRoot/Media/Video/
+
+# Папки с плагинами и VLC (если они не нужны в репозитории)
+Plugins/*
+!Plugins/readme.txt
+VLC/*
+!VLC/readme.txt
+
+# Системные файлы Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+$RECYCLE.BIN/
+
+# Папка с подписью (signing) — если там нет публичных сертификатов
+signing/
+
+# Файлы сборки от CI/CD
+Builds/*.zip
