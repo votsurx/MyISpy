@@ -483,13 +483,25 @@ namespace iSpyApplication.Sources.Video
 
 
             for (var i = 0; i < _formatContext->nb_streams; i++)
-                if (_formatContext->streams[i]->codec->codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO)
+            {
+                var stream = _formatContext->streams[i];
+
+                // Проверяем тип потока через codecpar
+                if (stream->codecpar->codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO)
                 {
-                    // get the pointer to the codec context for the video stream
-                    _videoCodecContext = _formatContext->streams[i]->codec;
-                    _videoStream = _formatContext->streams[i];
+                    // Находим кодек
+                    var codec = ffmpeg.avcodec_find_decoder(stream->codecpar->codec_id);
+
+                    // Создаём новый AVCodecContext
+                    _videoCodecContext = ffmpeg.avcodec_alloc_context3(codec);
+
+                    // Копируем параметры из codecpar в codecContext
+                    ffmpeg.avcodec_parameters_to_context(_videoCodecContext, stream->codecpar);
+
+                    _videoStream = stream;
                     break;
                 }
+            }
 
             if (_videoStream != null)
             {
@@ -510,8 +522,8 @@ namespace iSpyApplication.Sources.Video
 
                 if ((codec->capabilities & ffmpeg.AV_CODEC_CAP_DR1) != 0)
                     _videoCodecContext->flags |= CODEC_FLAG_EMU_EDGE;
-                if ((codec->capabilities & ffmpeg.AV_CODEC_CAP_TRUNCATED) == ffmpeg.AV_CODEC_CAP_TRUNCATED)
-                    _videoCodecContext->flags |= ffmpeg.AV_CODEC_FLAG_TRUNCATED;
+                //if ((codec->capabilities & ffmpeg.AV_CODEC_CAP_TRUNCATED) == ffmpeg.AV_CODEC_CAP_TRUNCATED)
+                 //   _videoCodecContext->flags |= ffmpeg.AV_CODEC_FLAG_TRUNCATED;
 
 
                 Throw("OPEN2", ffmpeg.avcodec_open2(_videoCodecContext, codec, null));
@@ -519,27 +531,38 @@ namespace iSpyApplication.Sources.Video
 
             _lastPacket = DateTime.UtcNow;
 
+            // 1. Находим аудиопоток
             for (var i = 0; i < _formatContext->nb_streams; i++)
-                if (_formatContext->streams[i]->codec->codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO)
+            {
+                var stream = _formatContext->streams[i];
+                if (stream->codecpar->codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO)
                 {
-                    _audioCodecContext = _formatContext->streams[i]->codec;
-                    _audioStream = _formatContext->streams[i];
+                    _audioStream = stream;
                     break;
                 }
+            }
 
             if (_audioStream != null)
             {
-                var audiocodec = ffmpeg.avcodec_find_decoder(_audioCodecContext->codec_id);
-                if (audiocodec != null)
-                {
-                    ffmpeg.av_opt_set_int(_audioCodecContext, "refcounted_frames", 1, 0);
-                    Throw("OPEN2 audio", ffmpeg.avcodec_open2(_audioCodecContext, audiocodec, null));
+                // 2. Находим кодек по codec_id из codecpar
+                var audiocodec = ffmpeg.avcodec_find_decoder(_audioStream->codecpar->codec_id);
+                if (audiocodec == null)
+                    throw new InvalidOperationException("Audio codec not found");
 
-                    var outlayout = ffmpeg.av_get_default_channel_layout(OutFormat.Channels);
-                    _audioCodecContext->request_sample_fmt = AVSampleFormat.AV_SAMPLE_FMT_S16;
-                    _audioCodecContext->request_channel_layout = (ulong) outlayout;
+                // 3. Создаём новый AVCodecContext
+                _audioCodecContext = ffmpeg.avcodec_alloc_context3(audiocodec);
 
-                }
+                // 4. Копируем параметры из codecpar в codecContext
+                ffmpeg.avcodec_parameters_to_context(_audioCodecContext, _audioStream->codecpar);
+
+                // 5. Задаём параметры (если нужно)
+                // В FFmpeg 4.x+ реф-счётные фреймы включены по умолчанию.
+                // request_sample_fmt и request_channel_layout не нужны — они задаются через avcodec_alloc_context3.
+
+                // 6. Открываем кодек
+                var ret = ffmpeg.avcodec_open2(_audioCodecContext, audiocodec, null);
+                if (ret < 0)
+                    Throw("OPEN2 audio", ret);
             }
 
             if (_videoStream == null && _audioStream == null)
@@ -826,11 +849,11 @@ namespace iSpyApplication.Sources.Video
                         {
                             var stream = _formatContext->streams[i];
 
-                            if (stream != null && stream->codec != null && stream->codec->codec != null)
-                            {
-                                stream->discard = AVDiscard.AVDISCARD_ALL;
-                                ffmpeg.avcodec_close(stream->codec);
-                            }
+                            //if (stream != null && stream->codec != null && stream->codec->codec != null)
+                            //{
+                            //    stream->discard = AVDiscard.AVDISCARD_ALL;
+                            //    ffmpeg.avcodec_close(stream->codec);
+                            //}
                         }
                     }
                     fixed (AVFormatContext** f = &_formatContext)

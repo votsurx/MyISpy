@@ -289,20 +289,12 @@ namespace iSpyApplication.Realtime
                     }
                 }
 
-                if (_formatContext->streams != null)
+                // Удаляем всё, что было с циклом по stream->codec, и заменяем на:
+                unsafe
                 {
-                    var j = (int) _formatContext->nb_streams;
-                    for (var i = j - 1; i >= 0; i--)
+                    fixed (AVFormatContext** pContext = &_formatContext)
                     {
-                        var stream = _formatContext->streams[i];
-                        if (stream != null && stream->codec != null)
-                        {
-                            if (stream->codecpar != null && stream->codecpar->extradata_size > 0)
-                                ffmpeg.av_free(stream->codecpar->extradata);
-
-                            stream->discard = AVDiscard.AVDISCARD_ALL;
-                            ffmpeg.av_freep(&stream);
-                        }
+                        ffmpeg.avformat_close_input(pContext);
                     }
                 }
 

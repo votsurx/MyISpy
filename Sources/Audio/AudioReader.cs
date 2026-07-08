@@ -164,8 +164,14 @@ namespace iSpyApplication.Sources.Audio
 
                 audio_stream_index = ret;
 
-                _audioCodecContext = fmt_ctx->streams[audio_stream_index]->codec;
                 _audioStream = fmt_ctx->streams[audio_stream_index];
+
+                // 1. Создаём новый AVCodecContext через avcodec_alloc_context3
+                var codec = ffmpeg.avcodec_find_decoder(_audioStream->codecpar->codec_id);
+                _audioCodecContext = ffmpeg.avcodec_alloc_context3(codec);
+
+                // 2. Копируем параметры из codecpar в codecContext
+                ffmpeg.avcodec_parameters_to_context(_audioCodecContext, _audioStream->codecpar);
 
                 fmt_ctx->flags |= ffmpeg.AVFMT_FLAG_DISCARD_CORRUPT;
                 fmt_ctx->flags |= ffmpeg.AVFMT_FLAG_NOBUFFER;
