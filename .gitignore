@@ -346,3 +346,7 @@ ehthumbs.db
 ehthumbs_vista.db
 signing/
 Builds/*.zip
+
+# Файлы Visual Studio
+*.sdf
+*.vspx
