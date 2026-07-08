@@ -60,25 +60,43 @@ namespace iSpyApplication
             {
                 Init();
             }
-            identifier = identifier.ToLower();
-            try
-            {
-                return Res[languageCode+"."+identifier.ToLower()].ToString();
-            }
-            catch (NullReferenceException)
-            {
-                Logger.LogError("No Translation for token " + identifier);
-                if (MainForm.Conf.Language != "en")
-                {
-                    Res.Add(languageCode+"."+identifier, identifier);
-                    return identifier;
-                }
 
-            }
-            catch
+            // 1. Проверяем, что словарь существует
+            if (Res == null)
             {
-                //possible threading error where language is reset
+                Logger.LogError("Translation dictionary is null.");
+                return identifier;
             }
+
+            // 2. Приводим к нижнему регистру
+            identifier = identifier.ToLower();
+            languageCode = languageCode ?? MainForm.Conf.Language ?? "en";
+
+            // 3. Формируем ключ
+            string key = languageCode + "." + identifier;
+
+            // 4. Пытаемся получить перевод
+            if (Res.ContainsKey(key))
+            {
+                return Res[key].ToString();
+            }
+
+            // 5. Если перевода нет — логируем и возвращаем идентификатор
+            Logger.LogError("No Translation for token " + identifier);
+
+            // 6. Если язык не английский, добавляем ключ в словарь (кешируем отсутствие)
+            if (languageCode != "en")
+            {
+                try
+                {
+                    Res.Add(key, identifier);
+                }
+                catch
+                {
+                    // Если ключ уже есть — игнорируем
+                }
+            }
+
             return identifier;
         }
 

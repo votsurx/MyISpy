@@ -40,26 +40,46 @@ namespace iSpyApplication.Utilities
         {
             try
             {
-                using (RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\VideoLAN\\VLC", RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.QueryValues))
+                using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\VideoLAN\VLC", RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.QueryValues))
                 {
+                    if (rk == null)
+                    {
+                        Logger.LogError("VLC is not installed or registry key not found.");
+                        VLCLocationAutoDetect = null;
+                        return;
+                    }
 
-                    var v = Version.Parse(rk.GetValue("Version").ToString());
-                    var dir = rk.GetValue("InstallDir") as string;
+                    object versionValue = rk.GetValue("Version");
+                    object installDirValue = rk.GetValue("InstallDir");
+
+                    if (versionValue == null || installDirValue == null)
+                    {
+                        Logger.LogError("VLC registry entry is incomplete.");
+                        VLCLocationAutoDetect = null;
+                        return;
+                    }
+
+                    var v = Version.Parse(versionValue.ToString());
+                    var dir = installDirValue as string;
+
                     if (v.CompareTo(MinVersion) >= 0)
                     {
                         Logger.LogMessage("Found VLC in " + dir + " (v" + v + ")", "VLCHelper");
                         VLCLocationAutoDetect = dir;
                     }
                     else
+                    {
                         Logger.LogError("VLC version unsupported. Please ensure v" + MinVersion + "+ is installed");
+                        VLCLocationAutoDetect = null;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Couldn't find VLC");
-                VlcHelper.VLCLocationAutoDetect = null;
-                
+                Logger.LogError("Couldn't find VLC due to an exception: " + ex.Message);
+                VLCLocationAutoDetect = null;
             }
+
             if (VLCLocation != null)
                 Logger.LogMessage("Using VLC in " + VLCLocation, "VLCHelper");
         }
