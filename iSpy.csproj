@@ -210,8 +210,8 @@
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
-    <Reference Include="FFmpeg.AutoGen, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
-      <HintPath>packages\FFmpeg.AutoGen.6.0.0\lib\netstandard2.0\FFmpeg.AutoGen.dll</HintPath>
+    <Reference Include="FFmpeg.AutoGen, Version=4.2.0.0, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
+      <HintPath>packages\FFmpeg.AutoGen.4.2.0\lib\net45\FFmpeg.AutoGen.dll</HintPath>
     </Reference>
     <Reference Include="FlickrNet, Version=3.26.0.0, Culture=neutral, PublicKeyToken=2491df59efa5d132, processorArchitecture=MSIL">
       <HintPath>packages\FlickrNet.3.26.0\lib\net20\FlickrNet.dll</HintPath>
