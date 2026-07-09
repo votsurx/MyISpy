@@ -2100,17 +2100,7 @@ namespace iSpyApplication
                         volumeLevel.Tick();
                         continue;
                     }
-                    var floorPlanControl = c as FloorPlanControl;
-                    if (floorPlanControl != null)
-                    {
-                        FloorPlanControl fpc = floorPlanControl;
-                        if (fpc.Fpobject.needsupdate)
-                        {
-                            fpc.NeedsRefresh = true;
-                            fpc.Fpobject.needsupdate = false;
-                        }
-                        fpc.Tick();
-                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -2767,11 +2757,7 @@ namespace iSpyApplication
             {
                 EditMicrophone(level.Micobject);
             }
-            var target = ContextTarget as FloorPlanControl;
-            if (target != null)
-            {
-                EditFloorplan(target.Fpobject);
-            }
+            
         }
 
         private void DeleteToolStripMenuItemClick(object sender, EventArgs e)
@@ -2788,11 +2774,7 @@ namespace iSpyApplication
                 RemoveMicrophone(level, true);
                 return;
             }
-            var fpc = ContextTarget as FloorPlanControl;
-            if (fpc != null)
-            {
-                RemoveFloorplan(fpc, true);
-            }
+            
         }
 
 
@@ -3135,16 +3117,7 @@ namespace iSpyApplication
                     Connect(url, false);
             }
 
-            if (ContextTarget is FloorPlanControl)
-            {
-                string url = Webpage;
-                if (WsWrapper.WebsiteLive && Conf.ServicesEnabled)
-                {
-                    OpenUrl(url);
-                }
-                else
-                    Connect(url, false);
-            }
+            
         }
 
         public void Connect(bool silent)
@@ -3404,10 +3377,7 @@ namespace iSpyApplication
                 WebConnect();
         }
 
-        private void AddFloorPlanToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            AddFloorPlan();
-        }
+        
 
         private void ListenToolStripMenuItemClick(object sender, EventArgs e)
         {
@@ -3531,11 +3501,6 @@ namespace iSpyApplication
         private void MicrophoneToolStripMenuItemClick(object sender, EventArgs e)
         {
             AddMicrophone(0);
-        }
-
-        private void FloorPlanToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            AddFloorPlan();
         }
 
         private void MenuItem12Click(object sender, EventArgs e)
@@ -5633,14 +5598,7 @@ namespace iSpyApplication
             this._addMicrophoneToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
             this._addMicrophoneToolStripMenuItem.Text = "Add &Microphone";
             this._addMicrophoneToolStripMenuItem.Click += new System.EventHandler(this.AddMicrophoneToolStripMenuItemClick);
-            // 
-            // _addFloorPlanToolStripMenuItem
-            // 
-            this._addFloorPlanToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("_addFloorPlanToolStripMenuItem.Image")));
-            this._addFloorPlanToolStripMenuItem.Name = "_addFloorPlanToolStripMenuItem";
-            this._addFloorPlanToolStripMenuItem.Size = new System.Drawing.Size(184, 26);
-            this._addFloorPlanToolStripMenuItem.Text = "Add Floor &Plan";
-            this._addFloorPlanToolStripMenuItem.Click += new System.EventHandler(this.AddFloorPlanToolStripMenuItemClick);
+
             // 
             // _remoteCommandsToolStripMenuItem
             // 
@@ -5917,7 +5875,7 @@ namespace iSpyApplication
             this._floorPlanToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
             this._floorPlanToolStripMenuItem.Size = new System.Drawing.Size(331, 20);
             this._floorPlanToolStripMenuItem.Text = "Floor Plan";
-            this._floorPlanToolStripMenuItem.Click += new System.EventHandler(this.FloorPlanToolStripMenuItemClick);
+
             // 
             // videoFileToolStripMenuItem
             // 

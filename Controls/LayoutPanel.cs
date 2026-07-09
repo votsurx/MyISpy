@@ -95,11 +95,7 @@ namespace iSpyApplication.Controls
             var lc = new List<ISpyControl>();
             foreach (var c in Controls)
             {
-                if (c is CameraWindow || c is FloorPlanControl)
-                {
-                    lc.Add((ISpyControl) c);
-                    continue;
-                }
+                
                 var vl = c as VolumeLevel;
                 if (vl?.Paired == false)
                     lc.Add(vl);
@@ -285,14 +281,7 @@ namespace iSpyApplication.Controls
                             cw.Size = new Size(li.LayoutRectangle.Width, li.LayoutRectangle.Height);
                         }
                         break;
-                    case 3:
-                        FloorPlanControl fp = MainForm.InstanceReference.GetFloorPlan(li.ObjectId);
-                        if (fp != null)
-                        {
-                            fp.Location = new Point(li.LayoutRectangle.X, li.LayoutRectangle.Y);
-                            fp.Size = new Size(li.LayoutRectangle.Width, li.LayoutRectangle.Height);
-                        }
-                        break;
+                    
                 }
             }
         }
@@ -316,17 +305,7 @@ namespace iSpyApplication.Controls
                     });
                     continue;
                 }
-                var control = c as FloorPlanControl;
-                if (control != null)
-                {
-                    SavedLayout.Add(new LayoutItem
-                    {
-                        LayoutRectangle = r,
-                        ObjectId = control.Fpobject.id,
-                        ObjectTypeId = 3
-                    });
-                    continue;
-                }
+                
                 var level = c as VolumeLevel;
                 if (level != null)
                 {
@@ -455,41 +434,6 @@ namespace iSpyApplication.Controls
                 }
                 return;
             }
-
-            var control = obj as FloorPlanControl;
-            if (control != null)
-            {
-                var fp = control;
-                fp.BringToFront();
-                var r = fp.RestoreRect;
-                if (r.IsEmpty)
-                {
-                    fp.RestoreRect = new Rectangle(fp.Location.X, fp.Location.Y,
-                                                              fp.Width, fp.Height);
-                    var wFact = Convert.ToDouble(Width) / fp.Width;
-                    var hFact = Convert.ToDouble(Height) / fp.Height;
-
-                    if (hFact <= wFact)
-                    {
-                        fp.Width = (int)(Width / wFact * hFact);
-                        fp.Height = Height;
-                    }
-                    else
-                    {
-                        fp.Width = Width;
-                        fp.Height = (int)(Height / hFact * wFact);
-                    }
-                    fp.Location = new Point(((Width - fp.Width) / 2), ((Height - fp.Height) / 2));
-                    _maximised = fp;
-                }
-                else
-                {
-                    if (minimiseIfMaximised)
-                        Minimize(control, false);
-                    fp.RestoreRect = Rectangle.Empty;
-                }
-                return;
-            }
         }
 
         public void Minimize(object obj, bool tocontents)
@@ -547,33 +491,6 @@ namespace iSpyApplication.Controls
                 }
                 cw.Invalidate();
             }
-
-            var control = obj as FloorPlanControl;
-            if (control != null)
-            {
-                var fp = control;
-                Rectangle r = fp.RestoreRect;
-                if (r != Rectangle.Empty && !tocontents)
-                {
-                    fp.Location = r.Location;
-                    fp.Height = r.Height;
-                    fp.Width = r.Width;
-                    fp.Invalidate();
-                }
-                else
-                {
-                    if (fp.ImgPlan != null)
-                    {
-                        fp.Width = fp.ImgPlan.Width + 2;
-                        fp.Height = fp.ImgPlan.Height + 26;
-                    }
-                    else
-                    {
-                        fp.Width = 322;
-                        fp.Height = 266;
-                    }
-                }
-            }
         }
 
         public void LayoutOptimised()
@@ -621,11 +538,7 @@ namespace iSpyApplication.Controls
                 {
                     window.Highlighted = false;
                 }
-                var control = c as FloorPlanControl;
-                if (control != null)
-                {
-                    control.Highlighted = false;
-                }
+                
                 var level = c as VolumeLevel;
                 if (level != null)
                 {

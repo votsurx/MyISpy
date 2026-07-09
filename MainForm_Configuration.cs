@@ -1685,14 +1685,6 @@ namespace iSpyApplication
                         removed = true;
                         break;
                     }
-                    var control = c as FloorPlanControl;
-                    if (control != null)
-                    {
-                        var floorPlanControl = control;
-                        RemoveFloorplan(floorPlanControl, false);
-                        removed = true;
-                        break;
-                    }
                 }
                 Application.DoEvents();
             }
@@ -1735,11 +1727,6 @@ namespace iSpyApplication
                 foreach (objectsMicrophone om in Microphones)
                 {
                     DisplayMicrophone(om);
-                }
-
-                foreach (objectsFloorplan ofp in FloorPlans)
-                {
-                    DisplayFloorPlan(ofp);
                 }
 
                 //link em up
@@ -2167,14 +2154,6 @@ namespace iSpyApplication
 
         }
 
-        private void SetFloorPlanEvents(FloorPlanControl fpc)
-        {
-            fpc.DoubleClick += FloorPlanDoubleClick;
-            fpc.MouseDown += FloorPlanMouseDown;
-            fpc.MouseUp += FloorPlanMouseUp;
-            fpc.MouseMove += FloorPlanMouseMove;
-        }
-
         public void DisplayMicrophone(objectsMicrophone mic)
         {
             var micControl = new VolumeLevel(mic,this);
@@ -2197,18 +2176,6 @@ namespace iSpyApplication
                 Logger.LogException(ex);
             }
             micControl.LoadFileList();
-        }
-
-        internal void DisplayFloorPlan(objectsFloorplan ofp)
-        {
-            var fpControl = new FloorPlanControl(ofp, this);
-            SetFloorPlanEvents(fpControl);
-            fpControl.BackColor = Conf.BackColor.ToColor();
-            _pnlCameras.Controls.Add(fpControl);
-            fpControl.Location = new Point(ofp.x, ofp.y);
-            fpControl.Size = new Size(ofp.width, ofp.height);
-            fpControl.BringToFront();
-            fpControl.Tag = GetControlIndex();
         }
 
         internal void EditCamera(objectsCamera cr, IWin32Window owner = null)
@@ -2249,9 +2216,6 @@ namespace iSpyApplication
                 EditMicrophone(vl.Micobject, owner);
                 return;
             }
-            var fp = ctrl as FloorPlanControl;
-            if (fp == null) return;
-            EditFloorplan(fp.Fpobject, owner);
         }
 
         internal void EditMicrophone(objectsMicrophone om, IWin32Window owner = null)
@@ -2278,29 +2242,6 @@ namespace iSpyApplication
             }
         }
 
-        internal void EditFloorplan(objectsFloorplan ofp, IWin32Window owner = null)
-        {
-            FloorPlanControl fpc = null;
-
-            for (int index = 0; index < _pnlCameras.Controls.Count; index++)
-            {
-                Control c = _pnlCameras.Controls[index];
-                if (c.GetType() != typeof(FloorPlanControl)) continue;
-                var fp = (FloorPlanControl)c;
-                if (fp.Fpobject.id != ofp.id) continue;
-                fpc = fp;
-                break;
-            }
-
-            if (fpc != null)
-            {
-                var afp = new AddFloorPlan { Fpc = fpc, MainClass = this };
-                afp.ShowDialog(owner ?? this);
-                afp.Dispose();
-                fpc.Invalidate();
-            }
-        }
-
         private CameraWindow GetCamera(int cameraId)
         {
             for (int index = 0; index < _pnlCameras.Controls.Count; index++)
@@ -2310,19 +2251,6 @@ namespace iSpyApplication
                 var cw = (CameraWindow)c;
                 if (cw.Camobject.id != cameraId) continue;
                 return cw;
-            }
-            return null;
-        }
-
-        public FloorPlanControl GetFloorPlan(int floorPlanId)
-        {
-            for (int index = 0; index < _pnlCameras.Controls.Count; index++)
-            {
-                Control c = _pnlCameras.Controls[index];
-                if (c.GetType() != typeof(FloorPlanControl)) continue;
-                var fp = (FloorPlanControl)c;
-                if (fp.Fpobject.id != floorPlanId) continue;
-                return fp;
             }
             return null;
         }
@@ -2337,12 +2265,6 @@ namespace iSpyApplication
                 var vl = io as VolumeLevel;
                 if (vl != null)
                     RemoveMicrophone(vl, confirm);
-                else
-                {
-                    var fp = io as FloorPlanControl;
-                    if (fp!=null)
-                        RemoveFloorplan(fp,confirm);
-                }
             }
         }
 
@@ -2516,52 +2438,7 @@ namespace iSpyApplication
             volumeControl.Dispose();
         }
 
-        private void RemoveFloorplan(FloorPlanControl fpc, bool confirm)
-        {
-            if (confirm &&
-                MessageBox.Show(LocRm.GetString("Delete") + ":" + fpc.ObjectName, LocRm.GetString("Confirm"), MessageBoxButtons.OKCancel,
-                                MessageBoxIcon.Warning) == DialogResult.Cancel)
-                return;
-
-            if (fpc.Fpobject?.objects?.@object != null)
-            {
-                foreach (var o in fpc.Fpobject.objects.@object)
-                {
-                    switch (o.type)
-                    {
-                        case "camera":
-                            CameraWindow cw = GetCameraWindow(o.id);
-                            if (cw != null)
-                            {
-                                //cw.Location = new Point(Location.X + e.X, Location.Y + e.Y);
-                                cw.Highlighted = false;
-                                cw.Invalidate();
-                            }
-                            break;
-                        case "microphone":
-                            VolumeLevel vl = GetVolumeLevel(o.id);
-                            if (vl != null)
-                            {
-                                vl.Highlighted = false;
-                                vl.Invalidate();
-                            }
-                            break;
-                    }
-                }
-            }
-            _pnlCameras.Controls.Remove(fpc);
-
-
-            if (!_closing)
-            {
-                objectsFloorplan ofp = FloorPlans.SingleOrDefault(p => p.id == fpc.Fpobject.id);
-                if (ofp != null)
-                    FloorPlans.Remove(ofp);
-                SetNewStartPosition();
-                NeedsSync = true;
-            }
-            fpc.Dispose();
-        }
+        
 
         public void SaveFileData()
         {
@@ -2963,48 +2840,7 @@ namespace iSpyApplication
 
         }
 
-        private void AddFloorPlan()
-        {
-            var ofp = new objectsFloorplan
-            {
-                objects = new objectsFloorplanObjects { @object = new objectsFloorplanObjectsEntry[0] },
-                id = -1,
-                image = "",
-                height = 480,
-                width = 640,
-                x = Convert.ToInt32(Random.NextDouble() * 100),
-                y = Convert.ToInt32(Random.NextDouble() * 100),
-                name = LocRm.GetString("FloorPlan") + " " + NextFloorPlanId
-            };
-
-            var fpc = new FloorPlanControl(ofp, this) { BackColor = Conf.BackColor.ToColor() };
-            _pnlCameras.Controls.Add(fpc);
-
-            fpc.Location = new Point(ofp.x, ofp.y);
-            fpc.Size = new Size(320, 240);
-            fpc.BringToFront();
-            fpc.Tag = GetControlIndex();
-
-            LayoutPanel.NeedsRedraw = true;
-
-            var afp = new AddFloorPlan { Fpc = fpc, Owner = this, MainClass = this };
-            afp.ShowDialog(this);
-            if (afp.DialogResult == DialogResult.OK)
-            {
-                UnlockLayout();
-                afp.Fpc.Fpobject.id = NextFloorPlanId;
-                AddObject(ofp);
-                SetFloorPlanEvents(fpc);
-                SetNewStartPosition();
-                fpc.Invalidate();
-            }
-            else
-            {
-                _pnlCameras.Controls.Remove(fpc);
-                fpc.Dispose();
-            }
-            afp.Dispose();
-        }
+        
 
         private void SetCameraEvents(CameraWindow cameraControl)
         {
@@ -3224,8 +3060,6 @@ namespace iSpyApplication
                     return GetVolumeLevel(id);
                 case 2:
                     return GetCameraWindow(id);
-                case 3:
-                    return GetFloorPlan(id);
             }
             return null;
         }
@@ -3290,22 +3124,6 @@ namespace iSpyApplication
                     om.y = omc.Location.Y;
                 }
             }
-            c.microphones = Microphones.ToArray();
-            foreach (objectsFloorplan of in FloorPlans)
-            {
-                FloorPlanControl fpc = GetFloorPlan(of.id);
-                if (fpc != null)
-                {
-                    of.width = fpc.Width;
-                    of.height = fpc.Height;
-                    of.x = fpc.Location.X;
-                    of.y = fpc.Location.Y;
-                }
-            }
-            c.floorplans = FloorPlans.ToArray();
-            c.remotecommands = RemoteCommands.ToArray();
-            c.schedule = new objectsSchedule {entries = _schedule.ToArray()};
-            lock (ThreadLock)
             {
                 var s = new XmlSerializer(typeof(objects));
                 var sb = new StringBuilder();
@@ -3908,68 +3726,7 @@ namespace iSpyApplication
 
         #region FloorPlanEvents
 
-        private void FloorPlanMouseDown(object sender, MouseEventArgs e)
-        {
-            _lastClicked = _pnlCameras;
-            if (Resizing) return;
-            var fpc = (FloorPlanControl)sender;
-            if (e.Button == MouseButtons.Left)
-            {
-                fpc.Fpobject.x = e.X;
-                fpc.Fpobject.y = e.Y;
-                fpc.BringToFront();
-            }
-            else
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    ContextTarget = fpc;
-                    pluginCommandsToolStripMenuItem.Visible = false;
-                    switchToolStripMenuItem.Visible = false;
-                    _listenToolStripMenuItem.Visible = false;
-                    _resetRecordingCounterToolStripMenuItem.Visible = false;
-                    _recordNowToolStripMenuItem.Visible = false;
-                    _takePhotoToolStripMenuItem.Visible = openWebInterfaceToolStripMenuItem.Visible = false;
-                    _applyScheduleToolStripMenuItem1.Visible = false;
-                    pTZToolStripMenuItem.Visible = false;
-                    pTZScheduleOnToolStripMenuItem.Visible = pTZScheduleOffToolStripMenuItem.Visible = false;
-                    ctxtMnu.Show(fpc, new Point(e.X, e.Y));
-                }
-            }
-            fpc.Focus();
-        }
-
-        private void FloorPlanMouseUp(object sender, MouseEventArgs e)
-        {
-            if (Resizing) return;
-            var fpc = (FloorPlanControl)sender;
-            if (e.Button == MouseButtons.Left)
-            {
-                fpc.Fpobject.x = fpc.Left;
-                fpc.Fpobject.y = fpc.Top;
-            }
-        }
-
-        private void FloorPlanMouseMove(object sender, MouseEventArgs e)
-        {
-            if (Resizing) return;
-            var fpc = (FloorPlanControl)sender;
-            if (e.Button == MouseButtons.Left && !MainForm.LockLayout)
-            {
-                int newLeft = fpc.Left + (e.X - Convert.ToInt32(fpc.Fpobject.x));
-                int newTop = fpc.Top + (e.Y - Convert.ToInt32(fpc.Fpobject.y));
-                if (newLeft < 0) newLeft = 0;
-                if (newTop < 0) newTop = 0;
-                if (newLeft + fpc.Width > 5 && newLeft < ClientRectangle.Width - 5)
-                {
-                    fpc.Left = newLeft;
-                }
-                if (newTop + fpc.Height > 5 && newTop < ClientRectangle.Height - 50)
-                {
-                    fpc.Top = newTop;
-                }
-            }
-        }
+        
 
         #endregion
 

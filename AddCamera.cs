@@ -1218,8 +1218,6 @@ namespace iSpyApplication
             CameraControl.Camobject.detector.recordonalert = rdoRecordAlert.Checked;
             CameraControl.Camobject.detector.recordondetect = rdoRecordDetect.Checked;
 
-            CameraControl.UpdateFloorplans(false);
-
             CameraControl.Camobject.settings.audiomodel = ddlTalkModel.SelectedItem.ToString();
             CameraControl.Camobject.settings.audioport = (int)numTalkPort.Value;
             CameraControl.Camobject.settings.audioip = txtAudioOutIP.Text.Trim();

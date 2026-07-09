@@ -1562,16 +1562,6 @@ namespace iSpyApplication.Controls
                         }
                     }
 
-                    if (iFc < 1)
-                    {
-                        UpdateFloorplans(false);
-                        FlashCounter = DateTime.MinValue;
-                        if (_raiseStop)
-                        {
-                            DoAlert("alertstopped");
-                            _raiseStop = false;
-                        }
-                    }
                 }
 
                 if (!MovementDetected && Camobject.detector.autooff>0)
@@ -1744,11 +1734,6 @@ namespace iSpyApplication.Controls
             {
                 if (Alerted)
                 {
-                    if ((Helper.Now - LastAlerted).TotalSeconds > Camobject.alerts.minimuminterval)
-                    {
-                        Alerted = false;
-                        UpdateFloorplans(false);
-                    }
                 }
 
                 //Check new Alert
@@ -2999,7 +2984,6 @@ namespace iSpyApplication.Controls
 
                 if (VideoSourceErrorState)
                 {
-                    UpdateFloorplans(false);
                     var vl = VolumeControl;
                     if (vl?.AudioSource != null && vl.IsEnabled)
                     {
@@ -3609,7 +3593,6 @@ namespace iSpyApplication.Controls
                 }
                 
                 Alerted = true;
-                UpdateFloorplans(true);
                 LastAlerted = Helper.Now;
                 _raiseStop = true;
                 RemoteCommand?.Invoke(this, new ThreadSafeCommand("bringtofrontcam," + Camobject.id));
@@ -4244,7 +4227,6 @@ namespace iSpyApplication.Controls
                 FlashCounter = DateTime.MinValue;
                 _lastReconnect = DateTime.UtcNow;
                 PTZNavigate = false;
-                UpdateFloorplans(false);
                 MainForm.NeedsSync = true;
                 _errorTime = _reconnectTarget = DateTime.MinValue;
                 _rtindex = 0;
@@ -4582,7 +4564,6 @@ namespace iSpyApplication.Controls
                 }
 
                 Camobject.settings.active = true;
-                UpdateFloorplans(false);
 
                 _timeLapseTotal = _timeLapseFrameCount = 0;
                 LastActivity = DateTime.MinValue;
@@ -4747,24 +4728,6 @@ namespace iSpyApplication.Controls
                 return nv[1];
             }
             return "";
-        }
-
-
-        public void UpdateFloorplans(bool isAlert)
-        {
-            foreach (
-                objectsFloorplan ofp in
-                    MainForm.FloorPlans.Where(
-                        p => p.objects.@object.Any(q => q.type == "camera" && q.id == Camobject.id)).
-                        ToList())
-            {
-                ofp.needsupdate = true;
-                if (!isAlert) continue;
-                FloorPlanControl fpc = MainForm.InstanceReference.GetFloorPlan(ofp.id);
-                fpc.LastAlertTimestamp = Helper.Now.UnixTicks();
-                fpc.LastOid = Camobject.id;
-                fpc.LastOtid = 2;
-            }
         }
 
         public string RecordSwitch(bool record)

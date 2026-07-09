@@ -615,37 +615,7 @@ namespace iSpyApplication.Controls
                                     gvc.ObjectIDs.Remove(gvc.ObjectIDs[gvc.CurrentIndex]);
                                 }
                                 break;
-                            case 3:
-                                var fp = MainClass.GetFloorPlan(obj.ObjectID);
-                                if (fp != null)
-                                {
-                                    if (fp.Fpobject != null && fp.ImgPlan != null)
-                                    {
-                                        var bmp = fp.ImgView;
-                                        if (!Cg.Fill)
-                                        {
-                                            rFeed = GetArea(x, y, _itemwidth, _itemheight, bmp.Width, bmp.Height);
-                                        }
-                                        if (bmp != null)
-                                        {
-                                            gGrid.DrawImage(bmp, rFeed);
-                                        }
-                                        if (Cg.Overlays)
-                                        {
-                                            gGrid.FillRectangle(MainForm.OverlayBackgroundBrush, r.X,
-                                                r.Y + r.Height - 20, r.Width, 20);
-                                            gGrid.DrawString(fp.Fpobject.name, Drawfont, OverlayBrush,
-                                                r.X + 5,
-                                                r.Y + r.Height - 16);
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    gvc.ObjectIDs.Remove(gvc.ObjectIDs[gvc.CurrentIndex]);
-                                }
-                                break;
+                            
                         }
                     }
                     

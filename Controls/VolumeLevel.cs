@@ -1004,7 +1004,7 @@ namespace iSpyApplication.Controls
                     if (_levels.Length > 0 && AudioSourceErrorState)
                     {
                         if (AudioSourceErrorState)
-                            UpdateFloorplans(false);
+
                         AudioSourceErrorState = false;
                         _reconnectFailCount = 0;
                     }
@@ -1088,7 +1088,7 @@ namespace iSpyApplication.Controls
 
                     if (iFc < 1)
                     {
-                        UpdateFloorplans(false);
+
                         FlashCounter = DateTime.MinValue;
                         if (_raiseStop)
                         {
@@ -1264,7 +1264,7 @@ namespace iSpyApplication.Controls
                     if ((Helper.Now - LastAlerted).TotalSeconds > Micobject.alerts.minimuminterval)
                     {
                         Alerted = false;
-                        UpdateFloorplans(false);
+
                     }
                 }
                 else
@@ -1735,7 +1735,7 @@ namespace iSpyApplication.Controls
                         #endregion
                     }
 
-                    UpdateFloorplans(false);
+
                 }
                 catch (Exception ex)
                 {
@@ -1890,7 +1890,6 @@ namespace iSpyApplication.Controls
                 AudioSourceErrorState = false;
                 _soundRecentlyDetected = false;
 
-                UpdateFloorplans(false);
                 Micobject.settings.active = false;
 
                 
@@ -2087,7 +2086,7 @@ namespace iSpyApplication.Controls
                 FlashCounter = DateTime.MinValue;
                 Listening = false;
                 LastSoundDetected = Helper.Now;
-                UpdateFloorplans(false);
+
                 Micobject.settings.active = true;
 
                 MainForm.NeedsSync = true;
@@ -2673,26 +2672,6 @@ namespace iSpyApplication.Controls
             _requestRefresh = true;
         }
 
-        private void UpdateFloorplans(bool isAlert)
-        {
-            foreach (
-                var ofp in
-                    MainForm.FloorPlans.Where(
-                        p => p.objects.@object.Count(q => q.type == "microphone" && q.id == Micobject.id) > 0).
-                        ToList())
-            {
-                ofp.needsupdate = true;
-                if (isAlert)
-                {
-                    
-                        FloorPlanControl fpc = MainForm.InstanceReference.GetFloorPlan(ofp.id);
-                        fpc.LastAlertTimestamp = Helper.Now.UnixTicks();
-                        fpc.LastOid = Micobject.id;
-                        fpc.LastOtid = 1;
-                }
-            }
-        }
-
         public void Detect(object sender, EventArgs e)
         {
             LastSoundDetected = Helper.Now.AddSeconds(0.3d);
@@ -2746,7 +2725,7 @@ namespace iSpyApplication.Controls
                 }
 
                 Alerted = true;
-                UpdateFloorplans(true);
+
                 LastAlerted = Helper.Now;
                 _raiseStop = true;
                 RemoteCommand?.Invoke(this, new ThreadSafeCommand("bringtofrontmic," + Micobject.id));

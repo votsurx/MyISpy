@@ -638,7 +638,6 @@ namespace iSpyApplication
 
             var cw = c as CameraWindow;
             var vl = c as VolumeLevel;
-            var fp = c as FloorPlanControl;
 
             switch (keycommand.ToLower())
             {
@@ -689,7 +688,7 @@ namespace iSpyApplication
                     break;
                 case "maxmin":
                 case "zoom":
-                    if (c is CameraWindow || c is VolumeLevel || c is FloorPlanControl)
+                    if (c is CameraWindow || c is VolumeLevel)
                     {
                         _pnlCameras.Maximise(c);
                         ShowHidePTZCommandButtons();
@@ -704,10 +703,7 @@ namespace iSpyApplication
                     {
                         RemoveMicrophone(vl, true);
                     }
-                    if (fp != null)
-                    {
-                        RemoveFloorplan(fp, true);
-                    }
+                    
                     break;
                 case "talk":
                     
@@ -729,8 +725,7 @@ namespace iSpyApplication
                         EditCamera(cw.Camobject);
                     if (vl!=null)
                         EditMicrophone(vl.Micobject);
-                    if (fp!=null)
-                        EditFloorplan(fp.Fpobject);
+                    
 
                     break;
                 case "tags":

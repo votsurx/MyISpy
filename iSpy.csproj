@@ -419,12 +419,6 @@
     <Compile Include="AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddFloorPlan.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AddFloorPlan.Designer.cs">
-      <DependentUpon>AddFloorPlan.cs</DependentUpon>
-    </Compile>
     <Compile Include="AddRemoteCommand.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1120,12 +1114,6 @@
     <Compile Include="C2BPComparers.cs" />
     <Compile Include="LocRM.cs" />
     <Compile Include="Firewall.cs" />
-    <Compile Include="Controls\FloorPlan.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\FloorPlan.Designer.cs">
-      <DependentUpon>FloorPlan.cs</DependentUpon>
-    </Compile>
     <Compile Include="extensions.cs" />
     <Compile Include="ftp.cs" />
     <Compile Include="Helper.cs" />
@@ -2426,9 +2414,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>AddCamera.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddFloorPlan.resx">
-      <DependentUpon>AddFloorPlan.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="AddRemoteCommand.resx">
       <DependentUpon>AddRemoteCommand.cs</DependentUpon>
     </EmbeddedResource>
@@ -2661,10 +2646,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NetworkTroubleshooter.resx">
       <DependentUpon>NetworkTroubleshooter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\FloorPlan.resx">
-      <DependentUpon>FloorPlan.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ConfigureSeconds.resx">
       <DependentUpon>ConfigureSeconds.cs</DependentUpon>

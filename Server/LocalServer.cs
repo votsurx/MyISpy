@@ -848,9 +848,7 @@ namespace iSpyApplication.Server
                         case "loadimage.jpg":
                             SendImage(sPhysicalFilePath, sHttpVersion, req);
                             break;
-                        case "floorplanfeed":
-                            SendFloorPlanFeed(sPhysicalFilePath, sHttpVersion, req);
-                            break;
+                        
                         case "audiofeed.mp3":
                             SendAudioFeed(Enums.AudioStreamMode.MP3, sBuffer, sPhysicalFilePath, req);
                             return;
@@ -2231,62 +2229,6 @@ namespace iSpyApplication.Server
                     }
                     resp = oclall.Trim('|');
                     break;
-                case "getfloorplanalerts2":
-                    {
-                        string cfg = "";
-
-                        foreach (objectsFloorplan ofp in MainForm.FloorPlans)
-                        {
-                            FloorPlanControl fpc = MainForm.InstanceReference.GetFloorPlan(ofp.id);
-                            if (fpc?.ImgPlan != null)
-                            {
-                                var lat = fpc.LastAlertTimestamp;
-                                var lrt = fpc.LastRefreshTimestamp;
-                                cfg += "{oid:" + ofp.id + ",alertTimestamp:" +
-                                       lat.ToString(CultureInfo.InvariantCulture) +
-                                       ",refreshTimestamp:" + lrt.ToString(CultureInfo.InvariantCulture) +
-                                       ",last_oid:" + fpc.LastOid +
-                                       ",last_otid:" + fpc.LastOtid + "},";
-                            }
-                        }
-                        func = func.Replace("data", "[" + cfg.Trim(',') + "]");
-                    }
-
-                    resp = "OK";
-                    break;
-                case "getfloorplans2":
-                    {
-                        string cfg = "";
-
-                        foreach (objectsFloorplan ofp in MainForm.FloorPlans)
-                        {
-                            FloorPlanControl fpc = MainForm.InstanceReference.GetFloorPlan(ofp.id);
-                            if (fpc?.ImgPlan != null)
-                            {
-                                var lat = fpc.LastAlertTimestamp;
-                                var lrt = fpc.LastRefreshTimestamp;
-
-                                cfg += "{oid: " + ofp.id + ", name: \"" +
-                                       ofp.name.Replace("\"", "") + "\", refreshTimestamp: " +
-                                       lrt.ToString(CultureInfo.InvariantCulture) + ", alertTimestamp: " +
-                                       lat.ToString(CultureInfo.InvariantCulture) + ", width:" +
-                                       fpc.ImageWidth + ", height:" + fpc.ImageHeight + ", groups:\"" +
-                                       ofp.accessgroups.Replace("\n", " ").Replace("\"", "") + "\",areas:[";
-
-                                cfg += ofp.objects.@object.Aggregate(temp,
-                                                                     (current, ofpo) =>
-                                                                     current +
-                                                                     ("{oid: " + ofpo.id + ",ot: " +
-                                                                      (ofpo.type == "camera" ? 2 : 1) + ", x:" + (ofpo.x) +
-                                                                      ",y:" + (ofpo.y) + "},"));
-                                cfg = cfg.Trim(',');
-                                cfg += "]},";
-                            }
-                        }
-                        func = func.Replace("data", "[" + cfg.Trim(',') + "]");
-                    }
-                    resp = "OK";
-                    break;
                 case "getgraph":
                     FilesFile ff = null;
                     switch (otid)
@@ -3638,85 +3580,7 @@ namespace iSpyApplication.Server
             }
         }
 
-        private void SendFloorPlanFeed(String sPhysicalFilePath, string sHttpVersion, HttpRequest req)
-        {
-            string floorplanid = GetVar(sPhysicalFilePath, "floorplanid");
-            try
-            {
-                var fpc = MainForm.InstanceReference.GetFloorPlan(Convert.ToInt32(floorplanid));
-                if (fpc == null)
-                {
-                    SendResponse(sHttpVersion, "image/jpeg", CameraRemoved, " 200 OK", 0, req);
-                }
-                else
-                {
-                    if (fpc.ImgPlan == null)
-                    {
-                        SendResponse(sHttpVersion, "image/jpeg", CameraConnecting, " 200 OK", 0, req);
-                    }
-                    else
-                    {
-                        int w = 320, h = 240;
-                        bool done = false;
-                        using (var ms = new MemoryStream())
-                        {
-                            if (sPhysicalFilePath.IndexOf("thumb", StringComparison.Ordinal) != -1)
-                            {
-                                w = 96;
-                                h = 72;
-                            }
-                            else
-                            {
-                                if (sPhysicalFilePath.IndexOf("full", StringComparison.Ordinal) != -1)
-                                {
-                                    fpc.ImgView.Save(ms, ImageFormat.Jpeg);
-                                    done = true;
-                                }
-                                else
-                                {
-                                    string size = GetVar(sPhysicalFilePath, "size");
-                                    if (size != "")
-                                    {
-                                        GetWidthHeight(size, out w, out h);
-                                    }
-                                }
-                            }
-
-
-                            if (!done)
-                            {
-                                var img = (Image)fpc.ImgView.Clone();
-                                var myThumbnail = img.GetThumbnailImage(w, h, null, IntPtr.Zero);
-
-                                // put the image into the memory stream
-
-                                myThumbnail.Save(ms, ImageFormat.Jpeg);
-                                myThumbnail.Dispose();
-                                img.Dispose();
-                            }
-
-
-                            // make byte array the same size as the image
-
-                            var imageContent = new Byte[ms.Length];
-                            ms.Position = 0;
-                            // load the byte array with the image
-                            ms.Read(imageContent, 0, (int)ms.Length);
-
-                            // rewind the memory stream
-
-                            SendResponse(sHttpVersion, "image/jpeg", imageContent, " 200 OK", 0, req);
-                        }
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex,"Server");
-            }
-        }
+        
 
         private void SendMJPEGFeed(String sPhysicalFilePath, HttpRequest req)
         {
