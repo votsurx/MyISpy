@@ -20,7 +20,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Cloud;
 using iSpyApplication.Controls;
 using iSpyApplication.Properties;
 using iSpyApplication.Sources.Audio;
@@ -1911,18 +1910,6 @@ namespace iSpyApplication.Server
                         }
                     }
                     resp = "OK";
-                    break;
-                //case "uploadyoutube":
-                //{
-                //    bool b;
-                //    resp = YouTubeUploader.Upload(oid, Helper.GetFullPath(otid, oid) + fn, out b) + ",OK";
-                //}
-                //    break;
-                case "uploadcloud":
-                {
-                    bool b;
-                    resp = CloudGateway.Upload(otid, oid, Helper.GetFullPath(otid, oid) + fn, out b) + ",OK";
-                }
                     break;
                 case "kinect_tilt_up":
                 {

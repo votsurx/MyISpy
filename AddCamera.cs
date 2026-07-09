@@ -9,7 +9,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Cloud;
 using iSpyApplication.Controls;
 using iSpyApplication.Kinect;
 using iSpyApplication.Pelco;
@@ -2523,15 +2522,6 @@ namespace iSpyApplication
                 case "box":
                     url = ("https://account.box.com/api/oauth2/authorize?client_id=0uvr6c6kvl60p7725i62v9ua4k6bclpj&box_login=&response_type=code&redirect_uri=" + rurl + "/responsecode.aspx&state=" + new Random().NextDouble());
                     break;
-                case "flickr":
-                    var err = "";
-                    url = Flickr.GetAuthoriseURL(out err);
-                    if (err != "")
-                    {
-                        MessageBox.Show(err);
-                        return;
-                    }
-                    break;
             }
 
 
@@ -2546,22 +2536,7 @@ namespace iSpyApplication
                     switch (provider)
                     {
                         case "drive":
-                            b = Drive.Authorise(auth.AuthCode);
-                            break;
-                        //case "youtube":
-                        //    b = YouTubeUploader.Authorise(auth.AuthCode);
-                        //    break;
-                        case "dropbox":
-                            b = Dropbox.Authorise(auth.AuthCode);
-                            break;
-                        case "onedrive":
-                            b = OneDrive.Authorise(auth.AuthCode);
-                            break;
-                        case "flickr":
-                            b = Flickr.Authorise(auth.AuthCode);
-                            break;
-                        case "box":
-                            b = Box.Authorise(auth.AuthCode);
+                           // b = Drive.Authorise(auth.AuthCode);
                             break;
                     }
                     if (b && provider!="youtube")

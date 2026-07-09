@@ -5,7 +5,6 @@ using System.Linq;
 
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Cloud;
 using iSpyApplication.Controls;
 using iSpyApplication.Properties;
 using iSpyApplication.Utilities;
@@ -450,11 +449,6 @@ namespace iSpyApplication
                 for (int i = 0; i < flowPreview.Controls.Count; i++)
                 {
                     var pb = flowPreview.Controls[i] as PreviewBox;
-                    if (pb != null && pb.Selected)
-                    {
-                        bool b;
-                        msg = CloudGateway.Upload(pb.Otid, pb.Oid, pb.FileName, out b);
-                    }
                 }
             }
             if (msg != "")

@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using FFmpeg.AutoGen;
-using iSpyApplication.Cloud;
 using iSpyApplication.Onvif;
 using iSpyApplication.Pelco;
 using iSpyApplication.Realtime;
@@ -2176,12 +2175,6 @@ namespace iSpyApplication.Controls
 
                         myThumbnail.Save(fullpath, MainForm.Encoder, parameters);
                         myThumbnail.Dispose();
-
-                        if (Camobject.settings.cloudprovider.images)
-                        {
-                            bool b;
-                            CloudGateway.Upload(2, Camobject.id, fullpath, out b);
-                        }
                     }
                 }
 
@@ -3422,10 +3415,6 @@ namespace iSpyApplication.Controls
                             MainForm.MasterFileAdd(new FilePreview(fn, dSeconds, Camobject.name, DateTime.Now.Ticks, 2,
                                 Camobject.id, ff.MaxAlarm, false, false));
                             MainForm.NeedsMediaRefresh = Helper.Now;
-                            if (Camobject.settings.cloudprovider.recordings)
-                            {
-                                CloudGateway.Upload(2, Camobject.id, path + CodecExtension);
-                            }
                             if (Camobject.recorder.ftpenabled)
                             {
                                 FtpRecording(path + CodecExtension);

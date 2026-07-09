@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Cloud;
 using iSpyApplication.Controls;
 using iSpyApplication.Onvif;
 using iSpyApplication.Utilities;
@@ -461,58 +460,8 @@ namespace iSpyApplication.Server
                             string code = GetVar(sRequest, "code");
                             switch (provider.ToLower())
                             {
-                                case "box":
-                                    if (Box.Authorise(code))
-                                    {
-                                        message = LocRm.GetString("Authorised", lc);
-                                    }
-                                    else
-                                        message = LocRm.GetString("Failed", lc);
-                                    break;
-                                case "onedrive":
-                                    if (OneDrive.Authorise(code))
-                                    {
-                                        message = LocRm.GetString("Authorised", lc);
-                                    }
-                                    else
-                                        message = LocRm.GetString("Failed", lc);
-                                    break;
-                                case "drive":
-                                    {
-                                        if (Drive.Authorise(code))
-                                        {
-                                            message = LocRm.GetString("Authorised", lc);
-                                        }
-                                        else
-                                            message = LocRm.GetString("Failed", lc);
-                                    }
-                                    break;
-                                case "flickr":
-                                    if (Flickr.Authorise(code))
-                                    {
-                                        message = LocRm.GetString("Authorised", lc);
-                                    }
-                                    else
-                                        message = LocRm.GetString("Failed", lc);
-                                    break;
-                                case "dropbox":
-                                    if (Dropbox.Authorise(code))
-                                    {
-                                        message = LocRm.GetString("Authorised", lc);
-                                    }
-                                    else
-                                        message = LocRm.GetString("Failed", lc);
-                                    break;
-                                //case "youtube":
-                                //    {
-                                //        if (YouTubeUploader.Authorise(code))
-                                //        {
-                                //            message = LocRm.GetString("Authorised", lc);
-                                //        }
-                                //        else
-                                //            message = LocRm.GetString("Failed", lc);
-                                //    }
-                                //    break;
+                               
+                                
                             }
                         }
 
@@ -528,7 +477,7 @@ namespace iSpyApplication.Server
                         switch (provider.ToLower())
                         {
                             case "flickr":
-                                url = Flickr.GetAuthoriseURL(out error);
+                                //url = Flickr.GetAuthoriseURL(out error);
                                 break;
                         }
                         
@@ -1693,21 +1642,6 @@ namespace iSpyApplication.Server
 
                         var tzo = Convert.ToInt32(TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime()).TotalMinutes);
                         resp = "{\"timeStamp\":" + timestamp.Ticks + ",\"timezoneOffset\":"+tzo+",\"events\": " + resp + "}";
-                    }
-                    break;
-                //post commands
-                //case "uploadyoutube":
-                //    {
-                //        var d = getJSONObject(sBuffer);
-                //        t = YouTubeUploader.Upload(oid, Helper.GetFullPath(ot, oid) + d.files[0].name, out success);
-                //        resp = "{\"action\":\"" + cmd + "\",\"status\":\"" + (success ? "ok" : "Upload Failed ("+t.JsonSafe()+")") + "\"}";
-                //    }
-                //    break;
-                case "uploadcloud":
-                    {
-                        var d = getJSONObject(sBuffer);
-                        t = CloudGateway.Upload(ot, oid, Helper.GetFullPath(ot, oid) + d.files[0].name, out success);
-                        resp = "{\"action\":\"" + cmd + "\",\"status\":\"" + (success ? "ok" : "Upload Failed (" + t.JsonSafe() + ")") + "\"}";
                     }
                     break;
                 case "massdelete":

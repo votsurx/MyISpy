@@ -18,7 +18,6 @@ using System.Timers;
 using System.Windows.Forms;
 using Antiufo.Controls;
 using FFmpeg.AutoGen;
-using iSpyApplication.Cloud;
 using iSpyApplication.Controls;
 using iSpyApplication.Joystick;
 using iSpyApplication.Onvif;

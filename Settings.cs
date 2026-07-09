@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Cloud;
 using iSpyApplication.Server;
 using Microsoft.Win32;
 using NAudio.Wave;

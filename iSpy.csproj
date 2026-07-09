@@ -440,13 +440,6 @@
     </Compile>
     <Compile Include="CameraDiscovery\CameraScanner.cs" />
     <Compile Include="CameraDiscovery\URLDiscovery.cs" />
-    <Compile Include="Cloud\Box.cs" />
-    <Compile Include="Cloud\CloudGateway.cs" />
-    <Compile Include="Cloud\Drive.cs" />
-    <Compile Include="Cloud\Dropbox.cs" />
-    <Compile Include="Cloud\Flickr.cs" />
-    <Compile Include="Cloud\OneDrive.cs" />
-    <Compile Include="Cloud\YouTubeUploader.cs" />
     <Compile Include="CommandButtons.cs">
       <SubType>Form</SubType>
     </Compile>
