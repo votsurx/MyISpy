@@ -899,18 +899,18 @@ namespace iSpyApplication.Controls
                         case 5:
                             MainClass.EditObject(ctrl, _owner);
                             break;
-                        case 6:
-                            if (Helper.HasFeature(Enums.Features.Access_Media))
-                            {
-                                string url = MainForm.Webpage;
-                                if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
-                                {
-                                    MainForm.OpenUrl(url);
-                                }
-                                else
-                                    MainClass.Connect(url, false);
-                            }
-                            break;
+                        //case 6:
+                        //    if (Helper.HasFeature(Enums.Features.Access_Media))
+                        //    {
+                        //        string url = MainForm.Webpage;
+                        //        if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
+                        //        {
+                        //            MainForm.OpenUrl(url);
+                        //        }
+                        //        else
+                        //            MainClass.Connect(url, false);
+                        //    }
+                        //    break;
                         case 7:
                             if (ctrl.CanGrab && ctrl.IsEnabled)
                             {

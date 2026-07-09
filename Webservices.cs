@@ -26,231 +26,231 @@ namespace iSpyApplication
             MainForm.StartBrowser(MainForm.Webserver+"/newuser.aspx");
         }
 
-        private bool SetupNetwork(out int port, out int localport, out string error)
-        {
-            port = Convert.ToInt32(txtWANPort.Value);
-            localport = (int)txtLANPort.Value;
-            if (tcIPMode.SelectedIndex==1)
-            {
-                localport = (int) txtPort.Value;
-            }
+        //private bool SetupNetwork(out int port, out int localport, out string error)
+        //{
+        //    port = Convert.ToInt32(txtWANPort.Value);
+        //    localport = (int)txtLANPort.Value;
+        //    if (tcIPMode.SelectedIndex==1)
+        //    {
+        //        localport = (int) txtPort.Value;
+        //    }
 
-            MainForm.Conf.ServerPort = port;
-            MainForm.Conf.LANPort = localport;
-            MainForm.MWS.NumErr = 0;
-            MainForm.Conf.SpecificIP = chkBindSpecific.Checked;
+        //    MainForm.Conf.ServerPort = port;
+        //    MainForm.Conf.LANPort = localport;
+        //    MainForm.MWS.NumErr = 0;
+        //    MainForm.Conf.SpecificIP = chkBindSpecific.Checked;
 
-            switch (tcIPMode.SelectedIndex)
-            {
-                case 0:
-                    MainForm.Conf.IPMode = "IPv4";
-                    MainForm.Conf.IPv4Address = lbIPv4Address.SelectedItem.ToString();
-                    MainForm.AddressIPv4 = MainForm.Conf.IPv4Address;
-                    break;
-                case 1:
-                    MainForm.Conf.IPMode = "IPv6";
-                    MainForm.Conf.IPv6Address = lbIPv6Address.SelectedItem.ToString();
-                    MainForm.AddressIPv6 = MainForm.Conf.IPv6Address;
-                    break;
-            }
-            MainForm.Conf.WSUsername = txtUsername.Text.Trim();
-            MainForm.Conf.WSPassword = txtPassword.Text.Trim();
+        //    switch (tcIPMode.SelectedIndex)
+        //    {
+        //        case 0:
+        //            MainForm.Conf.IPMode = "IPv4";
+        //            MainForm.Conf.IPv4Address = lbIPv4Address.SelectedItem.ToString();
+        //            MainForm.AddressIPv4 = MainForm.Conf.IPv4Address;
+        //            break;
+        //        case 1:
+        //            MainForm.Conf.IPMode = "IPv6";
+        //            MainForm.Conf.IPv6Address = lbIPv6Address.SelectedItem.ToString();
+        //            MainForm.AddressIPv6 = MainForm.Conf.IPv6Address;
+        //            break;
+        //    }
+        //    MainForm.Conf.WSUsername = txtUsername.Text.Trim();
+        //    MainForm.Conf.WSPassword = txtPassword.Text.Trim();
 
-            error = MainForm.StopAndStartServer();
-            Application.DoEvents();
-            return error=="";
-        }
+        //    error = MainForm.StopAndStartServer();
+        //    Application.DoEvents();
+        //    return error=="";
+        //}
 
-        private void Button1Click(object sender, EventArgs e)
-        {
-            bool bIPv6 = tcIPMode.SelectedIndex == 1;
-            int port, localPort;
-            string error;
+        //private void Button1Click(object sender, EventArgs e)
+        //{
+        //    bool bIPv6 = tcIPMode.SelectedIndex == 1;
+        //    int port, localPort;
+        //    string error;
             
-            if (!SetupNetwork(out port, out localPort, out error))
-            {
-                MessageBox.Show(error+Environment.NewLine+LocRm.GetString("TryDifferentPort"));
-                return;
-            }
+        //    //if (!SetupNetwork(out port, out localPort, out error))
+        //    //{
+        //    //    MessageBox.Show(error+Environment.NewLine+LocRm.GetString("TryDifferentPort"));
+        //    //    return;
+        //    //}
 
-            if (!String.IsNullOrWhiteSpace(txtUsername.Text.Trim()))
-            {
-                try
-                {
-                    var fw = new FireWall();
-                    var r = fw.Initialize();
-                    if (r == FireWall.FwErrorCode.FwNoerror)
-                    {
-                        bool bOn;
-                        r = fw.IsWindowsFirewallOn(out bOn);
-                        if (r == FireWall.FwErrorCode.FwNoerror)
-                        {
-                            if (bOn)
-                            {
-                                string strApplication = Application.StartupPath + "\\iSpy.exe";
-                                bool bEnabled = false;
-                                r = fw.IsAppEnabled(strApplication, ref bEnabled);
-                                if (r == FireWall.FwErrorCode.FwNoerror)
-                                {
-                                    if (!bEnabled)
-                                    {
-                                        fw.AddApplication(strApplication, "iSpy");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (r!= FireWall.FwErrorCode.FwNoerror)
-                    {
-                        throw new Exception(r.ToString());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex);
-                    MessageBox.Show(this,
-                                       LocRm.GetString("ErrorFromFirewall") +Environment.NewLine+ ex.Message +Environment.NewLine+
-                                       LocRm.GetString("AddFirewallExceptionManually"));
-                }
+        //    if (!String.IsNullOrWhiteSpace(txtUsername.Text.Trim()))
+        //    {
+        //        try
+        //        {
+        //            var fw = new FireWall();
+        //            var r = fw.Initialize();
+        //            if (r == FireWall.FwErrorCode.FwNoerror)
+        //            {
+        //                bool bOn;
+        //                r = fw.IsWindowsFirewallOn(out bOn);
+        //                if (r == FireWall.FwErrorCode.FwNoerror)
+        //                {
+        //                    if (bOn)
+        //                    {
+        //                        string strApplication = Application.StartupPath + "\\iSpy.exe";
+        //                        bool bEnabled = false;
+        //                        r = fw.IsAppEnabled(strApplication, ref bEnabled);
+        //                        if (r == FireWall.FwErrorCode.FwNoerror)
+        //                        {
+        //                            if (!bEnabled)
+        //                            {
+        //                                fw.AddApplication(strApplication, "iSpy");
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            if (r!= FireWall.FwErrorCode.FwNoerror)
+        //            {
+        //                throw new Exception(r.ToString());
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Logger.LogException(ex);
+        //            MessageBox.Show(this,
+        //                               LocRm.GetString("ErrorFromFirewall") +Environment.NewLine+ ex.Message +Environment.NewLine+
+        //                               LocRm.GetString("AddFirewallExceptionManually"));
+        //        }
 
-                Next.Enabled = false;
-                Next.Text = "...";
-                Application.DoEvents();
+        //        Next.Enabled = false;
+        //        Next.Text = "...";
+        //        Application.DoEvents();
                 
-                MainForm.Conf.DHCPReroute = chkReroute.Checked;
-                MainForm.Conf.SpecificIP = chkBindSpecific.Checked;
+        //        MainForm.Conf.DHCPReroute = chkReroute.Checked;
+        //        MainForm.Conf.SpecificIP = chkBindSpecific.Checked;
 
-                bool failed = false;
+        //        bool failed = false;
 
 
-                var result = WsWrapper.TestConnection(MainForm.Conf.WSUsername, MainForm.Conf.WSPassword, true);
-                if (result[0] != "OK")
-                {
-                    MessageBox.Show(result[0], LocRm.GetString("Error"));
-                    failed = true;
-                }
+        //        var result = WsWrapper.TestConnection(MainForm.Conf.WSUsername, MainForm.Conf.WSPassword, true);
+        //        if (result[0] != "OK")
+        //        {
+        //            MessageBox.Show(result[0], LocRm.GetString("Error"));
+        //            failed = true;
+        //        }
 
-                if (!failed)
-                {
-                    if (result.Length>0 && result[0] == "OK")
-                    {
-                        EmailAddress = result[2];
-                        MobileNumber = result[4];
-                        MainForm.Conf.Reseller = result[5];
-                        MainForm.Conf.ServicesEnabled = true;
-                        MainForm.Conf.Subscribed = Convert.ToBoolean(result[1]);
-                        if (result[3] != "")
-                        {
-                            if (!bIPv6)
-                            {
-                                //try setting port automatically
-                                if (chkuPNP.Checked)
-                                {
-                                    if (!NATControl.SetPorts(port, localPort))
-                                    {
-                                        MessageBox.Show(LocRm.GetString("ErrorPortMapping"), LocRm.GetString("Error"));
-                                        chkuPNP.Checked = false;
-                                    }
-                                    else
-                                    {
-                                        result = WsWrapper.TestConnection(MainForm.Conf.WSUsername, MainForm.Conf.WSPassword, true);
-                                    }
-                                }  
-                            }
+        //        if (!failed)
+        //        {
+        //            if (result.Length>0 && result[0] == "OK")
+        //            {
+        //                EmailAddress = result[2];
+        //                MobileNumber = result[4];
+        //                MainForm.Conf.Reseller = result[5];
+        //                MainForm.Conf.ServicesEnabled = true;
+        //                MainForm.Conf.Subscribed = Convert.ToBoolean(result[1]);
+        //                if (result[3] != "")
+        //                {
+        //                    if (!bIPv6)
+        //                    {
+        //                        //try setting port automatically
+        //                        if (chkuPNP.Checked)
+        //                        {
+        //                            if (!NATControl.SetPorts(port, localPort))
+        //                            {
+        //                                MessageBox.Show(LocRm.GetString("ErrorPortMapping"), LocRm.GetString("Error"));
+        //                                chkuPNP.Checked = false;
+        //                            }
+        //                            else
+        //                            {
+        //                                result = WsWrapper.TestConnection(MainForm.Conf.WSUsername, MainForm.Conf.WSPassword, true);
+        //                            }
+        //                        }  
+        //                    }
                             
-                            if (result[3] != "")
-                            {
-                                MainForm.Conf.Loopback = false;
-                                Next.Enabled = true;
-                                Next.Text = LocRm.GetString("Finish");
-                                MainForm.LoopBack = false;
-                                if (!bIPv6)
-                                {
-                                    switch (
-                                        MessageBox.Show(
-                                            LocRm.GetString("ErrorLoopback").Replace("[PORT]", port.ToString(CultureInfo.InvariantCulture)),
-                                            LocRm.GetString("Error"), MessageBoxButtons.YesNoCancel))
-                                    {
-                                        case DialogResult.Yes:
-                                            ShowTroubleShooter();
-                                            return;
-                                        case DialogResult.No:
-                                            MainForm.Conf.Loopback = false;
-                                            MainForm.LoopBack = false;
-                                            DialogResult = DialogResult.Yes;
-                                            Close();
-                                            return;
-                                        case DialogResult.Cancel:
-                                            return;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (
-                                        MessageBox.Show(
-                                            LocRm.GetString("ErrorLoopbackIPv6").Replace("[PORT]", localPort.ToString(CultureInfo.InvariantCulture)),
-                                            LocRm.GetString("Error"), MessageBoxButtons.YesNoCancel))
-                                    {
-                                        case DialogResult.Yes:
-                                            ShowTroubleShooter();
-                                            return;
-                                        case DialogResult.No:
-                                            MainForm.Conf.Loopback = false;
-                                            MainForm.LoopBack = false;
-                                            DialogResult = DialogResult.Yes;
-                                            Close();
-                                            return;
-                                        case DialogResult.Cancel:
-                                            return;
-                                    }
-                                }
-                            }
-                        }
-                        if (result[3] == "")
-                        {
-                            MainForm.Conf.Loopback = true;
-                            MainForm.LoopBack = true;
+        //                    if (result[3] != "")
+        //                    {
+        //                        MainForm.Conf.Loopback = false;
+        //                        Next.Enabled = true;
+        //                        Next.Text = LocRm.GetString("Finish");
+        //                        MainForm.LoopBack = false;
+        //                        if (!bIPv6)
+        //                        {
+        //                            switch (
+        //                                MessageBox.Show(
+        //                                    LocRm.GetString("ErrorLoopback").Replace("[PORT]", port.ToString(CultureInfo.InvariantCulture)),
+        //                                    LocRm.GetString("Error"), MessageBoxButtons.YesNoCancel))
+        //                            {
+        //                                case DialogResult.Yes:
+        //                                    ShowTroubleShooter();
+        //                                    return;
+        //                                case DialogResult.No:
+        //                                    MainForm.Conf.Loopback = false;
+        //                                    MainForm.LoopBack = false;
+        //                                    DialogResult = DialogResult.Yes;
+        //                                    Close();
+        //                                    return;
+        //                                case DialogResult.Cancel:
+        //                                    return;
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            switch (
+        //                                MessageBox.Show(
+        //                                    LocRm.GetString("ErrorLoopbackIPv6").Replace("[PORT]", localPort.ToString(CultureInfo.InvariantCulture)),
+        //                                    LocRm.GetString("Error"), MessageBoxButtons.YesNoCancel))
+        //                            {
+        //                                case DialogResult.Yes:
+        //                                    ShowTroubleShooter();
+        //                                    return;
+        //                                case DialogResult.No:
+        //                                    MainForm.Conf.Loopback = false;
+        //                                    MainForm.LoopBack = false;
+        //                                    DialogResult = DialogResult.Yes;
+        //                                    Close();
+        //                                    return;
+        //                                case DialogResult.Cancel:
+        //                                    return;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                if (result[3] == "")
+        //                {
+        //                    MainForm.Conf.Loopback = true;
+        //                    MainForm.LoopBack = true;
                             
-                            DialogResult = DialogResult.Yes;
-                            Close();
-                            return;
-                        }
-                        Next.Enabled = true;
-                        Next.Text = LocRm.GetString("Finish");
-                    }
-                    else
-                    {
-                        if (result.Length>0 && result[0].ToLower().IndexOf("login", StringComparison.Ordinal) == -1)
-                        {
-                            MessageBox.Show(result[0], LocRm.GetString("Error"));
-                        }
-                        else
-                        {
-                            MessageBox.Show(LocRm.GetString("NoResponse"), LocRm.GetString("ConnectFailed"));
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Next.Enabled = true;
-                Next.Text = LocRm.GetString("Finish");
-                if (
-                    MessageBox.Show(LocRm.GetString("WarningLogin"), LocRm.GetString("Note"), MessageBoxButtons.OKCancel) ==
-                    DialogResult.Cancel)
-                {
-                    return;
-                }
-                MainForm.Conf.ServicesEnabled = false;
-                MainForm.Conf.Subscribed = false;
-                MainForm.Conf.WSUsername = "";
-                MainForm.Conf.WSPassword = "";
-                DialogResult = DialogResult.OK;
-                Close();
-            }
-            Next.Enabled = true;
-            Next.Text = LocRm.GetString("Finish");
-        }
+        //                    DialogResult = DialogResult.Yes;
+        //                    Close();
+        //                    return;
+        //                }
+        //                Next.Enabled = true;
+        //                Next.Text = LocRm.GetString("Finish");
+        //            }
+        //            else
+        //            {
+        //                if (result.Length>0 && result[0].ToLower().IndexOf("login", StringComparison.Ordinal) == -1)
+        //                {
+        //                    MessageBox.Show(result[0], LocRm.GetString("Error"));
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show(LocRm.GetString("NoResponse"), LocRm.GetString("ConnectFailed"));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Next.Enabled = true;
+        //        Next.Text = LocRm.GetString("Finish");
+        //        if (
+        //            MessageBox.Show(LocRm.GetString("WarningLogin"), LocRm.GetString("Note"), MessageBoxButtons.OKCancel) ==
+        //            DialogResult.Cancel)
+        //        {
+        //            return;
+        //        }
+        //        MainForm.Conf.ServicesEnabled = false;
+        //        MainForm.Conf.Subscribed = false;
+        //        MainForm.Conf.WSUsername = "";
+        //        MainForm.Conf.WSPassword = "";
+        //        DialogResult = DialogResult.OK;
+        //        Close();
+        //    }
+        //    Next.Enabled = true;
+        //    Next.Text = LocRm.GetString("Finish");
+        //}
 
 
         private void WebservicesLoad(object sender, EventArgs e)
@@ -389,20 +389,20 @@ namespace iSpyApplication
         }
 
 
-        private void ShowTroubleShooter()
-        {
-            int port, localPort;
-            string error = "";
-            if (!SetupNetwork(out port, out localPort, out error))
-            {
-                MessageBox.Show(error);
-                return;
-            }
+        //private void ShowTroubleShooter()
+        //{
+        //    int port, localPort;
+        //    string error = "";
+        //    if (!SetupNetwork(out port, out localPort, out error))
+        //    {
+        //        MessageBox.Show(error);
+        //        return;
+        //    }
 
-            var nt = new NetworkTroubleshooter();
-            nt.ShowDialog(this);
-            nt.Dispose();
-        }
+        //    var nt = new NetworkTroubleshooter();
+        //    nt.ShowDialog(this);
+        //    nt.Dispose();
+        //}
 
         private void tcIPMode_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -423,10 +423,10 @@ namespace iSpyApplication
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ShowTroubleShooter();
-        }
+        //private void button1_Click(object sender, EventArgs e)
+        //{
+        //    ShowTroubleShooter();
+        //}
 
         private void chkEnableIPv6_CheckedChanged(object sender, EventArgs e)
         {

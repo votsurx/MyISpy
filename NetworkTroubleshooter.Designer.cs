@@ -71,7 +71,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Retry";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            //this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel1
             // 
@@ -117,7 +117,7 @@
             this.Name = "NetworkTroubleshooter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Network Troubleshooter";
-            this.Load += new System.EventHandler(this.NetworkTroubleshooter_Load);
+            //this.Load += new System.EventHandler(this.NetworkTroubleshooter_Load);
             this.panel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();

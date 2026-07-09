@@ -17,14 +17,14 @@ namespace iSpyApplication.Server
 
         public string Source
         {
-            get { return Conf.DeviceList.First(p => p.ObjectTypeID == 2 && p.SourceTypeID == _videoSourceTypeID).Name; }
+            get { return "SourceType_" + _videoSourceTypeID; }
         }
 
         internal string AudioSource
         {
             get
             {
-                return _audioSourceTypeID == -1 ? "" : Conf.DeviceList.First(p => p.ObjectTypeID == 1 && p.SourceTypeID == _audioSourceTypeID).Name;
+                return _audioSourceTypeID == -1 ? "" : "AudioSourceType_" + _audioSourceTypeID;
             }
         }
 

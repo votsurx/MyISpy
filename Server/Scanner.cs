@@ -10,7 +10,7 @@ namespace iSpyApplication.Server
     public class Scanner
     {
         private const int MaxThreads = 10;
-        public event EventHandler<DeviceFoundEventArgs> DeviceFound;
+        //public event EventHandler<DeviceFoundEventArgs> DeviceFound;
         public event EventHandler ScanFinished;
 
         public void PortScannerManager(IEnumerable<string> ipranges, IEnumerable<int> ports)
@@ -154,11 +154,11 @@ namespace iSpyApplication.Server
                                     webserver = response.Headers[k];
                             }
                             int iport1 = iport;
-                            if (DeviceFound != null)
-                            {
-                                var nd = new NetworkDevice(ipaddress, iport1, hostname, webserver);
-                                DeviceFound(this, new DeviceFoundEventArgs(nd));
-                            }
+                            //if (DeviceFound != null)
+                            //{
+                            //    //var nd = new NetworkDevice(ipaddress, iport1, hostname, webserver);
+                            //    //DeviceFound(this, new DeviceFoundEventArgs(nd));
+                            //}
                         }
                     }
                 }
@@ -173,15 +173,15 @@ namespace iSpyApplication.Server
 
     }
 
-    public class DeviceFoundEventArgs : EventArgs
-    {
-        public NetworkDevice Device;
+    //public class DeviceFoundEventArgs : EventArgs
+    //{
+    //    public NetworkDevice Device;
 
-        // Constructor
-        public DeviceFoundEventArgs(NetworkDevice device)
-        {
-            Device = device;
-        }
-    }
+    //    // Constructor
+    //    public DeviceFoundEventArgs(NetworkDevice device)
+    //    {
+    //        Device = device;
+    //    }
+    //}
 
 }

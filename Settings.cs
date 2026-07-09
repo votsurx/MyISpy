@@ -161,12 +161,12 @@ namespace iSpyApplication
             var ips = rtbAccessList.Text.Trim().Split(',');
             var t = ips.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
             MainForm.Conf.AllowedIPList = t.Trim(',');
-            LocalServer.ReloadAllowedIPs();
+            //LocalServer.ReloadAllowedIPs();
 
             var refs = rtbReferrers.Text.Trim().Split(',');
             var t2 = refs.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
             MainForm.Conf.Referers = t2.Trim(',');
-            LocalServer.ReloadAllowedReferrers();
+            //LocalServer.ReloadAllowedReferrers();
 
             
             MainForm.Conf.ShowOverlayControls = chkOverlay.Checked;
@@ -390,7 +390,6 @@ namespace iSpyApplication
             txtAlertOnDisconnect.Text = MainForm.Conf.AlertOnDisconnect;
             txtAlertOnReconnect.Text = MainForm.Conf.AlertOnReconnect;
             txtArchive.Text = MainForm.Conf.ArchiveNew;
-            SetSSLText();
             
 
             txtAlertSubject.Text = MainForm.Conf.MailAlertSubject;
@@ -1291,30 +1290,30 @@ namespace iSpyApplication
 
         }
 
-        private void btnCert_Click(object sender, EventArgs e)
-        {
-            var c = MainForm.Conf.SSLEnabled;
-            var ssl = new SSLConfig();
-            ssl.ShowDialog(this);
-            ssl.Dispose();
-            SetSSLText();
-            if (MainForm.Conf.SSLEnabled != c)
-            {
-                MainClass.ConnectServices(false);
+        //private void btnCert_Click(object sender, EventArgs e)
+        //{
+        //    var c = MainForm.Conf.SSLEnabled;
+        //    var ssl = new SSLConfig();
+        //    ssl.ShowDialog(this);
+        //    ssl.Dispose();
+        //    SetSSLText();
+        //    if (MainForm.Conf.SSLEnabled != c)
+        //    {
+        //        MainClass.ConnectServices(false);
 
-            }
+        //    }
             
-        }
+        //}
 
-        private void SetSSLText()
-        {
-            lblSSLCert.Text = LocRm.GetString("Off");
-            if (MainForm.Conf.SSLEnabled)
-            {
-                lblSSLCert.Text = MainForm.Conf.SSLCertificate;
-            }
+        //private void SetSSLText()
+        //{
+        //    lblSSLCert.Text = LocRm.GetString("Off");
+        //    if (MainForm.Conf.SSLEnabled)
+        //    {
+        //        lblSSLCert.Text = MainForm.Conf.SSLCertificate;
+        //    }
 
-        }
+        //}
 
         private void ddlPlayback_SelectedIndexChanged(object sender, EventArgs e)
         {

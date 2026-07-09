@@ -849,7 +849,7 @@ namespace iSpyApplication
             this.btnCert.TabIndex = 1;
             this.btnCert.Text = "...";
             this.btnCert.UseVisualStyleBackColor = true;
-            this.btnCert.Click += new System.EventHandler(this.btnCert_Click);
+            //this.btnCert.Click += new System.EventHandler(this.btnCert_Click);
             // 
             // lblSSLCert
             // 

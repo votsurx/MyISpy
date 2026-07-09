@@ -164,7 +164,7 @@ namespace iSpyApplication.Controls
         public IWavePlayer WaveOut;
         public IAudioSource AudioSource;
 
-        public List<HttpRequest> OutSockets = new List<HttpRequest>();
+        //public List<HttpRequest> OutSockets = new List<HttpRequest>();
 
         private Thread _tFiles;
         public void LoadFileList()
@@ -752,18 +752,18 @@ namespace iSpyApplication.Controls
                                     MainClass.EditMicrophone(Micobject);
                                 }
                                 break;
-                            case 3:
-                                if (Helper.HasFeature(Enums.Features.Access_Media))
-                                {
-                                    string url = MainForm.Webpage;
-                                    if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
-                                    {
-                                        MainForm.OpenUrl(url);
-                                    }
-                                    else
-                                        MainClass.Connect(url, false);
-                                }
-                                break;
+                            //case 3:
+                            //    if (Helper.HasFeature(Enums.Features.Access_Media))
+                            //    {
+                            //        string url = MainForm.Webpage;
+                            //        if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
+                            //        {
+                            //            MainForm.OpenUrl(url);
+                            //        }
+                            //        else
+                            //            MainClass.Connect(url, false);
+                            //    }
+                            //    break;
                             case 4:
                                 if (IsEnabled)
                                 {
@@ -1627,10 +1627,10 @@ namespace iSpyApplication.Controls
 
                         try
                         {
-                            string url = (X509.SslEnabled ? "https" : "http") + "://" + MainForm.IPAddress + "/";
-                            linktofile =
-                                Uri.EscapeDataString(url + "loadclip.mp3?oid=" + Micobject.id + "&ot=1&fn=" +
-                                                     AudioFileName + ".mp3&auth=" + MainForm.Identifier);
+                            //string url = (X509.SslEnabled ? "https" : "http") + "://" + MainForm.IPAddress + "/";
+                            //linktofile =
+                            //    Uri.EscapeDataString(url + "loadclip.mp3?oid=" + Micobject.id + "&ot=1&fn=" +
+                            //                         AudioFileName + ".mp3&auth=" + MainForm.Identifier);
                         }
                         catch (Exception ex)
                         {
@@ -2245,56 +2245,56 @@ namespace iSpyApplication.Controls
                     Micobject.settings.needsupdate = false;
                 }
 
-                OutSockets.RemoveAll(p => p.TcpClient.Client.Connected == false);
-                if (OutSockets.Count>0)
-                {
-                    if (_mp3Writer == null)
-                    {
-                        _audioStreamFormat = new WaveFormat(Micobject.settings.samples, 16, Micobject.settings.channels);
-                        var wf = new WaveFormat(_audioStreamFormat.SampleRate, _audioStreamFormat.BitsPerSample, _audioStreamFormat.Channels);
-                        _mp3Writer = new LameMP3FileWriter(_outStream, wf, LAMEPreset.STANDARD);
-                    }
+                //OutSockets.RemoveAll(p => p.TcpClient.Client.Connected == false);
+                //if (OutSockets.Count>0)
+                //{
+                //    if (_mp3Writer == null)
+                //    {
+                //        _audioStreamFormat = new WaveFormat(Micobject.settings.samples, 16, Micobject.settings.channels);
+                //        var wf = new WaveFormat(_audioStreamFormat.SampleRate, _audioStreamFormat.BitsPerSample, _audioStreamFormat.Channels);
+                //        _mp3Writer = new LameMP3FileWriter(_outStream, wf, LAMEPreset.STANDARD);
+                //    }
 
-                    _mp3Writer.Write(e.RawData, 0, e.BytesRecorded);
+                //    _mp3Writer.Write(e.RawData, 0, e.BytesRecorded);
 
-                    var bterm = Encoding.ASCII.GetBytes("\r\n");
+                //    var bterm = Encoding.ASCII.GetBytes("\r\n");
 
-                    if (_outStream.Length > 0)
-                    {
-                        var bout = new byte[(int) _outStream.Length];
+                //    if (_outStream.Length > 0)
+                //    {
+                //        var bout = new byte[(int) _outStream.Length];
 
-                        _outStream.Seek(0, SeekOrigin.Begin);
-                        _outStream.Read(bout, 0, (int) _outStream.Length);
+                //        _outStream.Seek(0, SeekOrigin.Begin);
+                //        _outStream.Read(bout, 0, (int) _outStream.Length);
 
-                        _outStream.SetLength(0);
-                        _outStream.Seek(0, SeekOrigin.Begin);
+                //        _outStream.SetLength(0);
+                //        _outStream.Seek(0, SeekOrigin.Begin);
 
-                        foreach (var s in OutSockets)
-                        {
-                            var b = Encoding.ASCII.GetBytes(bout.Length.ToString("X") + "\r\n");
-                            try
-                            {
-                                s.Stream.Write(b, 0, b.Length);
-                                s.Stream.Write(bout, 0, bout.Length);
-                                s.Stream.Write(bterm, 0, bterm.Length);
-                            }
-                            catch
-                            {
-                                OutSockets.Remove(s);
-                                break;
-                            }
-                        }
-                    }
+                //        foreach (var s in OutSockets)
+                //        {
+                //            var b = Encoding.ASCII.GetBytes(bout.Length.ToString("X") + "\r\n");
+                //            try
+                //            {
+                //                s.Stream.Write(b, 0, b.Length);
+                //                s.Stream.Write(bout, 0, bout.Length);
+                //                s.Stream.Write(bterm, 0, bterm.Length);
+                //            }
+                //            catch
+                //            {
+                //                OutSockets.Remove(s);
+                //                break;
+                //            }
+                //        }
+                //    }
 
-                }
-                else
-                {
-                    if (_mp3Writer != null)
-                    {
-                        _mp3Writer.Close();
-                        _mp3Writer = null;
-                    }
-                }
+                //}
+                //else
+                //{
+                //    if (_mp3Writer != null)
+                //    {
+                //        _mp3Writer.Close();
+                //        _mp3Writer = null;
+                //    }
+                //}
 
 
                 DataAvailable?.Invoke(this, new NewDataAvailableArgs((byte[])e.RawData.Clone()));
@@ -2558,7 +2558,7 @@ namespace iSpyApplication.Controls
 
                                 message += MainForm.Conf.AppendLinkText;
 
-                                WsWrapper.SendAlert(param1, subject, message);
+                                //WsWrapper.SendAlert(param1, subject, message);
                             }
                         }
                         break;
@@ -2570,7 +2570,7 @@ namespace iSpyApplication.Controls
                                 if (message.Length > 160)
                                     message = message.Substring(0, 159);
 
-                                WsWrapper.SendSms(param1, message);
+                                //WsWrapper.SendSms(param1, message);
                             }
                         }
                         break;
@@ -2582,7 +2582,7 @@ namespace iSpyApplication.Controls
                                 if (message.Length > 160)
                                     message = message.Substring(0, 159);
 
-                                WsWrapper.SendTweet(message + " " + MainForm.Webserver + "/mobile/");
+                                //WsWrapper.SendTweet(message + " " + MainForm.Webserver + "/mobile/");
                             }
                         }
                         break;
@@ -2691,7 +2691,7 @@ namespace iSpyApplication.Controls
 
         public void Alert(object sender, EventArgs e)
         {
-            if (sender is LocalServer || sender is VolumeLevel || sender is CameraWindow)
+            if (sender is VolumeLevel || sender is CameraWindow)
             {
                 FlashCounter = Helper.Now.AddSeconds(10);
                 DoAlert("alert");

@@ -1165,18 +1165,18 @@ namespace iSpyApplication.Controls
                                             MainClass.EditCamera(Camobject);
                                         }
                                         break;
-                                    case 3:
-                                        if (Helper.HasFeature(Enums.Features.Access_Media))
-                                        {
-                                            string url = MainForm.Webpage;
-                                            if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
-                                            {
-                                                MainForm.OpenUrl(url);
-                                            }
-                                            else
-                                                MainClass.Connect(url, false);
-                                        }
-                                        break;
+                                    //case 3:
+                                    //    if (Helper.HasFeature(Enums.Features.Access_Media))
+                                    //    {
+                                    //        string url = MainForm.Webpage;
+                                    //        if (WsWrapper.WebsiteLive && MainForm.Conf.ServicesEnabled)
+                                    //        {
+                                    //            MainForm.OpenUrl(url);
+                                    //        }
+                                    //        else
+                                    //            MainClass.Connect(url, false);
+                                    //    }
+                                    //    break;
                                     case 4:
                                         if (IsEnabled)
                                         {
@@ -3554,27 +3554,27 @@ namespace iSpyApplication.Controls
                 return;
             }
 
-            if (sender is LocalServer || sender is VolumeLevel)
-            {
-                FlashCounter = Helper.Now.AddSeconds(10);
-                DoAlert("alert");
-                return;
-            }
+            //if (sender is LocalServer || sender is VolumeLevel)
+            //{
+            //    FlashCounter = Helper.Now.AddSeconds(10);
+            //    DoAlert("alert");
+            //    return;
+            //}
 
-            if (sender is string || sender is IVideoSource)
-            {
-                if (Camobject.alerts.active && Camera != null)
-                {
-                    FlashCounter = Helper.Now.AddSeconds(10);
-                    string msg = "";
-                    var s = sender as string;
-                    if (s != null)
-                        msg = s;
-                    else
-                  
-                    DoAlert("alert", msg);
-                }
-            }
+            //if (sender is string || sender is IVideoSource)
+            //{
+            //    if (Camobject.alerts.active && Camera != null)
+            //    {
+            //        FlashCounter = Helper.Now.AddSeconds(10);
+            //        string msg = "";
+            //        var s = sender as string;
+            //        if (s != null)
+            //            msg = s;
+            //        else
+
+            //            DoAlert("alert", msg);
+            //    }
+            //}
         }
 
         private void DoAlert(string type, string msg = "")
@@ -3600,9 +3600,9 @@ namespace iSpyApplication.Controls
                 {
                     StartSaving();
                 }
-                var wss = MainForm.MWS.WebSocketServer;
-                if (wss!=null)
-                    wss.SendToAll("alert|" + ObjectName);
+                //var wss = MainForm.MWS.WebSocketServer;
+                //if (wss!=null)
+                //    wss.SendToAll("alert|" + ObjectName);
             }
 
             var t = new Thread(() => AlertThread(type, msg, Camobject.id)) { Name = type + " (" + Camobject.id + ")", IsBackground = true };
@@ -4000,10 +4000,10 @@ namespace iSpyApplication.Controls
                                 message += MainForm.Conf.AppendLinkText;
 
 
-                                if (includeGrab && rawgrab!=null)
-                                    WsWrapper.SendAlertWithImage(param1, subject, message, rawgrab);
-                                else
-                                    WsWrapper.SendAlert(param1, subject, message);
+                                //if (includeGrab && rawgrab!=null)
+                                //    WsWrapper.SendAlertWithImage(param1, subject, message, rawgrab);
+                                //else
+                                //    WsWrapper.SendAlert(param1, subject, message);
                             }
 
                         }
@@ -4016,7 +4016,7 @@ namespace iSpyApplication.Controls
                                 if (message.Length > 160)
                                     message = message.Substring(0, 159);
 
-                                WsWrapper.SendSms(param1, message);
+                                //WsWrapper.SendSms(param1, message);
                             }
                         }
                         break;
@@ -4028,7 +4028,7 @@ namespace iSpyApplication.Controls
                                 if (message.Length > 160)
                                     message = message.Substring(0, 159);
 
-                                WsWrapper.SendTweet(message + " " + MainForm.Webserver + "/mobile/");
+                                //WsWrapper.SendTweet(message + " " + MainForm.Webserver + "/mobile/");
                             }
                         }
                         break;

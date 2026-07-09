@@ -151,7 +151,7 @@ namespace iSpyApplication
             this.Next.TabIndex = 5;
             this.Next.Text = "Finish";
             this.Next.UseVisualStyleBackColor = true;
-            this.Next.Click += new System.EventHandler(this.Button1Click);
+            //this.Next.Click += new System.EventHandler(this.Button1Click);
             // 
             // label3
             // 
@@ -468,7 +468,7 @@ namespace iSpyApplication
             this.btnTroubleshooting.TabIndex = 64;
             this.btnTroubleshooting.Text = "Troubleshooter";
             this.btnTroubleshooting.UseVisualStyleBackColor = true;
-            this.btnTroubleshooting.Click += new System.EventHandler(this.button1_Click);
+            //this.btnTroubleshooting.Click += new System.EventHandler(this.button1_Click);
             // 
             // tableLayoutPanel1
             // 

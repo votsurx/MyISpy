@@ -537,17 +537,8 @@
       <DependentUpon>PTZConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="Realtime\MediaWriter.cs" />
-    <Compile Include="Server\Conf.cs" />
     <Compile Include="Server\ConnectionOption.cs" />
-    <Compile Include="Server\HTTPRequest.cs" />
-    <Compile Include="Server\JSONServer.cs" />
-    <Compile Include="Server\NetworkDeviceList.cs" />
-    <Compile Include="Server\RestartableStream.cs" />
     <Compile Include="Server\Scanner.cs" />
-    <Compile Include="Server\SourceItem.cs" />
-    <Compile Include="Server\WebSocketConnection.cs" />
-    <Compile Include="Server\WebSocketServer.cs" />
-    <Compile Include="Server\X509.cs" />
     <Compile Include="Service References\OnvifServices\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -954,9 +945,7 @@
     <Compile Include="PTZTool.Designer.cs">
       <DependentUpon>PTZTool.cs</DependentUpon>
     </Compile>
-    <Compile Include="RestartableStream.cs" />
     <Compile Include="SerializableFont.cs" />
-    <Compile Include="Server\LocalServer.cs" />
     <Compile Include="ShareCamera.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1009,12 +998,6 @@
     <Compile Include="Sources\Video\MJPEGStream.cs" />
     <Compile Include="Sources\Video\VideoCaptureDevice.cs" />
     <Compile Include="Sources\Video\VLCStream.cs" />
-    <Compile Include="SSLConfig.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SSLConfig.Designer.cs">
-      <DependentUpon>SSLConfig.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\ConnectionOptions.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
@@ -1206,8 +1189,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="WinAPI.cs" />
-    <Compile Include="WSWrapper.cs" />
-    <Compile Include="X509.cs" />
     <Compile Include="XML\config.cs">
       <DependentUpon>config.xsd</DependentUpon>
     </Compile>
@@ -2618,9 +2599,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ShareCamera.resx">
       <DependentUpon>ShareCamera.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SSLConfig.resx">
-      <DependentUpon>SSLConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TagConfigure.resx">
       <DependentUpon>TagConfigure.cs</DependentUpon>
