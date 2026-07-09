@@ -1174,7 +1174,7 @@ namespace iSpyApplication
             this.combo_dwnsmpl.Name = "combo_dwnsmpl";
             this.combo_dwnsmpl.Size = new System.Drawing.Size(39, 21);
             this.combo_dwnsmpl.TabIndex = 22;
-            this.combo_dwnsmpl.SelectedIndexChanged += new System.EventHandler(this.combo_dwnsmpl_SelectedIndexChanged);
+
             // 
             // numXimeaHeight
             // 
@@ -1236,15 +1236,6 @@ namespace iSpyApplication
             this.numXimeaWidth.Size = new System.Drawing.Size(62, 20);
             this.numXimeaWidth.TabIndex = 24;
             // 
-            // numXimeaGain
-            // 
-            this.numXimeaGain.DecimalPlaces = 2;
-            this.numXimeaGain.Location = new System.Drawing.Point(91, 160);
-            this.numXimeaGain.Name = "numXimeaGain";
-            this.numXimeaGain.Size = new System.Drawing.Size(62, 20);
-            this.numXimeaGain.TabIndex = 19;
-            this.numXimeaGain.ValueChanged += new System.EventHandler(this.numXimeaGain_ValueChanged);
-            // 
             // label27
             // 
             this.label27.AutoSize = true;
@@ -1254,17 +1245,7 @@ namespace iSpyApplication
             this.label27.Size = new System.Drawing.Size(54, 13);
             this.label27.TabIndex = 18;
             this.label27.Text = "Gain (dB):";
-            // 
-            // ddlXimeaDevice
-            // 
-            this.tableLayoutPanel7.SetColumnSpan(this.ddlXimeaDevice, 3);
-            this.ddlXimeaDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddlXimeaDevice.FormattingEnabled = true;
-            this.ddlXimeaDevice.Location = new System.Drawing.Point(91, 3);
-            this.ddlXimeaDevice.Name = "ddlXimeaDevice";
-            this.ddlXimeaDevice.Size = new System.Drawing.Size(257, 21);
-            this.ddlXimeaDevice.TabIndex = 1;
-            this.ddlXimeaDevice.SelectedIndexChanged += new System.EventHandler(this.ddlXimeaDevice_SelectedIndexChanged);
+            
             // 
             // label23
             // 
@@ -1374,20 +1355,7 @@ namespace iSpyApplication
             this.label25.Size = new System.Drawing.Size(41, 13);
             this.label25.TabIndex = 12;
             this.label25.Text = "Height:";
-            // 
-            // numXimeaExposure
-            // 
-            this.numXimeaExposure.DecimalPlaces = 2;
-            this.numXimeaExposure.Increment = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.numXimeaExposure.Location = new System.Drawing.Point(241, 160);
-            this.numXimeaExposure.Name = "numXimeaExposure";
-            this.numXimeaExposure.Size = new System.Drawing.Size(62, 20);
-            this.numXimeaExposure.TabIndex = 21;
-            this.numXimeaExposure.ValueChanged += new System.EventHandler(this.numXimeaExposure_ValueChanged);
+            
             // 
             // tabPage8
             // 

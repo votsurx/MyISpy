@@ -12,10 +12,8 @@ namespace iSpyApplication.Server
                                                     {
                                                         new SourceItem("LocalDevice", "LocalVideoSource", 2, 3),
                                                         new SourceItem("Desktop", "LocalVideoSource", 2, 4),
-                                                        new SourceItem("KinectV1", "LocalVideoSource", 2, 7,false,true),
                                                         //cannot do this until 64 bit version of kinect driver is available
                                                         //new SourceItem("KinectV2","LocalVideoSource",2,11),
-                                                        new SourceItem("XIMEA", "LocalVideoSource", 2, 6,false,true),
                                                         new SourceItem("Clone", "LocalVideoSource", 2, 10),
                                                         new SourceItem("JPEG", "NetworkVideoSource", 2, 0),
                                                         new SourceItem("MJPEG", "NetworkVideoSource", 2, 1),

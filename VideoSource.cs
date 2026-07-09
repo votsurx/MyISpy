@@ -9,10 +9,8 @@ using System.Windows.Forms;
 using iSpyApplication.Controls;
 using iSpyApplication.Onvif;
 using iSpyApplication.Sources.Video;
-using iSpyApplication.Sources.Video.Ximea;
 using iSpyApplication.Utilities;
 using iSpyPRO.DirectShow;
-using Microsoft.Kinect;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace iSpyApplication
@@ -296,109 +294,6 @@ namespace iSpyApplication
                 EnumeratedSupportedFrameSizes();
             }
 
-
-            //ximea
-
-            int deviceCount = 0;
-
-            try
-            {
-                deviceCount = XimeaCamera.CamerasCount;
-            }
-            catch(Exception)
-            {
-                //Ximea DLL not installed
-                //Logger.LogMessage("This is not a XIMEA device");
-            }
-
-            pnlXimea.Enabled = deviceCount>0;
-
-            if (pnlXimea.Enabled)
-            {
-                for (int i = 0; i < deviceCount; i++)
-                {
-                    ddlXimeaDevice.Items.Add("Device " + i);
-                }
-                if (NV("type")=="ximea")
-                {
-                    int deviceIndex = Convert.ToInt32(NV("device"));
-                    ddlXimeaDevice.SelectedIndex = ddlXimeaDevice.Items.Count > deviceIndex?deviceIndex:0;
-                    numXimeaWidth.Text = NV("width");
-                    numXimeaHeight.Text = NV("height");
-                    numXimeaOffsetX.Value = Convert.ToInt32(NV("x"));
-                    numXimeaOffestY.Value = Convert.ToInt32(NV("y"));
-
-                    decimal gain;
-                    decimal.TryParse(NV("gain"), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out gain);
-                    numXimeaGain.Value =  gain;
-
-                    decimal exp;
-                    decimal.TryParse(NV("exposure"), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out exp);
-                    if (exp == 0)
-                        exp = 100;
-                    numXimeaExposure.Value = exp;
-
-                    combo_dwnsmpl.SelectedItem  = NV("downsampling");
-                }
-            }
-            else
-            {
-                ddlXimeaDevice.Items.Add(LocRm.GetString("NoDevicesFound"));
-                ddlXimeaDevice.SelectedIndex = 0;
-            }
-
-            deviceCount = 0;
-            
-            try
-            {
-                foreach (var potentialSensor in KinectSensor.KinectSensors)
-                {
-                    if (potentialSensor.Status == KinectStatus.Connected)
-                    {
-                        deviceCount++;
-                        ddlKinectDevice.Items.Add(potentialSensor.UniqueKinectId);
-
-                        if (NV("type") == "kinect")
-                        {
-                            if (NV("UniqueKinectId") == potentialSensor.UniqueKinectId)
-                            {
-                                ddlKinectDevice.SelectedIndex = ddlKinectDevice.Items.Count - 1;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //Type error if not installed
-                Logger.LogMessage("Kinect is not installed");
-            }
-            if (deviceCount>0)
-            {
-                if (ddlKinectDevice.SelectedIndex == -1)
-                    ddlKinectDevice.SelectedIndex = 0;
-            }
-            else
-            {
-                pnlKinect.Enabled = false;
-            }
-
-            ddlKinectVideoMode.SelectedIndex = 0;
-            if (NV("type") == "kinect")
-            {
-                try
-                {
-                    chkKinectSkeletal.Checked = Convert.ToBoolean(NV("KinectSkeleton"));
-                    chkTripWires.Checked = Convert.ToBoolean(NV("TripWires"));
-                    if (NV("StreamMode")!="")
-                        ddlKinectVideoMode.SelectedIndex = Convert.ToInt32(NV("StreamMode"));
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
             ddlRTSP.SelectedIndex = CameraControl.Camobject.settings.rtspmode;
 
             onvifWizard1.CameraControl = CameraControl;
@@ -529,8 +424,6 @@ namespace iSpyApplication
             HideTab(tabPage4, Helper.HasFeature(Enums.Features.Source_Local));
             HideTab(tabPage5, Helper.HasFeature(Enums.Features.Source_Desktop));
             HideTab(tabPage6, Helper.HasFeature(Enums.Features.Source_VLC));
-            HideTab(tabPage7, Helper.HasFeature(Enums.Features.Source_Ximea));
-            HideTab(tabPage8, Helper.HasFeature(Enums.Features.Source_Kinect));
             HideTab(tabPage9, Helper.HasFeature(Enums.Features.Source_Custom));
             HideTab(tabPage10, Helper.HasFeature(Enums.Features.Source_ONVIF));
             HideTab(tabPage11, Helper.HasFeature(Enums.Features.Source_Clone));
@@ -696,40 +589,6 @@ namespace iSpyApplication
                     VideoSourceString = url;
                     CameraControl.Camobject.settings.vlcargs = txtVLCArgs.Text.Trim();
                     SetPTZPort();
-                    break;
-                case 6:
-                    if (!pnlXimea.Enabled)
-                    {
-                        MessageBox.Show(LocRm.GetString("Validate_SelectCamera"), LocRm.GetString("Note"));
-                        return;
-                    }
-                    nv = "type=ximea";
-                    nv += ",device=" + ddlXimeaDevice.SelectedIndex;
-                    nv += ",width=" + numXimeaWidth.Text;
-                    nv += ",height=" + numXimeaHeight.Text;
-                    nv += ",x=" + (int)numXimeaOffsetX.Value;
-                    nv += ",y=" + (int)numXimeaOffestY.Value;
-                    nv += ",gain=" +
-                          String.Format(CultureInfo.InvariantCulture, "{0:0.000}",
-                                        numXimeaGain.Value);
-                    nv += ",exposure=" + String.Format(CultureInfo.InvariantCulture, "{0:0.000}",
-                                        numXimeaExposure.Value);
-                    nv += ",downsampling=" + combo_dwnsmpl.SelectedItem;
-                    VideoSourceString = nv;
-                    break;
-                case 7:
-                    if (!pnlKinect.Enabled)
-                    {
-                        MessageBox.Show(LocRm.GetString("Validate_SelectCamera"), LocRm.GetString("Note"));
-                        return;
-                    }
-                    nv = "type=kinect";
-                    nv += ",UniqueKinectId=" + ddlKinectDevice.SelectedItem;
-                    nv += ",KinectSkeleton=" + chkKinectSkeletal.Checked;
-                    nv += ",TripWires=" + chkTripWires.Checked;
-                    nv += ",StreamMode=" + ddlKinectVideoMode.SelectedIndex;
-                    
-                    VideoSourceString = nv;
                     break;
                 case 8:
                     VideoSourceString = txtCustomURL.Text;
@@ -960,87 +819,8 @@ namespace iSpyApplication
 
         #endregion
 
-        private void ddlXimeaDevice_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ConnectXimea();
-        }
 
-
-        private void ConnectXimea()
-        {
-            // close whatever is open now
-            if (!pnlXimea.Enabled) return;
-            try
-            {
-                if (CameraControl.XimeaSource==null)
-                    CameraControl.XimeaSource = new XimeaVideoSource( ddlXimeaDevice.SelectedIndex );
-                    
-                // start the camera
-                if (!CameraControl.XimeaSource.IsRunning)
-                    CameraControl.XimeaSource.Start();
-
-                // get some parameters
-                nameBox.Text = CameraControl.XimeaSource.GetParamString(CameraParameter.DeviceName);
-                snBox.Text = CameraControl.XimeaSource.GetParamString(CameraParameter.DeviceSerialNumber);
-                typeBox.Text = CameraControl.XimeaSource.GetParamString(CameraParameter.DeviceType);
-
-                // width
-                numXimeaWidth.Text = CameraControl.XimeaSource.GetParamInt(CameraParameter.Width ).ToString(CultureInfo.InvariantCulture);
-
-                // height
-                numXimeaHeight.Text = CameraControl.XimeaSource.GetParamInt(CameraParameter.Height).ToString(CultureInfo.InvariantCulture);
-
-                // exposure
-                numXimeaExposure.Minimum = (decimal)CameraControl.XimeaSource.GetParamFloat(CameraParameter.ExposureMin) / 1000;
-                numXimeaExposure.Maximum = (decimal)CameraControl.XimeaSource.GetParamFloat(CameraParameter.ExposureMax) / 1000;
-                numXimeaExposure.Value = new decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.Exposure)) / 1000;
-                if (numXimeaExposure.Value == 0)
-                    numXimeaExposure.Value = 100;
-
-                // gain
-                numXimeaGain.Minimum = new decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.GainMin));
-                numXimeaGain.Maximum = new decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.GainMax));
-                numXimeaGain.Value = new decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.Gain));
-
-                int maxDwnsmpl = CameraControl.XimeaSource.GetParamInt(CameraParameter.DownsamplingMax);
-
-                switch (maxDwnsmpl)
-                {
-                    case 8:
-                        combo_dwnsmpl.Items.Add("1");
-                        combo_dwnsmpl.Items.Add("2");
-                        combo_dwnsmpl.Items.Add("4");
-                        combo_dwnsmpl.Items.Add("8");
-                        break;
-                    case 6:
-                        combo_dwnsmpl.Items.Add("1");
-                        combo_dwnsmpl.Items.Add("2");
-                        combo_dwnsmpl.Items.Add("4");
-                        combo_dwnsmpl.Items.Add("6");
-                        break;
-                    case 4:
-                        combo_dwnsmpl.Items.Add("1");
-                        combo_dwnsmpl.Items.Add("2");
-                        combo_dwnsmpl.Items.Add("4");
-                        break;
-                    case 2:
-                        combo_dwnsmpl.Items.Add("1");
-                        combo_dwnsmpl.Items.Add("2");
-                        break;
-                    default:
-                        combo_dwnsmpl.Items.Add("1");
-                        break;
-                }
-                combo_dwnsmpl.SelectedIndex = combo_dwnsmpl.Items.Count-1;
-            }
-            catch ( Exception ex )
-            {
-                Logger.LogException(ex);
-                MessageBox.Show( ex.Message, LocRm.GetString("Error"),
-                    MessageBoxButtons.OK, MessageBoxIcon.Error );
-            }
-
-        }
+        
 
         private void devicesCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1117,37 +897,6 @@ namespace iSpyApplication
                     break;
             }
             MainForm.OpenUrl( url);
-        }
-
-        private void combo_dwnsmpl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_loaded)
-                return;
-            if (combo_dwnsmpl.SelectedIndex > -1 && CameraControl.XimeaSource!=null)
-            {
-                CameraControl.XimeaSource.SetParam(CameraParameter.Downsampling,
-                                                   Convert.ToInt32(
-                                                       combo_dwnsmpl.Items[combo_dwnsmpl.SelectedIndex].ToString()));
-
-                //update width and height info
-                numXimeaWidth.Text = CameraControl.XimeaSource.GetParamInt(CameraParameter.Width).ToString();
-                numXimeaHeight.Text = CameraControl.XimeaSource.GetParamInt(CameraParameter.Height).ToString();
-
-                //reset gain slider
-                numXimeaGain.Minimum = new Decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.GainMin));
-                numXimeaGain.Maximum = new Decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.GainMax));
-                numXimeaGain.Value = new Decimal(CameraControl.XimeaSource.GetParamFloat(CameraParameter.Gain));
-            }
-        }
-
-        private void numXimeaExposure_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numXimeaGain_ValueChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void button4_Click_1(object sender, EventArgs e)

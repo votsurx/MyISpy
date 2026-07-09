@@ -27,12 +27,10 @@ using iSpyApplication.Server;
 using iSpyApplication.Sources;
 using iSpyApplication.Sources.Audio;
 using iSpyApplication.Sources.Video;
-using iSpyApplication.Sources.Video.Ximea;
 using iSpyApplication.Utilities;
 using iSpyApplication.Vision;
 using iSpyPRO.DirectShow;
 using iSpyPRO.DirectShow.Internals;
-using xiApi.NET;
 using Encoder = System.Drawing.Imaging.Encoder;
 using Image = System.Drawing.Image;
 
@@ -207,7 +205,6 @@ namespace iSpyApplication.Controls
         }
         public bool ForcedRecording { get; set; }
         public bool NeedMotionZones = true;
-        internal XimeaVideoSource XimeaSource;
         public bool Alerted;
         public double MovementCount;
         public DateTime CalibrateTarget;
@@ -4217,11 +4214,6 @@ namespace iSpyApplication.Controls
                                     }
                                 }
                             }
-
-                            if (Camera.VideoSource is XimeaVideoSource)
-                            {
-                                XimeaSource = null;
-                            }
                         }
                         else
                         {
@@ -4311,10 +4303,6 @@ namespace iSpyApplication.Controls
                         return "Desktop";
                     case 5:
                         return "VLC File/Stream";
-                    case 6:
-                        return "XIMEA Device";
-                    case 7:
-                        return "Kinect Device";
                     case 8:
                         return "Custom Provider";
                     case 9:
@@ -4444,12 +4432,6 @@ namespace iSpyApplication.Controls
                     case 5:
                         var vlcSource = new VlcStream(this);
                         OpenVideoSource(vlcSource, true);
-                        break;
-                    case 6:
-                        if (XimeaSource == null || !XimeaSource.IsRunning)
-                            XimeaSource =
-                                new XimeaVideoSource(this);
-                        OpenVideoSource(XimeaSource, true);
                         break;
                     
                     case 8:
@@ -4595,34 +4577,7 @@ namespace iSpyApplication.Controls
                         _lastRun = Helper.Now.Ticks;
                         Camera.Start();
                     }
-                    if (Camera.VideoSource is XimeaVideoSource)
-                    {
-                        //need to set these after the camera starts
-                        try
-                        {
-                            XimeaSource.SetParam(PRM.IMAGE_DATA_FORMAT, IMG_FORMAT.RGB24);
-                        }
-                        catch (ApplicationException)
-                        {
-                            XimeaSource.SetParam(PRM.IMAGE_DATA_FORMAT, IMG_FORMAT.MONO8);
-                        }
-                        XimeaSource.SetParam(CameraParameter.OffsetX,
-                            Convert.ToInt32(Nv(Camobject.settings.namevaluesettings, "x")));
-                        XimeaSource.SetParam(CameraParameter.OffsetY,
-                            Convert.ToInt32(Nv(Camobject.settings.namevaluesettings, "y")));
-                        float gain;
-                        float.TryParse(Nv(Camobject.settings.namevaluesettings, "gain"), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out gain);
-                        XimeaSource.SetParam(CameraParameter.Gain, gain);
-                        float exp;
-                        float.TryParse(Nv(Camobject.settings.namevaluesettings, "exposure"), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out exp);
-                        XimeaSource.SetParam(CameraParameter.Exposure, exp*1000);
-                        XimeaSource.SetParam(CameraParameter.Downsampling,
-                            Convert.ToInt32(Nv(Camobject.settings.namevaluesettings, "downsampling")));
-                        XimeaSource.SetParam(CameraParameter.Width,
-                            Convert.ToInt32(Nv(Camobject.settings.namevaluesettings, "width")));
-                        XimeaSource.SetParam(CameraParameter.Height,
-                            Convert.ToInt32(Nv(Camobject.settings.namevaluesettings, "height")));
-                    }
+                    
                     Camera.UpdateResources();
                 }
 
