@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using iSpyApplication.Controls;
-using iSpyApplication.Kinect;
 using iSpyApplication.Pelco;
 using iSpyApplication.Realtime;
 using iSpyApplication.Sources;
@@ -37,7 +36,7 @@ namespace iSpyApplication
         public bool IsNew;
         private HSLFilteringForm _filterForm;
         private bool _loaded;
-        private ConfigureTripWires _ctw;
+
         private PiPConfig _pip;
         public MainForm MainClass;
 
@@ -878,10 +877,7 @@ namespace iSpyApplication
                 if (_filterForm != null)
                     _filterForm.ImageProcess = (Bitmap) e.Frame.Clone();
 
-                if (_ctw != null && _ctw.TripWireEditor1 != null)
-                {
-                    _ctw.TripWireEditor1.LastFrame = e.Frame;
-                }
+                
                 if (_pip != null && _pip.areaSelector1 != null)
                 {
                     _pip.areaSelector1.LastFrame = e.Frame;
@@ -1766,19 +1762,7 @@ namespace iSpyApplication
 
             switch (ddlAlertMode.SelectedItem.ToString())
             {
-                case "Virtual Trip Wires":
-                    _ctw = new ConfigureTripWires();
-                    _ctw.TripWireEditor1.Init(CameraControl.Camobject.alerts.pluginconfig);
-                    _ctw.ShowDialog(this);
-                    CameraControl.Camobject.alerts.pluginconfig = _ctw.TripWireEditor1.Config;
-                    if (CameraControl.Camera != null && CameraControl.Camera.VideoSource is KinectStream)
-                    {
-                        ((KinectStream) CameraControl.Camera.VideoSource).InitTripWires(
-                            CameraControl.Camobject.alerts.pluginconfig);
-                    }
-                    _ctw.Dispose();
-                    _ctw = null;
-                    break;
+                
                 default:
                     if (CameraControl.Camera != null && CameraControl.Camera.Plugin != null)
                     {

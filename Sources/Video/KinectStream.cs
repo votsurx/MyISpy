@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using AForge.Imaging.Filters;
 using iSpyApplication.Controls;
-using iSpyApplication.Kinect;
 using iSpyApplication.Sources.Audio;
 using iSpyApplication.Utilities;
 using Microsoft.Kinect;
@@ -377,13 +376,7 @@ namespace iSpyApplication.Sources.Video
                                     DrawBonesAndJoints(skel, g);
                                 }
                             }
-                            if (_tripwires)
-                            {
-                                foreach (var dl in TripWires)
-                                {
-                                    g.DrawLine(TripWirePen, dl.StartPoint, dl.EndPoint);
-                                }
-                            }
+                            
                         }
                         // notify client
                         NewFrame?.Invoke(this, new NewFrameEventArgs(bmap));
@@ -439,13 +432,7 @@ namespace iSpyApplication.Sources.Video
                                         DrawBonesAndJoints(skel, g);
                                     }
                                 }
-                                if (_tripwires)
-                                {
-                                    foreach (var dl in TripWires)
-                                    {
-                                        g.DrawLine(TripWirePen, dl.StartPoint, dl.EndPoint);
-                                    }
-                                }
+                                
                             }
                             // notify client
                             NewFrame?.Invoke(this, new NewFrameEventArgs(bmap));
@@ -547,54 +534,9 @@ namespace iSpyApplication.Sources.Video
             {
                 g.DrawLine(drawPen, p1, p2);
             }
-
-
-            if (_tripwires && TripWire != null)
-            {
-                if ((from t in TripWires let dl = t where joint1.Position.Z * 1000 >= dl.DepthMin && joint1.Position.Z * 1000 <= dl.DepthMax select t).Any(t => ProcessIntersection(p1, p2, t)))
-                {
-                    if ((DateTime.UtcNow - _lastWarnedTripWire).TotalSeconds > 5)
-                    {
-                        TripWire(this, EventArgs.Empty);
-                        _lastWarnedTripWire = DateTime.UtcNow;
-                    }
-                }
-            }
         }
 
-        public void InitTripWires(String cfg)
-        {
-            TripWires.Clear();
-            if (!string.IsNullOrEmpty(cfg))
-            {
-                try
-                {
-                    var tw = cfg.Trim().Split(';');
-                    foreach (string t in tw)
-                    {
-                        var twe = t.Split(',');
-                        if (!string.IsNullOrEmpty(twe[0]))
-                        {
-                            var sp = new Point(Convert.ToInt32(twe[0]), Convert.ToInt32(twe[1]));
-                            var ep = new Point(Convert.ToInt32(twe[2]), Convert.ToInt32(twe[3]));
-                            int dmin = Convert.ToInt32(twe[4]);
-                            int dmax = Convert.ToInt32(twe[5]);
-                            TripWires.Add(new DepthLine(sp, ep, dmin, dmax));
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    TripWires.Clear();
-                }
-            }
-        }
-
-        public event TripWireEventHandler TripWire;
-        public delegate void TripWireEventHandler(object sender, EventArgs e);
-        public List<DepthLine> TripWires = new List<DepthLine>();
-
-
+        
         public void Stop()
         {
             if (IsRunning)
@@ -702,44 +644,7 @@ namespace iSpyApplication.Sources.Video
                 Logger.LogException(ex, "KinectStream");
             }
             return null;
-        }
-
-
-        private static bool ProcessIntersection(Point a, Point b, DepthLine dl)
-        {
-            var c = dl.StartPoint;
-            var d = dl.EndPoint;
-
-            float ua = (d.X - c.X) * (a.Y - c.Y) - (d.Y - c.Y) * (a.X - c.X);
-            float ub = (b.X - a.X) * (a.Y - c.Y) - (b.Y - a.Y) * (a.X - c.X);
-            float denominator = (d.Y - c.Y) * (b.X - a.X) - (d.X - c.X) * (b.Y - a.Y);
-
-            //bool intersection, coincident;
-
-            if (Math.Abs(denominator) <= 0.00001f)
-            {
-                if (Math.Abs(ua) <= 0.00001f && Math.Abs(ub) <= 0.00001f)
-                {
-                    return true;
-                    //intersection = coincident = true;
-                    //intersectionPoint = (A + B) / 2;
-                }
-            }
-            else
-            {
-                ua /= denominator;
-                ub /= denominator;
-
-                if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1)
-                {
-                    return true;
-                    //intersection = true;
-                    //intersectionPoint.X = A.X + ua * (B.X - A.X);
-                    //intersectionPoint.Y = A.Y + ua * (B.Y - A.Y);
-                }
-            }
-            return false;
-        }
+        }           
 
         private bool _disposed;
         // Public implementation of Dispose pattern callable by consumers. 

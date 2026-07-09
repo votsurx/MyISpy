@@ -834,12 +834,6 @@
       <DependentUpon>GridViewManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Joystick\JoystickDevice.cs" />
-    <Compile Include="Kinect\ConfigureTripWires.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Kinect\ConfigureTripWires.Designer.cs">
-      <DependentUpon>ConfigureTripWires.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\AngleSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -915,16 +909,6 @@
     </Compile>
     <Compile Include="GridView.Designer.cs">
       <DependentUpon>GridView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Kinect\DepthLine.cs" />
-    <Compile Include="Kinect\EditDepthLine.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Kinect\EditDepthLine.Designer.cs">
-      <DependentUpon>EditDepthLine.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Kinect\TripWireEditor.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="LayoutItem.cs" />
     <Compile Include="Mailer.cs" />
@@ -2601,9 +2585,6 @@
     <EmbeddedResource Include="Importer.resx">
       <DependentUpon>Importer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Kinect\ConfigureTripWires.resx">
-      <DependentUpon>ConfigureTripWires.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\AngleSelector.resx">
       <DependentUpon>AngleSelector.cs</DependentUpon>
     </EmbeddedResource>
@@ -2642,9 +2623,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GridView.resx">
       <DependentUpon>GridView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Kinect\EditDepthLine.resx">
-      <DependentUpon>EditDepthLine.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Merger.resx">
       <DependentUpon>Merger.cs</DependentUpon>

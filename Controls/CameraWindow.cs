@@ -4195,19 +4195,7 @@ namespace iSpyApplication.Controls
                             }
                         }
 
-                        var source = Camera.VideoSource as KinectStream;
-                        if (source != null)
-                        {
-                            source.TripWire -= Alert;
-                        }
-
-                        var source1 = Camera.VideoSource as KinectNetworkStream;
-                        if (source1 != null)
-                        {
-                            //remove the alert handler from the source stream
-                            source1.AlertHandler -= CameraWindow_AlertHandler;
-                        }
-
+                        
                         var audiostream = Camera.VideoSource as ISupportsAudio;
                         if (audiostream != null)
                         {
@@ -5027,21 +5015,6 @@ namespace iSpyApplication.Controls
                 return;
             }
             var vlcStream = source as VlcStream;
-            
-
-            var kinectStream = source as KinectStream;
-            if (kinectStream != null)
-            {
-                kinectStream.InitTripWires(Camobject.alerts.pluginconfig);
-                kinectStream.TripWire += Alert;
-            }
-
-            var kinectNetworkStream = source as KinectNetworkStream;
-            if (kinectNetworkStream != null)
-            {
-                //add the camera alert handler hook to the provider
-                kinectNetworkStream.AlertHandler += CameraWindow_AlertHandler;
-            }
 
             var audiostream = source as ISupportsAudio;
             if (audiostream != null)
