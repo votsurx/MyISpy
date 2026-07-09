@@ -1911,41 +1911,7 @@ namespace iSpyApplication.Server
                     }
                     resp = "OK";
                     break;
-                case "kinect_tilt_up":
-                {
-                    var c = MainForm.InstanceReference.GetCameraWindow(oid);
-                    if (c != null)
-                    {
-                        try
-                        {
-                            ((KinectStream) c.Camera.VideoSource).Tilt += 4;
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.LogException(ex, "Server");
-                        }
-                    }
-
-                    resp = "OK";
-                }
-                    break;
-                case "kinect_tilt_down":
-                {
-                    var c = MainForm.InstanceReference.GetCameraWindow(oid);
-                    if (c != null)
-                    {
-                        try
-                        {
-                            ((KinectStream) c.Camera.VideoSource).Tilt -= 4;
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.LogException(ex, "Server");
-                        }
-                    }
-                    resp = "OK";
-                }
-                    break;
+                
                 case "removeobject":
                     if (otid == 1)
                     {

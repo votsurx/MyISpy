@@ -1019,8 +1019,6 @@
     <Compile Include="Sources\Video\discovery\localdevice.cs" />
     <Compile Include="Sources\Video\IVideoSource.cs" />
     <Compile Include="Sources\Video\JPEGStream.cs" />
-    <Compile Include="Sources\Video\KinectNetworkStream.cs" />
-    <Compile Include="Sources\Video\KinectStream.cs" />
     <Compile Include="Sources\Video\MJPEGStream.cs" />
     <Compile Include="Sources\Video\VideoCaptureDevice.cs" />
     <Compile Include="Sources\Video\VLCStream.cs" />

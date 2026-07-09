@@ -3590,10 +3590,7 @@ namespace iSpyApplication.Controls
                     if (s != null)
                         msg = s;
                     else
-                    {
-                        if (sender is KinectStream)
-                            msg = "Trip Wire";
-                    }
+                  
                     DoAlert("alert", msg);
                 }
             }
@@ -4454,17 +4451,11 @@ namespace iSpyApplication.Controls
                                 new XimeaVideoSource(this);
                         OpenVideoSource(XimeaSource, true);
                         break;
-                    case 7:
-                        var ks = new KinectStream(this);                            
-                        OpenVideoSource(ks, true);                        
-                        break;
+                    
                     case 8:
                         switch (Nv(Camobject.settings.namevaluesettings, "custom"))
                         {
-                            case "Network Kinect":
-                                // open the network kinect video stream
-                                OpenVideoSource(new KinectNetworkStream(this), true);
-                                break;
+                            
                             default:
                                 lock (_lockobject)
                                 {
