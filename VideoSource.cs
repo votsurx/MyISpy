@@ -56,15 +56,6 @@ namespace iSpyApplication
                 snapshotResolutionsCombo.Visible = value;
             }
         }
-
-        /// <summary>
-        /// Provides configured video device.
-        /// </summary>
-        /// 
-        /// <remarks><para>The property provides configured video device if user confirmed
-        /// the dialog using "OK" button. If user canceled the dialog, the property is
-        /// set to <see langword="null"/>.</para></remarks>
-        /// 
         internal VideoCaptureDevice VideoDevice => _videoCaptureDevice;
 
         private string _videoDeviceMoniker = string.Empty;
@@ -73,42 +64,18 @@ namespace iSpyApplication
         public int FrameRate;
         private VideoInput _videoInput = VideoInput.Default;
 
-        /// <summary>
-        /// Moniker string of the selected video device.
-        /// </summary>
-        /// 
-        /// <remarks><para>The property allows to get moniker string of the selected device
-        /// on form completion or set video device which should be selected by default on
-        /// form loading.</para></remarks>
-        /// 
         public string VideoDeviceMoniker
         {
             get { return _videoDeviceMoniker; }
             set { _videoDeviceMoniker = value; }
         }
 
-        /// <summary>
-        /// Video frame size of the selected device.
-        /// </summary>
-        /// 
-        /// <remarks><para>The property allows to get video size of the selected device
-        /// on form completion or set the size to be selected by default on form loading.</para>
-        /// </remarks>
-        /// 
         public Size CaptureSize
         {
             get { return _captureSize; }
             set { _captureSize = value; }
         }
 
-        /// <summary>
-        /// Snapshot frame size of the selected device.
-        /// </summary>
-        /// 
-        /// <remarks><para>The property allows to get snapshot size of the selected device
-        /// on form completion or set the size to be selected by default on form loading
-        /// (if <see cref="ConfigureSnapshots"/> property is set <see langword="true"/>).</para>
-        /// </remarks>
         public Size SnapshotSize
         {
             get { return _snapshotSize; }
