@@ -325,12 +325,6 @@ namespace iSpyApplication
                 case 5:
                     tcSource.SelectedTab = tabPage6;
                     break;
-                case 6:
-                    tcSource.SelectedTab = tabPage7;
-                    break;
-                case 7:
-                    tcSource.SelectedTab = tabPage8;
-                    break;
                 case 8:
                     tcSource.SelectedTab = tabPage9;
                     break;
@@ -408,7 +402,6 @@ namespace iSpyApplication
             LocRm.SetString(linkLabel5, "Help");
             LocRm.SetString(label18, "Arguments");
             LocRm.SetString(linkLabel3, "DownloadVLC");
-            LocRm.SetString(chkKinectSkeletal, "ShowSkeleton");
             LocRm.SetString(chkTripWires, "ShowTripWires");
             LocRm.SetString(label34, "Provider");
             LocRm.SetString(label45, "BorderTimeout");
@@ -594,12 +587,10 @@ namespace iSpyApplication
                     VideoSourceString = txtCustomURL.Text;
                     nv = "custom=" + ddlCustomProvider.SelectedItem;
                     CameraControl.Camobject.settings.namevaluesettings = nv;
-                    CameraControl.Camobject.alerts.mode = "KinectPlugin";//custom ispykinect alert mode
                     CameraControl.Camobject.detector.recordonalert = false;
                     CameraControl.Camobject.alerts.minimuminterval = 10;
                     CameraControl.Camobject.detector.recordondetect = false;
                     CameraControl.Camobject.detector.type = "None";
-                    CameraControl.Camobject.settings.audiomodel = "NetworkKinect";
                     try
                     {
                         var uri = new Uri(VideoSourceString);
@@ -847,10 +838,6 @@ namespace iSpyApplication
                 sourceIndex = 4;
             if (tcSource.SelectedTab.Equals(tabPage6))
                 sourceIndex = 5;
-            if (tcSource.SelectedTab.Equals(tabPage7))
-                sourceIndex = 6;
-            if (tcSource.SelectedTab.Equals(tabPage8))
-                sourceIndex = 7;
             if (tcSource.SelectedTab.Equals(tabPage9))
                 sourceIndex = 8;
             if (tcSource.SelectedTab.Equals(tabPage10))
@@ -1245,11 +1232,6 @@ namespace iSpyApplication
                 rdoCaptureSnapshots.Checked = true;
         }
 
-        private void chkKinectSkeletal_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button6_Click(object sender, EventArgs e)
         {
             ofd.Filter = "Video Files|*.*";
@@ -1270,7 +1252,7 @@ namespace iSpyApplication
                 CameraControl.NeedSizeUpdate = true;
         }
 
-        
+
 
         private void tcSource_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1350,7 +1332,10 @@ namespace iSpyApplication
         {
 
         }
+
+        private void tabPage8_Click(object sender, EventArgs e)
+        {
+
+        }
     }
-    
-    
 }

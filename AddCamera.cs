@@ -201,8 +201,8 @@ namespace iSpyApplication
             ddlTimestamp.Text = CameraControl.Camobject.settings.timestampformatter;
 
             //chkUploadYouTube.Checked = CameraControl.Camobject.settings.youtube.autoupload;
-            chkPublic.Checked = CameraControl.Camobject.settings.youtube.@public;
-            txtTags.Text = CameraControl.Camobject.settings.youtube.tags;
+            //chkPublic.Checked = CameraControl.Camobject.settings.youtube.@public;
+            //txtTags.Text = CameraControl.Camobject.settings.youtube.tags;
             chkMovement.Checked = CameraControl.Camobject.alerts.active;
             chkFill.Checked = CameraControl.Camobject.settings.fillMode == 1;
             
@@ -323,14 +323,14 @@ namespace iSpyApplication
             txtMaxRecordTime.Value = CameraControl.Camobject.recorder.maxrecordtime;
             numMinRecordTime.Value = CameraControl.Camobject.recorder.minrecordtime;
             btnBack.Enabled = false;
-            
-            txtUploadEvery.Text = CameraControl.Camobject.ftp.intervalnew.ToString(CultureInfo.InvariantCulture);
+
+            //txtUploadEvery.Text = CameraControl.Camobject.ftp.intervalnew.ToString(CultureInfo.InvariantCulture);
             numSaveInterval.Text = CameraControl.Camobject.savelocal.intervalnew.ToString(CultureInfo.InvariantCulture);
-            numFTPMinimumDelay.Text = CameraControl.Camobject.ftp.minimumdelay.ToString(CultureInfo.InvariantCulture);
+            //numFTPMinimumDelay.Text = CameraControl.Camobject.ftp.minimumdelay.ToString(CultureInfo.InvariantCulture);
             numSaveDelay.Text = CameraControl.Camobject.savelocal.minimumdelay.ToString(CultureInfo.InvariantCulture);
 
-            txtFTPFilename.Text = CameraControl.Camobject.ftp.filename;
-            chkFTP.Checked = CameraControl.Camobject.ftp.enabled;
+            //txtFTPFilename.Text = CameraControl.Camobject.ftp.filename;
+            //chkFTP.Checked = CameraControl.Camobject.ftp.enabled;
             chkLocalSaving.Checked = gbLocal.Enabled = CameraControl.Camobject.savelocal.enabled;
             txtTimeLapseFrames.Text = CameraControl.Camobject.recorder.timelapseframes.ToString(CultureInfo.InvariantCulture);
 
@@ -341,13 +341,13 @@ namespace iSpyApplication
             
             txtMaskImage.Text = CameraControl.Camobject.settings.maskimage;
             
-            txtFTPText.Text = CameraControl.Camobject.ftp.text;
+            //txtFTPText.Text = CameraControl.Camobject.ftp.text;
             txtSaveOverlay.Text = CameraControl.Camobject.savelocal.text;
 
 
-            rdoFTPMotion.Checked = CameraControl.Camobject.ftp.mode == 0;
-            rdoFTPAlerts.Checked = CameraControl.Camobject.ftp.mode == 1;
-            rdoFTPInterval.Checked = CameraControl.Camobject.ftp.mode == 2;
+            //rdoFTPMotion.Checked = CameraControl.Camobject.ftp.mode == 0;
+            //rdoFTPAlerts.Checked = CameraControl.Camobject.ftp.mode == 1;
+            //rdoFTPInterval.Checked = CameraControl.Camobject.ftp.mode == 2;
 
             rdoSaveMotion.Checked = CameraControl.Camobject.savelocal.mode == 0;
             rdoSaveAlerts.Checked = CameraControl.Camobject.savelocal.mode == 1;
@@ -422,7 +422,7 @@ namespace iSpyApplication
                 ddlTriggerRecording.SelectedIndex = 0;
 
 
-            numMaxCounter.Value = CameraControl.Camobject.ftp.countermax;
+            //numMaxCounter.Value = CameraControl.Camobject.ftp.countermax;
             numSaveCounter.Value = CameraControl.Camobject.savelocal.countermax;
 
             chkIgnoreAudio.Checked = CameraControl.Camobject.settings.ignoreaudio;
@@ -437,31 +437,31 @@ namespace iSpyApplication
 
             numAutoOff.Value = CameraControl.Camobject.detector.autooff;
             chkArchive.Checked = CameraControl.Camobject.settings.storagemanagement.archive;
-            chkUploadGrabs.Checked = CameraControl.Camobject.settings.cloudprovider.images;
-            chkUploadRecordings.Checked = CameraControl.Camobject.settings.cloudprovider.recordings;
-            txtCloudPath.Text = CameraControl.Camobject.settings.cloudprovider.path;
+            //chkUploadGrabs.Checked = CameraControl.Camobject.settings.cloudprovider.images;
+            //chkUploadRecordings.Checked = CameraControl.Camobject.settings.cloudprovider.recordings;
+            //txtCloudPath.Text = CameraControl.Camobject.settings.cloudprovider.path;
             chkMessaging.Checked = CameraControl.Camobject.settings.messaging;
 
             LoadMediaDirectories();
-            PopFTPServers();
-            ddlCloudProviders.Items.Add(LocRm.GetString("PleaseSelect"));
-            ddlCloudProviders.Items.AddRange(Settings.CloudProviders);
-            ddlCloudProviders.SelectedIndex = 0;
-            foreach (var o in ddlCloudProviders.Items)
-            {
-                if (o.ToString().ToLower() == CameraControl.Camobject.settings.cloudprovider.provider.ToLower())
-                {
-                    ddlCloudProviders.SelectedItem = o;
-                    break;
-                }
-            }
+            //PopFTPServers();
+            //ddlCloudProviders.Items.Add(LocRm.GetString("PleaseSelect"));
+            //ddlCloudProviders.Items.AddRange(Settings.CloudProviders);
+            //ddlCloudProviders.SelectedIndex = 0;
+            //foreach (var o in ddlCloudProviders.Items)
+            //{
+            //    if (o.ToString().ToLower() == CameraControl.Camobject.settings.cloudprovider.provider.ToLower())
+            //    {
+            //        ddlCloudProviders.SelectedItem = o;
+            //        break;
+            //    }
+            //}
             intervalConfig1.Init(CameraControl);
             ptzui1.CameraControl = CameraControl;
             scheduleEditor1.Io = CameraControl;
 
-            chkFTPRecordingsEnabled.Checked = CameraControl.Camobject.recorder.ftpenabled;
-            txtFTPRecordingFilename.Text = CameraControl.Camobject.recorder.ftpfilename;
-            numFTPRecordingCounterMax.Value = CameraControl.Camobject.recorder.ftpcountermax;
+            //chkFTPRecordingsEnabled.Checked = CameraControl.Camobject.recorder.ftpenabled;
+            //txtFTPRecordingFilename.Text = CameraControl.Camobject.recorder.ftpfilename;
+            //numFTPRecordingCounterMax.Value = CameraControl.Camobject.recorder.ftpcountermax;
 
             comboBox1.Items.Add("software");
             foreach (var gpu in MediaWriter.Encoders)
@@ -712,7 +712,7 @@ namespace iSpyApplication
             lblSaveEvery.Text = LocRm.GetString("SaveEvery");
             label61.Text = LocRm.GetString("Profile");
             label62.Text = LocRm.GetString("Framerate");
-            linkLabel3.Text = LocRm.GetString("Plugins");
+            //linkLabel3.Text = LocRm.GetString("Plugins");
             
             linkLabel10.Text = LocRm.GetString("Reload");
             btnCrossbar.Text = LocRm.GetString("Inputs");
@@ -766,9 +766,9 @@ namespace iSpyApplication
             HideTab(tabPage1, Helper.HasFeature(Enums.Features.High_Level_User));
             HideTab(tabPage4, Helper.HasFeature(Enums.Features.Recording) & Helper.HasFeature(Enums.Features.High_Level_User));
             HideTab(tabPage8, Helper.HasFeature(Enums.Features.PTZ));
-            HideTab(tabPage7, Helper.HasFeature(Enums.Features.Save_Frames));
-            HideTab(tabPage10, Helper.HasFeature(Enums.Features.Save_Frames));
-            HideTab(tabPage9, Helper.HasFeature(Enums.Features.Cloud) && Helper.HasFeature(Enums.Features.Web_Settings));
+            //HideTab(tabPage7, Helper.HasFeature(Enums.Features.Save_Frames));
+            //HideTab(tabPage10, Helper.HasFeature(Enums.Features.Save_Frames));
+            //HideTab(tabPage9, Helper.HasFeature(Enums.Features.Cloud) && Helper.HasFeature(Enums.Features.Web_Settings));
             HideTab(tabPage5, Helper.HasFeature(Enums.Features.Scheduling));
             HideTab(tabPage6, Helper.HasFeature(Enums.Features.Storage));
 
@@ -1195,24 +1195,24 @@ namespace iSpyApplication
             CameraControl.Camobject.recorder.maxrecordtime = maxrecord;
             CameraControl.Camobject.recorder.timelapseenabled = chkTimelapse.Checked;
 
-            CameraControl.Camobject.ftp.enabled = chkFTP.Checked;
-            CameraControl.Camobject.ftp.intervalnew = ftpinterval;
-            CameraControl.Camobject.ftp.filename = txtFTPFilename.Text;
-            CameraControl.Camobject.ftp.text = txtFTPText.Text;
-            int ftpmode = 0;
-            if (rdoFTPAlerts.Checked)
-                ftpmode = 1;
-            if (rdoFTPInterval.Checked)
-                ftpmode = 2;
-            CameraControl.Camobject.ftp.mode = ftpmode;
+            //CameraControl.Camobject.ftp.enabled = chkFTP.Checked;
+            //CameraControl.Camobject.ftp.intervalnew = ftpinterval;
+            //CameraControl.Camobject.ftp.filename = txtFTPFilename.Text;
+            //CameraControl.Camobject.ftp.text = txtFTPText.Text;
+            //int ftpmode = 0;
+            //if (rdoFTPAlerts.Checked)
+            //    ftpmode = 1;
+            //if (rdoFTPInterval.Checked)
+            //    ftpmode = 2;
+            //CameraControl.Camobject.ftp.mode = ftpmode;
 
             CameraControl.Camobject.recorder.timelapseframes = timelapseframes;
             CameraControl.Camobject.recorder.timelapse = timelapsemovie;
             CameraControl.Camobject.recorder.profile = ddlProfile.SelectedIndex;
 
-            CameraControl.Camobject.settings.youtube.@public = chkPublic.Checked;
-            CameraControl.Camobject.settings.youtube.tags = txtTags.Text;
-            CameraControl.Camobject.settings.maxframeraterecord = numMaxFRRecording.Value;
+            //CameraControl.Camobject.settings.youtube.@public = chkPublic.Checked;
+            //CameraControl.Camobject.settings.youtube.tags = txtTags.Text;
+            //CameraControl.Camobject.settings.maxframeraterecord = numMaxFRRecording.Value;
 
             CameraControl.Camobject.settings.accessgroups = txtAccessGroups.Text;
             CameraControl.Camobject.detector.recordonalert = rdoRecordAlert.Checked;
@@ -1225,23 +1225,23 @@ namespace iSpyApplication
             CameraControl.Camobject.settings.audiopassword = txtTalkPassword.Text;
             CameraControl.Camobject.recorder.trigger = ((ListItem)ddlTriggerRecording.SelectedItem).Value;
 
-            CameraControl.Camobject.recorder.ftpenabled = chkFTPRecordingsEnabled.Checked;
-            CameraControl.Camobject.recorder.ftpfilename = txtFTPRecordingFilename.Text;
-            CameraControl.Camobject.recorder.ftpcountermax = (int)numFTPRecordingCounterMax.Value;
+            //CameraControl.Camobject.recorder.ftpenabled = chkFTPRecordingsEnabled.Checked;
+            //CameraControl.Camobject.recorder.ftpfilename = txtFTPRecordingFilename.Text;
+            //CameraControl.Camobject.recorder.ftpcountermax = (int)numFTPRecordingCounterMax.Value;
 
-            CameraControl.SetVideoSize();
+            //CameraControl.SetVideoSize();
 
-            if (ddlFTPServer.Enabled)
-            {
-                int i = ddlFTPServer.SelectedIndex;
-                if (i > -1)
-                {
-                    var ftp = MainForm.Conf.FTPServers[i];
-                    CameraControl.Camobject.ftp.ident = ftp.ident;
-                }
-            }
-            CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
-            CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
+            //if (ddlFTPServer.Enabled)
+            //{
+            //    int i = ddlFTPServer.SelectedIndex;
+            //    if (i > -1)
+            //    {
+            //        var ftp = MainForm.Conf.FTPServers[i];
+            //        CameraControl.Camobject.ftp.ident = ftp.ident;
+            //    }
+            //}
+            //CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
+            //CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
 
             if (CameraControl != null && CameraControl.Camera != null && CameraControl.Camera.VideoSource != null)
             {
@@ -1279,14 +1279,14 @@ namespace iSpyApplication
                 }
             }
 
-            if (ddlCloudProviders.SelectedIndex > 0)
-                CameraControl.Camobject.settings.cloudprovider.provider = ddlCloudProviders.SelectedItem.ToString();
-            else
-                CameraControl.Camobject.settings.cloudprovider.provider = "";
+            //if (ddlCloudProviders.SelectedIndex > 0)
+            //    CameraControl.Camobject.settings.cloudprovider.provider = ddlCloudProviders.SelectedItem.ToString();
+            //else
+            //    CameraControl.Camobject.settings.cloudprovider.provider = "";
 
-            CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
-            CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
-            CameraControl.Camobject.settings.cloudprovider.path = txtCloudPath.Text;
+            //CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
+            //CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
+            //CameraControl.Camobject.settings.cloudprovider.path = txtCloudPath.Text;
             CameraControl.Camobject.settings.messaging = chkMessaging.Checked;
             CameraControl.Camobject.settings.encoder = comboBox1.SelectedItem.ToString();
 
@@ -2392,38 +2392,38 @@ namespace iSpyApplication
         private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             ShowSettings(3);
-            PopFTPServers();
+            //PopFTPServers();
         }
 
-        private void PopFTPServers()
-        {
-            ddlFTPServer.Items.Clear();
-            ddlFTPServer.Enabled = true;
-            int i = -1, j=0;
-            foreach (var ftp in MainForm.Conf.FTPServers)
-            {
-                ddlFTPServer.Items.Add(ftp.name);
-                if (CameraControl.Camobject.ftp.ident == ftp.ident)
-                {
-                    i = j;
-                }
-                j++;
-            }
+        //private void PopFTPServers()
+        //{
+        //    ddlFTPServer.Items.Clear();
+        //    ddlFTPServer.Enabled = true;
+        //    int i = -1, j=0;
+        //    foreach (var ftp in MainForm.Conf.FTPServers)
+        //    {
+        //        ddlFTPServer.Items.Add(ftp.name);
+        //        if (CameraControl.Camobject.ftp.ident == ftp.ident)
+        //        {
+        //            i = j;
+        //        }
+        //        j++;
+        //    }
 
-            if (i > -1)
-                ddlFTPServer.SelectedIndex = i;
-            else
-            {
-                if (ddlFTPServer.Items.Count > 0)
-                    ddlFTPServer.SelectedIndex = 0;
-                else
-                {
-                    ddlFTPServer.Items.Add(LocRm.GetString("None"));
-                    ddlFTPServer.Enabled = false;
-                }
-            }
+        //    if (i > -1)
+        //        ddlFTPServer.SelectedIndex = i;
+        //    else
+        //    {
+        //        if (ddlFTPServer.Items.Count > 0)
+        //            ddlFTPServer.SelectedIndex = 0;
+        //        else
+        //        {
+        //            ddlFTPServer.Items.Add(LocRm.GetString("None"));
+        //            ddlFTPServer.Enabled = false;
+        //        }
+        //    }
             
-        }
+        //}
 
         private void btnAuthorise_Click(object sender, EventArgs e)
         {

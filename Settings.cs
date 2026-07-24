@@ -115,7 +115,7 @@ namespace iSpyApplication
             MainForm.Conf.BigButtons = chkBigButtons.Checked;
             MainForm.Conf.DeleteToRecycleBin = chkRecycle.Checked;
             MainForm.Conf.SpeechRecognition = chkSpeechRecognition.Checked;
-            MainForm.Conf.AppendLinkText = txtAppendLinkText.Text;
+           // MainForm.Conf.AppendLinkText = txtAppendLinkText.Text;
             MainForm.Conf.StartupForm = ddlStartUpForm.SelectedItem.ToString();
             MainForm.Conf.TrayOnMinimise = chkMinimiseToTray.Checked;
             MainForm.Conf.MJPEGStreamInterval = (int)numMJPEGStreamInterval.Value;
@@ -126,15 +126,15 @@ namespace iSpyApplication
             MainForm.Conf.DisconnectNotificationDelay = (int)numDisconnectNotification.Value;
             var l = mediaDirectoryEditor1.Directories.ToList();
             MainForm.Conf.MediaDirectories = l.ToArray();
-            var l2 = ftpEditor1.Servers.ToList();
-            MainForm.Conf.FTPServers = l2.ToArray();
-            MainForm.Conf.MailAlertSubject = txtAlertSubject.Text;
-            MainForm.Conf.MailAlertBody = txtAlertBody.Text;
-            MainForm.Conf.SMSAlert = txtSMSBody.Text;
-            MainForm.Conf.VLCFileCache = (int)numFileCache.Value;
-            MainForm.Conf.Password_Protect_Startup = chkPasswordProtectOnStart.Checked;
-            MainForm.Conf.BrandPath = lblBrand.Text;
-            SaveSMTPSettings();
+            //var l2 = ftpEditor1.Servers.ToList();
+            //MainForm.Conf.FTPServers = l2.ToArray();
+            //MainForm.Conf.MailAlertSubject = txtAlertSubject.Text;
+            //MainForm.Conf.MailAlertBody = txtAlertBody.Text;
+            //MainForm.Conf.SMSAlert = txtSMSBody.Text;
+            //MainForm.Conf.VLCFileCache = (int)numFileCache.Value;
+            //MainForm.Conf.Password_Protect_Startup = chkPasswordProtectOnStart.Checked;
+            //MainForm.Conf.BrandPath = lblBrand.Text;
+            //SaveSMTPSettings();
 
             MainForm.Conf.ArchiveNew = txtArchive.Text.Trim();
             if (!string.IsNullOrEmpty(MainForm.Conf.ArchiveNew))
@@ -158,14 +158,14 @@ namespace iSpyApplication
 
             MainForm.SetPriority();
 
-            var ips = rtbAccessList.Text.Trim().Split(',');
-            var t = ips.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
-            MainForm.Conf.AllowedIPList = t.Trim(',');
-            //LocalServer.ReloadAllowedIPs();
+            //var ips = rtbAccessList.Text.Trim().Split(',');
+            //var t = ips.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
+            //MainForm.Conf.AllowedIPList = t.Trim(',');
+            ////LocalServer.ReloadAllowedIPs();
 
-            var refs = rtbReferrers.Text.Trim().Split(',');
-            var t2 = refs.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
-            MainForm.Conf.Referers = t2.Trim(',');
+            //var refs = rtbReferrers.Text.Trim().Split(',');
+            //var t2 = refs.Select(ip => ip.Trim()).Where(ip2 => ip2 != "").Aggregate("", (current, ip2) => current + (ip2 + ","));
+            //MainForm.Conf.Referers = t2.Trim(',');
             //LocalServer.ReloadAllowedReferrers();
 
             
@@ -369,7 +369,7 @@ namespace iSpyApplication
             txtIPCameraTimeout.Value = MainForm.Conf.IPCameraTimeout;
             txtServerReceiveTimeout.Value = MainForm.Conf.ServerReceiveTimeout;
             txtServerName.Text = MainForm.Conf.ServerName;
-            rtbAccessList.Text = MainForm.Conf.AllowedIPList;
+            //rtbAccessList.Text = MainForm.Conf.AllowedIPList;
 
             int i = 0, selind = 0;
             foreach (TranslationsTranslationSet set in LocRm.TranslationSets.OrderBy(p => p.Name))
@@ -385,16 +385,16 @@ namespace iSpyApplication
             chkInterrupt.Checked = MainForm.Conf.ScreensaverWakeup;
             chkEnableIPv6.Checked = !MainForm.Conf.IPv6Disabled;
             chkRecycle.Checked = MainForm.Conf.DeleteToRecycleBin;
-            txtAppendLinkText.Text = MainForm.Conf.AppendLinkText;
+            //txtAppendLinkText.Text = MainForm.Conf.AppendLinkText;
             numMJPEGStreamInterval.Value = MainForm.Conf.MJPEGStreamInterval;
             txtAlertOnDisconnect.Text = MainForm.Conf.AlertOnDisconnect;
             txtAlertOnReconnect.Text = MainForm.Conf.AlertOnReconnect;
             txtArchive.Text = MainForm.Conf.ArchiveNew;
             
 
-            txtAlertSubject.Text = MainForm.Conf.MailAlertSubject;
-            txtAlertBody.Text = MainForm.Conf.MailAlertBody;
-            txtSMSBody.Text = MainForm.Conf.SMSAlert;
+            //txtAlertSubject.Text = MainForm.Conf.MailAlertSubject;
+            //txtAlertBody.Text = MainForm.Conf.MailAlertBody;
+            //txtSMSBody.Text = MainForm.Conf.SMSAlert;
 
             foreach (string s in StartupModes)
             {
@@ -528,25 +528,25 @@ namespace iSpyApplication
             chkGZip.Checked = MainForm.Conf.EnableGZip;
             numDisconnectNotification.Value = MainForm.Conf.DisconnectNotificationDelay;
             mediaDirectoryEditor1.Enabled = Helper.HasFeature(Enums.Features.Storage);
-            HideTab(tabPage11, Helper.HasFeature(Enums.Features.Plugins));
+            //HideTab(tabPage11, Helper.HasFeature(Enums.Features.Plugins));
 
             //important leave here:
-            chkPasswordProtect.Checked = MainForm.Conf.Enable_Password_Protect;
-            if (Helper.HasFeature(Enums.Features.Plugins))
-                ListPlugins();
+            //chkPasswordProtect.Checked = MainForm.Conf.Enable_Password_Protect;
+            //if (Helper.HasFeature(Enums.Features.Plugins))
+            //    ListPlugins();
 
-            chkUseiSpy.Checked = !MainForm.Conf.UseSMTP;
-            txtSMTPFromAddress.Text = MainForm.Conf.SMTPFromAddress;
-            txtSMTPUsername.Text = MainForm.Conf.SMTPUsername;
-            txtSMTPPassword.Text = MainForm.Conf.SMTPPassword;
-            txtSMTPServer.Text = MainForm.Conf.SMTPServer;
-            chkSMTPUseSSL.Checked = MainForm.Conf.SMTPSSL;
-            numSMTPPort.Value = MainForm.Conf.SMTPPort;
+            //chkUseiSpy.Checked = !MainForm.Conf.UseSMTP;
+            //txtSMTPFromAddress.Text = MainForm.Conf.SMTPFromAddress;
+            //txtSMTPUsername.Text = MainForm.Conf.SMTPUsername;
+            //txtSMTPPassword.Text = MainForm.Conf.SMTPPassword;
+            //txtSMTPServer.Text = MainForm.Conf.SMTPServer;
+            //chkSMTPUseSSL.Checked = MainForm.Conf.SMTPSSL;
+            //numSMTPPort.Value = MainForm.Conf.SMTPPort;
 
-            ftpEditor1.Init(MainForm.Conf.FTPServers);
+            //ftpEditor1.Init(MainForm.Conf.FTPServers);
             chkOpenGrabs.Checked = MainForm.Conf.OpenGrabs;
             numFileCache.Value = MainForm.Conf.VLCFileCache;
-            rtbReferrers.Text = MainForm.Conf.Referers;
+            //rtbReferrers.Text = MainForm.Conf.Referers;
             chkPasswordProtectOnStart.Checked = MainForm.Conf.Password_Protect_Startup;
 
             chkEnableLogging.Checked = MainForm.Conf.Logging.Enabled;
@@ -611,7 +611,7 @@ namespace iSpyApplication
             tabPage2.Text = LocRm.GetString("Storage");
             tabPage4.Text = LocRm.GetString("Timeouts");
             tabPage6.Text = LocRm.GetString("options");
-            tabPage7.Text = LocRm.GetString("IPAccess");
+            //tabPage7.Text = LocRm.GetString("IPAccess");
             Text = LocRm.GetString("settings");
             chkAlertWindows.Text = LocRm.GetString("CreateAlertWindow");
             chkOverlay.Text = LocRm.GetString("ShowOverlayControls");
@@ -619,7 +619,7 @@ namespace iSpyApplication
             chkInterrupt.Text = LocRm.GetString("InterruptScreensaverOnAlert");
             label23.Text = LocRm.GetString("JPEGQuality");
             llblHelp.Text = LocRm.GetString("help");
-            label17.Text = LocRm.GetString("IPAccessExplainer");
+            //label17.Text = LocRm.GetString("IPAccessExplainer");
             chkMonitor.Text = LocRm.GetString("RestartIfCrashed");
             chkGZip.Text = LocRm.GetString("Enable GZip");
             label40.Text = LocRm.GetString("Permissions");
@@ -628,7 +628,7 @@ namespace iSpyApplication
             label48.Text = LocRm.GetString("DisconnectionNotificationDelay");
             label41.Text = LocRm.GetString("MJPEGFrameInterval");
             label20.Text = LocRm.GetString("VLCFileCache");
-            label64.Text = LocRm.GetString("HTTPReferrersAllowed");
+            //label64.Text = LocRm.GetString("HTTPReferrersAllowed");
 
             LocRm.SetString(lblMicrophone, "Microphone");
             LocRm.SetString(chkBigButtons, "BigButtons");
@@ -638,12 +638,12 @@ namespace iSpyApplication
             LocRm.SetString(label15, "MaxCPUTarget");
             LocRm.SetString(label22, "MaxRedrawRate");
             LocRm.SetString(btnBorderDefault, "BorderDefault");
-            LocRm.SetString(label25,"YouCanUseRegularExpressions");
+           // LocRm.SetString(label25,"YouCanUseRegularExpressions");
             LocRm.SetString(tabPage5,"Talk");
             LocRm.SetString(tabPage8, "Joystick");
             LocRm.SetString(label26, "Joystick");
-            LocRm.SetString(tabPage9, "Messaging");
-            LocRm.SetString(label19, "AppendLinkText");
+            //LocRm.SetString(tabPage9, "Messaging");
+            //LocRm.SetString(label19, "AppendLinkText");
 
             LocRm.SetString(label28, "PanAxis");
             LocRm.SetString(label30, "TiltAxis");
@@ -663,30 +663,30 @@ namespace iSpyApplication
             LocRm.SetString(label39, "StartupForm");
             LocRm.SetString(chkMinimiseToTray, "MinimiseToTray");
 
-            LocRm.SetString(label56, "EmailNotifications");
-            LocRm.SetString(label50, "EmailSubject");
-            LocRm.SetString(label51, "EmailBody");
-            LocRm.SetString(label19, "AppendLinkText");
-            LocRm.SetString(label57, "SMSNotifications");
-            LocRm.SetString(label54, "Message");
-            LocRm.SetString(linkLabel5, "Reset");
+            //LocRm.SetString(label56, "EmailNotifications");
+            //LocRm.SetString(label50, "EmailSubject");
+            //LocRm.SetString(label51, "EmailBody");
+            //LocRm.SetString(label19, "AppendLinkText");
+            //LocRm.SetString(label57, "SMSNotifications");
+            //LocRm.SetString(label54, "Message");
+            //LocRm.SetString(linkLabel5, "Reset");
 
-            chkUseiSpy.Text = LocRm.GetString("UseISpyServers");
-            label52.Text = LocRm.GetString("FromAddress");
-            label58.Text = LocRm.GetString("Username");
+            //chkUseiSpy.Text = LocRm.GetString("UseISpyServers");
+            //label52.Text = LocRm.GetString("FromAddress");
+            //label58.Text = LocRm.GetString("Username");
 
-            LocRm.SetString(label59, "Password");
-            LocRm.SetString(label53, "Server");
-            LocRm.SetString(label61, "Port");
-            LocRm.SetString(chkSMTPUseSSL, "UseSSL");
-            LocRm.SetString(btnTestSMTP, "Test");
+            //LocRm.SetString(label59, "Password");
+            //LocRm.SetString(label53, "Server");
+            //LocRm.SetString(label61, "Port");
+            //LocRm.SetString(chkSMTPUseSSL, "UseSSL");
+            //LocRm.SetString(btnTestSMTP, "Test");
             LocRm.SetString(label43, "WhenDisconnectedFromWebServices");
             LocRm.SetString(label45,"Execute");
             LocRm.SetString(label46, "Execute");
             LocRm.SetString(label44, "WhenReconnectedToWebServices");
-            LocRm.SetString(label10, "Plugins");
-            LocRm.SetString(linkLabel3, "DownloadPlugins");
-            LocRm.SetString(linkLabel4, "RefreshList");
+            //LocRm.SetString(label10, "Plugins");
+            //LocRm.SetString(linkLabel3, "DownloadPlugins");
+            //LocRm.SetString(linkLabel4, "RefreshList");
             LocRm.SetString(label12, "ArchiveLocation");
             LocRm.SetString(button3, "RunNow");
 
@@ -694,15 +694,15 @@ namespace iSpyApplication
             LocRm.SetString(label65, "KeepLogsFor");
             LocRm.SetString(label67, "Days");
 
-            tabPage10.Text = LocRm.GetString("ConnectionAlerts");
-            tabPage11.Text = LocRm.GetString("Plugins");
+            //tabPage10.Text = LocRm.GetString("ConnectionAlerts");
+            //tabPage11.Text = LocRm.GetString("Plugins");
             tabPage14.Text = LocRm.GetString("Logging");
             label9.Text = LocRm.GetString("MaximseAndRestore");
             labelJButtn10.Text = LocRm.GetString("PTSpeedProfile");
             label60.Text = LocRm.GetString("SSLCertificate");
             //future
             chkSpeechRecognition.Visible = false;
-            label63.Text = LocRm.GetString("Servers");
+            //label63.Text = LocRm.GetString("Servers");
             chkOpenGrabs.Text = LocRm.GetString("OpenImagesAfterSaving");
             chkEnableLogging.Text = LocRm.GetString("Enable");
             numKeepLogs.Text = LocRm.GetString("KeepLogsForDays");
@@ -1191,23 +1191,23 @@ namespace iSpyApplication
             MainForm.OpenUrl(MainForm.Website + "/plugins.aspx");
         }
 
-        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MainForm.LoadPlugins();
-            ListPlugins();
-        }
+        //private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        //{
+        //    MainForm.LoadPlugins();
+        //    ListPlugins();
+        //}
 
-        private void ListPlugins()
-        {
-            lbPlugins.Items.Clear();
+        //private void ListPlugins()
+        //{
+        //    lbPlugins.Items.Clear();
             
-            foreach (String plugin in MainForm.Plugins)
-            {
-                string name = plugin.Substring(plugin.LastIndexOf("\\", StringComparison.Ordinal) + 1);
-                name = name.Substring(0, name.LastIndexOf(".", StringComparison.Ordinal));
-                lbPlugins.Items.Add(name);
-            }
-        }
+        //    foreach (String plugin in MainForm.Plugins)
+        //    {
+        //        string name = plugin.Substring(plugin.LastIndexOf("\\", StringComparison.Ordinal) + 1);
+        //        name = name.Substring(0, name.LastIndexOf(".", StringComparison.Ordinal));
+        //        lbPlugins.Items.Add(name);
+        //    }
+        //}
 
         private void btnArchive_Click(object sender, EventArgs e)
         {
@@ -1243,46 +1243,46 @@ namespace iSpyApplication
             return f;
         }
 
-        private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            txtAlertSubject.Text = "[EVENT]: [SERVER] [OBJECTNAME]";
-            txtAlertBody.Text = txtSMSBody.Text = "[EVENT] at [DATE] [TIME]: [SERVER] [OBJECTNAME] [RECORDED] [PLUGIN]";
+        //private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        //{
+        //    txtAlertSubject.Text = "[EVENT]: [SERVER] [OBJECTNAME]";
+        //    txtAlertBody.Text = txtSMSBody.Text = "[EVENT] at [DATE] [TIME]: [SERVER] [OBJECTNAME] [RECORDED] [PLUGIN]";
 
-            txtAlertSubject.Text = "[EVENT]: [SERVER] [OBJECTNAME]";
-            txtAlertBody.Text = txtSMSBody.Text = "[EVENT] at [DATE] [TIME]: [SERVER] [OBJECTNAME] [RECORDED] [PLUGIN]";            
-            txtAppendLinkText.Text = "<br/>ispyconnect.com";
-        }
+        //    txtAlertSubject.Text = "[EVENT]: [SERVER] [OBJECTNAME]";
+        //    txtAlertBody.Text = txtSMSBody.Text = "[EVENT] at [DATE] [TIME]: [SERVER] [OBJECTNAME] [RECORDED] [PLUGIN]";            
+        //    txtAppendLinkText.Text = "<br/>ispyconnect.com";
+        //}
 
-        private void chkUseiSpy_CheckedChanged(object sender, EventArgs e)
-        {
-            tlpSMTP.Enabled = !chkUseiSpy.Checked;
-        }
+        //private void chkUseiSpy_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    tlpSMTP.Enabled = !chkUseiSpy.Checked;
+        //}
 
-        private void btnTestSMTP_Click(object sender, EventArgs e)
-        {
-            SaveSMTPSettings();
-             var p = new Prompt(LocRm.GetString("TestMailTo"), MainForm.Conf.SMTPFromAddress);
-            if (p.ShowDialog(this) == DialogResult.OK)
-            {
-                MessageBox.Show(this, Mailer.Send(p.Val, LocRm.GetString("test"),
-                    LocRm.GetString("ISpyMessageTest"))
-                    ? LocRm.GetString("MessageSent")
-                    : LocRm.GetString("FailedCheckLog"));
-            }
-        }
+        //private void btnTestSMTP_Click(object sender, EventArgs e)
+        //{
+        //    SaveSMTPSettings();
+        //     var p = new Prompt(LocRm.GetString("TestMailTo"), MainForm.Conf.SMTPFromAddress);
+        //    if (p.ShowDialog(this) == DialogResult.OK)
+        //    {
+        //        MessageBox.Show(this, Mailer.Send(p.Val, LocRm.GetString("test"),
+        //            LocRm.GetString("ISpyMessageTest"))
+        //            ? LocRm.GetString("MessageSent")
+        //            : LocRm.GetString("FailedCheckLog"));
+        //    }
+        //}
 
-        private void SaveSMTPSettings()
-        {
-            MainForm.Conf.UseSMTP = !chkUseiSpy.Checked;
-            MainForm.Conf.SMTPFromAddress = txtSMTPFromAddress.Text;
-            MainForm.Conf.SMTPUsername = txtSMTPUsername.Text;
-            MainForm.Conf.SMTPPassword = txtSMTPPassword.Text;
-            MainForm.Conf.SMTPServer = txtSMTPServer.Text;
-            MainForm.Conf.SMTPSSL = chkSMTPUseSSL.Checked;
-            MainForm.Conf.SMTPPort = (int)numSMTPPort.Value;
+        //private void SaveSMTPSettings()
+        //{
+        //    MainForm.Conf.UseSMTP = !chkUseiSpy.Checked;
+        //    MainForm.Conf.SMTPFromAddress = txtSMTPFromAddress.Text;
+        //    MainForm.Conf.SMTPUsername = txtSMTPUsername.Text;
+        //    MainForm.Conf.SMTPPassword = txtSMTPPassword.Text;
+        //    MainForm.Conf.SMTPServer = txtSMTPServer.Text;
+        //    MainForm.Conf.SMTPSSL = chkSMTPUseSSL.Checked;
+        //    MainForm.Conf.SMTPPort = (int)numSMTPPort.Value;
 
             
-        }
+        //}
 
         private void chkPasswordProtectSettings_CheckedChanged(object sender, EventArgs e)
         {
