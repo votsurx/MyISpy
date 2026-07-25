@@ -45,8 +45,8 @@ namespace iSpyApplication
         public const string VLCx86 = "https://www.videolan.org/vlc/download-windows.html";
         public const string VLCx64 = "https://download.videolan.org/pub/videolan/vlc/last/win64/";
 
-        public const string Website = "https://www.ispyconnect.com";
-        public const string ContentSource = "https://files.ispyconnect.com/downloads/";
+        public const string Website = "";
+        public const string ContentSource = "";
         public static bool NeedsSync;
         private static DateTime _needsMediaRefresh = DateTime.MinValue;
         //private static Player _player = null;
@@ -178,15 +178,7 @@ namespace iSpyApplication
         private static int _pingCounter;
         private static ImageCodecInfo _encoder;
         private static bool _needsDelete = false;
-        
-
-        
-
-        
-        
-        private static string _browser = string.Empty;
-
-        
+        private static string _browser = string.Empty; 
         private MenuItem menuItem37;
         private ToolStripMenuItem tagsToolStripMenuItem;
         private MenuItem menuItem38;
@@ -249,7 +241,10 @@ namespace iSpyApplication
         internal PlayerVLC _player;
         public McRemoteControlManager.RemoteControlDevice RemoteManager;
         public bool SilentStartup;
-        
+        // Yolo
+        public bool YoloEnabled { get; set; } = false;
+        public float YoloConfidence { get; set; } = 0.5f;
+
         internal CameraWindow TalkCamera;
 
         private MenuItem _aboutHelpItem;
@@ -649,9 +644,6 @@ namespace iSpyApplication
             {
                 Masterfilelist.Add(fp);
             }
-            //var wss = MWS.WebSocketServer;
-            //if (wss != null)
-            //    wss.SendToAll("new events|" + fp.Name);
         }
 
         public static void MasterFileRemoveAll(int objecttypeid, int objectid)
@@ -6865,6 +6857,69 @@ namespace iSpyApplication
             Conf.CommandButtonsLocationY = cmdButtons.Location.Y;
             Conf.CommandButtonsHeight = cmdButtons.Height;
             Conf.CommandButtonsWidth = cmdButtons.Width;
+        }
+    }
+    public static class CameraExtensions
+    {
+        private static readonly string YoloEnabledKey = "YoloEnabled";
+        private static readonly string YoloConfidenceKey = "YoloConfidence";
+
+        public static bool GetYoloEnabled(this objectsCamera cam)
+        {
+            if (string.IsNullOrEmpty(cam.settings.namevaluesettings)) return false;
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            return dict.TryGetValue(YoloEnabledKey, out var val) && bool.TryParse(val, out var result) && result;
+        }
+
+        public static void SetYoloEnabled(this objectsCamera cam, bool value)
+        {
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            dict[YoloEnabledKey] = value.ToString();
+            cam.settings.namevaluesettings = SerializeNameValueSettings(dict);
+        }
+
+        public static float GetYoloConfidence(this objectsCamera cam)
+        {
+            if (string.IsNullOrEmpty(cam.settings.namevaluesettings)) return 0.5f;
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            if (dict.TryGetValue(YoloConfidenceKey, out var valStr))
+            {
+                if (float.TryParse(valStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var val))
+                {
+                    if (val >= 0.1f && val <= 1.0f) return val;
+                }
+            }
+            return 0.5f;
+        }
+
+        public static void SetYoloConfidence(this objectsCamera cam, float value)
+        {
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            dict[YoloConfidenceKey] = value.ToString(CultureInfo.InvariantCulture);
+            cam.settings.namevaluesettings = SerializeNameValueSettings(dict);
+        }
+
+        private static Dictionary<string, string> ParseNameValueSettings(string settings)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (string.IsNullOrEmpty(settings)) return dict;
+            var parts = settings.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var part in parts)
+            {
+                var kv = part.Split('=');
+                if (kv.Length == 2)
+                {
+                    var key = kv[0].Trim();
+                    var val = kv[1].Trim();
+                    dict[key] = val;
+                }
+            }
+            return dict;
+        }
+
+        private static string SerializeNameValueSettings(Dictionary<string, string> dict)
+        {
+            return string.Join(",", dict.Select(kv => $"{kv.Key}={kv.Value}"));
         }
     }
 }

@@ -193,6 +193,13 @@ namespace iSpyApplication
                 MainForm.AddObject(CameraControl.Camobject);
             }
             _loaded = false;
+
+            // === ЗАГРУЗКА YOLO-НАСТРОЕК ===
+            chkYoloEnabled.Checked = CameraControl.Camobject.GetYoloEnabled();
+            float conf = CameraControl.Camobject.GetYoloConfidence();
+            if (conf < 0.1f) conf = 0.5f; // защита от некорректных значений
+            numYoloConfidenceNew.Value = (decimal)conf;
+
             CameraControl.NewFrame -= CameraNewFrame;
             CameraControl.NewFrame += CameraNewFrame;
             CameraControl.IsEdit = true;
@@ -1132,6 +1139,10 @@ namespace iSpyApplication
                 MainForm.NeedsMediaRebuild = true;
                 MainForm.NeedsMediaRefresh = Helper.Now;
             }
+
+            // === СОХРАНЕНИЕ YOLO-НАСТРОЕК ===
+            CameraControl.Camobject.SetYoloEnabled(chkYoloEnabled.Checked);
+            CameraControl.Camobject.SetYoloConfidence((float)numYoloConfidenceNew.Value);
 
             return true;
         }
@@ -2242,6 +2253,31 @@ namespace iSpyApplication
         private void linkLabel_OpenVRKbrd_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("osk.exe");
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
