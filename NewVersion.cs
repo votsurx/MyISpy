@@ -100,16 +100,16 @@ namespace iSpyApplication
             this._wbProductHistory.Location = new System.Drawing.Point(0, 0);
             this._wbProductHistory.MinimumSize = new System.Drawing.Size(20, 20);
             this._wbProductHistory.Name = "_wbProductHistory";
-            this._wbProductHistory.Size = new System.Drawing.Size(540, 301);
+            this._wbProductHistory.Size = new System.Drawing.Size(540, 295);
             this._wbProductHistory.TabIndex = 0;
             // 
             // _panel1
             // 
             this._panel1.Controls.Add(this.flowLayoutPanel1);
             this._panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this._panel1.Location = new System.Drawing.Point(0, 301);
+            this._panel1.Location = new System.Drawing.Point(0, 295);
             this._panel1.Name = "_panel1";
-            this._panel1.Size = new System.Drawing.Size(540, 34);
+            this._panel1.Size = new System.Drawing.Size(540, 40);
             this._panel1.TabIndex = 1;
             // 
             // flowLayoutPanel1
@@ -121,16 +121,16 @@ namespace iSpyApplication
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(540, 34);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(540, 40);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // _button1
             // 
             this._button1.AutoSize = true;
             this._button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._button1.Location = new System.Drawing.Point(438, 3);
+            this._button1.Location = new System.Drawing.Point(417, 3);
             this._button1.Name = "_button1";
-            this._button1.Size = new System.Drawing.Size(99, 23);
+            this._button1.Size = new System.Drawing.Size(120, 26);
             this._button1.TabIndex = 0;
             this._button1.Text = "Get latest version";
             this._button1.UseVisualStyleBackColor = true;
@@ -141,9 +141,9 @@ namespace iSpyApplication
             this._button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._button2.AutoSize = true;
             this._button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._button2.Location = new System.Drawing.Point(362, 3);
+            this._button2.Location = new System.Drawing.Point(328, 3);
             this._button2.Name = "_button2";
-            this._button2.Size = new System.Drawing.Size(70, 23);
+            this._button2.Size = new System.Drawing.Size(83, 26);
             this._button2.TabIndex = 1;
             this._button2.Text = "No Thanks";
             this._button2.UseVisualStyleBackColor = true;
@@ -152,10 +152,10 @@ namespace iSpyApplication
             // chkCheckForUpdates
             // 
             this.chkCheckForUpdates.AutoSize = true;
-            this.chkCheckForUpdates.Location = new System.Drawing.Point(176, 6);
+            this.chkCheckForUpdates.Location = new System.Drawing.Point(101, 6);
             this.chkCheckForUpdates.Margin = new System.Windows.Forms.Padding(6);
             this.chkCheckForUpdates.Name = "chkCheckForUpdates";
-            this.chkCheckForUpdates.Size = new System.Drawing.Size(177, 17);
+            this.chkCheckForUpdates.Size = new System.Drawing.Size(218, 20);
             this.chkCheckForUpdates.TabIndex = 2;
             this.chkCheckForUpdates.Text = "Automatically check for updates";
             this.chkCheckForUpdates.UseVisualStyleBackColor = true;
@@ -163,7 +163,7 @@ namespace iSpyApplication
             // 
             // NewVersion
             // 
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(540, 335);
             this.Controls.Add(this._wbProductHistory);

@@ -199,10 +199,6 @@ namespace iSpyApplication
             if (CameraControl.VolumeControl != null)
                 CameraControl.VolumeControl.IsEdit = true;
             ddlTimestamp.Text = CameraControl.Camobject.settings.timestampformatter;
-
-            //chkUploadYouTube.Checked = CameraControl.Camobject.settings.youtube.autoupload;
-            //chkPublic.Checked = CameraControl.Camobject.settings.youtube.@public;
-            //txtTags.Text = CameraControl.Camobject.settings.youtube.tags;
             chkMovement.Checked = CameraControl.Camobject.alerts.active;
             chkFill.Checked = CameraControl.Camobject.settings.fillMode == 1;
             
@@ -252,8 +248,7 @@ namespace iSpyApplication
             ranger1.ValueMinChanged += Ranger1ValueMinChanged;
             ranger1.ValueMaxChanged += Ranger1ValueMaxChanged;
             ranger1.GainChanged += Ranger1GainChanged;
-            ranger1.SetText();
-            
+            ranger1.SetText();        
             rdoRecordDetect.Checked = CameraControl.Camobject.detector.recordondetect;
             rdoRecordAlert.Checked = CameraControl.Camobject.detector.recordonalert;
             rdoNoRecord.Checked = !rdoRecordDetect.Checked && !rdoRecordAlert.Checked;
@@ -278,16 +273,12 @@ namespace iSpyApplication
  
             chkColourProcessing.Checked = CameraControl.Camobject.detector.colourprocessingenabled;
             numMaxFR.Value = CameraControl.Camobject.settings.maxframerate;
-            numMaxFRRecording.Value = CameraControl.Camobject.settings.maxframeraterecord;
-            
-            txtDirectory.Text = CameraControl.Camobject.directory;
-            
+            numMaxFRRecording.Value = CameraControl.Camobject.settings.maxframeraterecord;            
+            txtDirectory.Text = CameraControl.Camobject.directory;            
             rdoContinuous.Checked = CameraControl.Camobject.alerts.processmode == "continuous";
             rdoMotion.Checked = CameraControl.Camobject.alerts.processmode == "motion";
             rdoTrigger.Checked = CameraControl.Camobject.alerts.processmode == "trigger";
-            tbFTPQuality.Value = CameraControl.Camobject.ftp.quality;
-            tbSaveQuality.Value = CameraControl.Camobject.savelocal.quality;
-           
+            tbSaveQuality.Value = CameraControl.Camobject.savelocal.quality;           
             txtLocalFilename.Text = CameraControl.Camobject.savelocal.filename;
 
             if (CameraControl.Camera==null)
@@ -313,24 +304,14 @@ namespace iSpyApplication
             txtTimeLapse.Text = CameraControl.Camobject.recorder.timelapse.ToString(CultureInfo.InvariantCulture);
             pnlMovement.Enabled = chkMovement.Checked;
             chkSuppressNoise.Checked = CameraControl.Camobject.settings.suppressnoise;
-
-            gpbSubscriber2.Enabled = MainForm.Conf.Subscribed;
-            linkLabel9.Visible = !(MainForm.Conf.Subscribed);
-
             txtBuffer.Value = CameraControl.Camobject.recorder.bufferseconds;
             txtCalibrationDelay.Value = CameraControl.Camobject.detector.calibrationdelay;
             txtInactiveRecord.Value = CameraControl.Camobject.recorder.inactiverecord;
             txtMaxRecordTime.Value = CameraControl.Camobject.recorder.maxrecordtime;
             numMinRecordTime.Value = CameraControl.Camobject.recorder.minrecordtime;
             btnBack.Enabled = false;
-
-            //txtUploadEvery.Text = CameraControl.Camobject.ftp.intervalnew.ToString(CultureInfo.InvariantCulture);
             numSaveInterval.Text = CameraControl.Camobject.savelocal.intervalnew.ToString(CultureInfo.InvariantCulture);
-            //numFTPMinimumDelay.Text = CameraControl.Camobject.ftp.minimumdelay.ToString(CultureInfo.InvariantCulture);
             numSaveDelay.Text = CameraControl.Camobject.savelocal.minimumdelay.ToString(CultureInfo.InvariantCulture);
-
-            //txtFTPFilename.Text = CameraControl.Camobject.ftp.filename;
-            //chkFTP.Checked = CameraControl.Camobject.ftp.enabled;
             chkLocalSaving.Checked = gbLocal.Enabled = CameraControl.Camobject.savelocal.enabled;
             txtTimeLapseFrames.Text = CameraControl.Camobject.recorder.timelapseframes.ToString(CultureInfo.InvariantCulture);
 
@@ -340,21 +321,12 @@ namespace iSpyApplication
 
             
             txtMaskImage.Text = CameraControl.Camobject.settings.maskimage;
-            
-            //txtFTPText.Text = CameraControl.Camobject.ftp.text;
             txtSaveOverlay.Text = CameraControl.Camobject.savelocal.text;
-
-
-            //rdoFTPMotion.Checked = CameraControl.Camobject.ftp.mode == 0;
-            //rdoFTPAlerts.Checked = CameraControl.Camobject.ftp.mode == 1;
-            //rdoFTPInterval.Checked = CameraControl.Camobject.ftp.mode == 2;
 
             rdoSaveMotion.Checked = CameraControl.Camobject.savelocal.mode == 0;
             rdoSaveAlerts.Checked = CameraControl.Camobject.savelocal.mode == 1;
             rdoSaveInterval.Checked = CameraControl.Camobject.savelocal.mode == 2;
             numMotionTimeout.Value = CameraControl.Camobject.savelocal.motiontimeout;
-
-            txtUploadEvery.Enabled = rdoFTPInterval.Checked;
             numSaveInterval.Enabled = rdoSaveInterval.Checked;
             
             
@@ -372,12 +344,8 @@ namespace iSpyApplication
                 if (c.id != CameraControl.Camobject.id)
                     ddlCopyFrom.Items.Add(new ListItem(c.name,c.id.ToString(CultureInfo.InvariantCulture)));
             }
-            ddlCopyFrom.SelectedIndex = 0;
-
-
-            
+            ddlCopyFrom.SelectedIndex = 0;            
             tbQuality.Value = CameraControl.Camobject.recorder.quality;
-
             numTimelapseSave.Value = CameraControl.Camobject.recorder.timelapsesave;
             numFramerate.Value = CameraControl.Camobject.recorder.timelapseframerate;
 
@@ -421,48 +389,23 @@ namespace iSpyApplication
             if (ddlTriggerRecording.SelectedIndex == -1)
                 ddlTriggerRecording.SelectedIndex = 0;
 
-
-            //numMaxCounter.Value = CameraControl.Camobject.ftp.countermax;
             numSaveCounter.Value = CameraControl.Camobject.savelocal.countermax;
-
             chkIgnoreAudio.Checked = CameraControl.Camobject.settings.ignoreaudio;
-
             tblStorage.Enabled = chkStorageManagement.Checked = CameraControl.Camobject.settings.storagemanagement.enabled;
             numMaxAge.Value = CameraControl.Camobject.settings.storagemanagement.maxage;
             numMaxFolderSize.Value = CameraControl.Camobject.settings.storagemanagement.maxsize;
-
             actionEditor1.LoginRequested += ActionEditor1LoginRequested;
-
-            //chkNotifyDisconnect.Checked = CameraControl.Camobject.settings.notifyondisconnect;
-
             numAutoOff.Value = CameraControl.Camobject.detector.autooff;
-            chkArchive.Checked = CameraControl.Camobject.settings.storagemanagement.archive;
-            //chkUploadGrabs.Checked = CameraControl.Camobject.settings.cloudprovider.images;
-            //chkUploadRecordings.Checked = CameraControl.Camobject.settings.cloudprovider.recordings;
-            //txtCloudPath.Text = CameraControl.Camobject.settings.cloudprovider.path;
+            chkArchive.Checked = CameraControl.Camobject.settings.storagemanagement.archive;;
             chkMessaging.Checked = CameraControl.Camobject.settings.messaging;
 
             LoadMediaDirectories();
-            //PopFTPServers();
-            //ddlCloudProviders.Items.Add(LocRm.GetString("PleaseSelect"));
-            //ddlCloudProviders.Items.AddRange(Settings.CloudProviders);
-            //ddlCloudProviders.SelectedIndex = 0;
-            //foreach (var o in ddlCloudProviders.Items)
-            //{
-            //    if (o.ToString().ToLower() == CameraControl.Camobject.settings.cloudprovider.provider.ToLower())
-            //    {
-            //        ddlCloudProviders.SelectedItem = o;
-            //        break;
-            //    }
-            //}
+            
             intervalConfig1.Init(CameraControl);
             ptzui1.CameraControl = CameraControl;
             scheduleEditor1.Io = CameraControl;
 
-            //chkFTPRecordingsEnabled.Checked = CameraControl.Camobject.recorder.ftpenabled;
-            //txtFTPRecordingFilename.Text = CameraControl.Camobject.recorder.ftpfilename;
-            //numFTPRecordingCounterMax.Value = CameraControl.Camobject.recorder.ftpcountermax;
-
+            
             comboBox1.Items.Add("software");
             foreach (var gpu in MediaWriter.Encoders)
                 comboBox1.Items.Add(gpu.Name);
@@ -539,7 +482,6 @@ namespace iSpyApplication
             if (ddlAlertMode.Items.Count>0)
                 ddlAlertMode.SelectedIndex = iMode;
         }
-
         void Ranger1ValueMinChanged()
         {
             if (_loaded)
@@ -573,9 +515,6 @@ namespace iSpyApplication
             }
         }
 
-
-        
-
         private void RenderResources()
         {
             btnBack.Text = LocRm.GetString("Back");
@@ -586,13 +525,10 @@ namespace iSpyApplication
             btnSelectSource.Text = "...";
             llblClearAll.Text = LocRm.GetString("ClearAll");
             chkActive.Text = LocRm.GetString("CameraActive");
-            chkFTP.Text = LocRm.GetString("Enabled");
-
             chkFill.Text = LocRm.GetString("Fill");
             rdoMotion.Text = LocRm.GetString("WhenMotionDetected");
             rdoContinuous.Text = LocRm.GetString("Continuous");
             chkMovement.Text = LocRm.GetString("AlertsEnabled");
-            chkPublic.Text = LocRm.GetString("PubliccheckThisToMakeYour");
             rdoRecordDetect.Text = LocRm.GetString("RecordOnMovementDetection");
             rdoRecordAlert.Text = LocRm.GetString("RecordOnAlert");
             rdoNoRecord.Text = LocRm.GetString("NoRecord");
@@ -600,7 +536,6 @@ namespace iSpyApplication
             chkSuppressNoise.Text = LocRm.GetString("SupressNoise");
             chkTimelapse.Text = LocRm.GetString("TimelapseEnabled");
             gbZones.Text = LocRm.GetString("DetectionZones");
-            gpbSubscriber2.Text = LocRm.GetString("WebServiceOptions");
             groupBox1.Text = LocRm.GetString("TimelapseRecording");
             groupBox3.Text = LocRm.GetString("VideoSource");
             groupBox4.Text = LocRm.GetString("RecordingSettings");
@@ -616,7 +551,6 @@ namespace iSpyApplication
             label17.Text = LocRm.GetString("Frames");
             label19.Text = groupBox2.Text = LocRm.GetString("Microphone");
             label2.Text = LocRm.GetString("Source");
-            gbFTP.Text = LocRm.GetString("Server");
             label24.Text = LocRm.GetString("Seconds");
             label25.Text = LocRm.GetString("CalibrationDelay");
             label26.Text = LocRm.GetString("PrebufferFrames");
@@ -632,7 +566,6 @@ namespace iSpyApplication
             label35.Text = LocRm.GetString("Seconds");
             label36.Text = LocRm.GetString("Seconds");
             label33.Text = LocRm.GetString("Seconds");
-            label37.Text = rdoFTPInterval.Text = rdoSaveInterval.Text = LocRm.GetString("Interval");
             label38.Text = LocRm.GetString("MaxCalibrationDelay");
             label39.Text = LocRm.GetString("Seconds");
             label4.Text = LocRm.GetString("Mode");
@@ -646,7 +579,6 @@ namespace iSpyApplication
             label57.Text = label96.Text =LocRm.GetString("When");
             label58.Text = label99.Text = LocRm.GetString("Seconds");
             label100.Text = LocRm.GetString("json.motiontimeout");
-
             label60.Text = LocRm.GetString("Egimagesmycamimagejpg");
             label67.Text = LocRm.GetString("Images");
             label68.Text = LocRm.GetString("Interval");
@@ -656,8 +588,6 @@ namespace iSpyApplication
             label73.Text = LocRm.GetString("CameraModel");
             label75.Text = LocRm.GetString("ExtendedCommands");
             label76.Text = LocRm.GetString("ExitThisToEnableAlertsAnd");
-            label77.Text = LocRm.GetString("Tags");
-            label79.Text = LocRm.GetString("UploadViaWebsite");
             label83.Text = LocRm.GetString("ClickAndDragTodraw").Trim();
             label84.Text = LocRm.GetString("MaskImage");
             label86.Text = label100.Text = LocRm.GetString("OverlayText");
@@ -671,17 +601,13 @@ namespace iSpyApplication
             chkLocalSaving.Text = LocRm.GetString("LocalSavingEnabled");
             linkLabel11.Text = LocRm.GetString("OpenLocalFolder");
             tabPage1.Text = LocRm.GetString("Camera");
-            tabPage2.Text = rdoFTPAlerts.Text = rdoSaveAlerts.Text = LocRm.GetString("Alerts");
-            tabPage3.Text = rdoFTPMotion.Text = rdoSaveMotion.Text = LocRm.GetString("MotionDetection");
             tabPage4.Text = LocRm.GetString("Recording");
             tabPage5.Text = LocRm.GetString("Scheduling");
             tabPage6.Text = LocRm.GetString("Storage");
-            chkFTPRecordingsEnabled.Text = LocRm.GetString("Enabled");
             label9.Text = LocRm.GetString("Filename");
             label50.Text = LocRm.GetString("CounterMax");
             tabPage10.Text = LocRm.GetString("Images");
             tabPage8.Text = LocRm.GetString("Ptz");
-            tabPage9.Text = LocRm.GetString("Cloud");
             toolTip1.SetToolTip(txtMaskImage, LocRm.GetString("ToolTip_CameraName"));
             toolTip1.SetToolTip(txtCameraName, LocRm.GetString("ToolTip_CameraName"));
             toolTip1.SetToolTip(ranger1, LocRm.GetString("ToolTip_MotionSensitivity"));
@@ -689,21 +615,15 @@ namespace iSpyApplication
             toolTip1.SetToolTip(txtTimeLapse, LocRm.GetString("ToolTip_TimeLapseVideo"));
             toolTip1.SetToolTip(txtMaxRecordTime, LocRm.GetString("ToolTip_MaxDuration"));
             toolTip1.SetToolTip(txtInactiveRecord, LocRm.GetString("ToolTip_InactiveRecord"));
-            //toolTip1.SetToolTip(txtBuffer, LocRm.GetString("ToolTip_BufferFrames"));
             toolTip1.SetToolTip(txtCalibrationDelay, LocRm.GetString("ToolTip_DelayAlerts"));
             label16.Text = LocRm.GetString("PTZNote");
-            //chkRotate90.Text = LocRm.GetString("Rotate90");
-            
             label43.Text = LocRm.GetString("MaxFramerate");
             label47.Text = LocRm.GetString("WhenRecording");
-            label74.Text = LocRm.GetString("Directory");
-            
-            llblHelp.Text = LocRm.GetString("help");
-            
+            label74.Text = LocRm.GetString("Directory");        
+            llblHelp.Text = LocRm.GetString("help");           
             chkColourProcessing.Text = LocRm.GetString("Apply");
             chkResize.Text = LocRm.GetString("Resize");
-            Text = LocRm.GetString("AddCamera");
-            
+            Text = LocRm.GetString("AddCamera");           
             lblAccessGroups.Text = LocRm.GetString("AccessGroups");
             groupBox6.Text = LocRm.GetString("RecordingMode");
             llblEditPTZ.Text = LocRm.GetString("Edit");
@@ -712,8 +632,6 @@ namespace iSpyApplication
             lblSaveEvery.Text = LocRm.GetString("SaveEvery");
             label61.Text = LocRm.GetString("Profile");
             label62.Text = LocRm.GetString("Framerate");
-            //linkLabel3.Text = LocRm.GetString("Plugins");
-            
             linkLabel10.Text = LocRm.GetString("Reload");
             btnCrossbar.Text = LocRm.GetString("Inputs");
             label72.Text = LocRm.GetString("AutoOff");
@@ -722,7 +640,6 @@ namespace iSpyApplication
             label89.Text = LocRm.GetString("When");
             rdoTrigger.Text = LocRm.GetString("ExternalTrigger");
             label90.Text = LocRm.GetString("TriggerRecording");
-
             label63.Text = LocRm.GetString("MediaLocation");
             label74.Text = LocRm.GetString("Directory");
             chkStorageManagement.Text = LocRm.GetString("EnableStorageManagement");
@@ -731,10 +648,6 @@ namespace iSpyApplication
             chkArchive.Text = LocRm.GetString("ArchiveInsteadOfDelete");
             btnRunNow.Text = LocRm.GetString("RunNow");
 
-            chkUploadGrabs.Text = LocRm.GetString("AutomaticallyUploadImages");
-            chkUploadRecordings.Text = LocRm.GetString("AutomaticallyUploadRecordings");
-
-
             LocRm.SetString(label3,"TriggerRange");
             LocRm.SetString(groupBox8, "Talk");
             LocRm.SetString(label23, "CameraModel");
@@ -742,10 +655,7 @@ namespace iSpyApplication
             LocRm.SetString(label65, "IPAddress");
             LocRm.SetString(label21, "Port");
             LocRm.SetString(label66, "Username");
-            LocRm.SetString(label88, "Password");
-            
-            LocRm.SetString(label81,"FTPFileTip");
-            LocRm.SetString(label102, "FTPFileTip");
+            LocRm.SetString(label88, "Password");           
             LocRm.SetString(label93, "CounterMax");
             LocRm.SetString(label101, "CounterMax");
             LocRm.SetString(label90, "TriggerRecording");
@@ -757,18 +667,12 @@ namespace iSpyApplication
             LocRm.SetString(btnPTZSchedule, "Scheduler");
             LocRm.SetString(label5, "PictureInPicture");
             LocRm.SetString(linkLabel4, "CopyTo");
-            LocRm.SetString(btnAuthorise, "Authorise");
-            LocRm.SetString(btnAuthoriseYouTube, "Authorise");
-            LocRm.SetString(linkLabel9, "SubscribeText");
 
             HideTab(tabPage3, Helper.HasFeature(Enums.Features.Motion_Detection));
             HideTab(tabPage2, Helper.HasFeature(Enums.Features.Alerts));
             HideTab(tabPage1, Helper.HasFeature(Enums.Features.High_Level_User));
             HideTab(tabPage4, Helper.HasFeature(Enums.Features.Recording) & Helper.HasFeature(Enums.Features.High_Level_User));
             HideTab(tabPage8, Helper.HasFeature(Enums.Features.PTZ));
-            //HideTab(tabPage7, Helper.HasFeature(Enums.Features.Save_Frames));
-            //HideTab(tabPage10, Helper.HasFeature(Enums.Features.Save_Frames));
-            //HideTab(tabPage9, Helper.HasFeature(Enums.Features.Cloud) && Helper.HasFeature(Enums.Features.Web_Settings));
             HideTab(tabPage5, Helper.HasFeature(Enums.Features.Scheduling));
             HideTab(tabPage6, Helper.HasFeature(Enums.Features.Storage));
 
@@ -782,13 +686,6 @@ namespace iSpyApplication
                 btnPTZTrack.Enabled = true;
                 llblEditPTZ.Enabled = true;
             }
-
-            if (!Helper.HasFeature(Enums.Features.Web_Settings))
-            {
-                linkLabel9.Visible = false;
-            }
-
-
         }
         private void HideTab(TabPage t, bool show)
         {
@@ -954,9 +851,7 @@ namespace iSpyApplication
                 return false;
             }
 
-            double ftpinterval = Convert.ToDouble(txtUploadEvery.Value);
             double saveinterval = Convert.ToDouble(numSaveInterval.Value);
-            double ftpmindelay = Convert.ToDouble(numFTPMinimumDelay.Value);
             double savemindelay = Convert.ToDouble(numSaveDelay.Value);
 
 
@@ -1012,8 +907,6 @@ namespace iSpyApplication
             CameraControl.Camobject.savelocal.filename = txtLocalFilename.Text.Trim();
             CameraControl.Camobject.savelocal.enabled = chkLocalSaving.Checked;
             CameraControl.Camobject.savelocal.motiontimeout = motionTimeout;
-
-
             CameraControl.Camobject.detector.processframeinterval = (int)numProcessInterval.Value;
             CameraControl.Camobject.detector.motionzones = AreaControl.MotionZones;
             CameraControl.Camobject.detector.type = (string) _detectortypes[ddlMotionDetector.SelectedIndex];
@@ -1033,21 +926,14 @@ namespace iSpyApplication
             }
 
             CameraControl.Camobject.settings.ignoreaudio = chkIgnoreAudio.Checked;
-            CameraControl.Camobject.alerts.active = chkMovement.Checked;
-                
-           
-                
+            CameraControl.Camobject.alerts.active = chkMovement.Checked;     
             CameraControl.Camobject.recorder.quality = tbQuality.Value;
             CameraControl.Camobject.recorder.timelapsesave = (int)numTimelapseSave.Value;
             CameraControl.Camobject.recorder.timelapseframerate = (int)numFramerate.Value;
-                
-            CameraControl.Camobject.ftp.quality = tbFTPQuality.Value;
-            CameraControl.Camobject.ftp.countermax = (int) numMaxCounter.Value;
-            CameraControl.Camobject.ftp.minimumdelay = ftpmindelay;                
+                                
             SetStorageManagement();
 
             CameraControl.Camobject.recorder.minrecordtime = (int)numMinRecordTime.Value;
-
             CameraControl.Camobject.detector.autooff = (int)numAutoOff.Value;
                                 
             if (txtDirectory.Text.Trim() == "")
@@ -1055,7 +941,6 @@ namespace iSpyApplication
 
             var md = (ListItem)ddlMediaDirectory.SelectedItem;
             var newind = Convert.ToInt32(md.Value);
-
 
             string olddir = Helper.GetMediaDirectory(2, CameraControl.Camobject.id) + "video\\" + CameraControl.Camobject.directory + "\\";
 
@@ -1194,54 +1079,18 @@ namespace iSpyApplication
                 CameraControl.Camobject.alerts.processmode = "trigger";
             CameraControl.Camobject.recorder.maxrecordtime = maxrecord;
             CameraControl.Camobject.recorder.timelapseenabled = chkTimelapse.Checked;
-
-            //CameraControl.Camobject.ftp.enabled = chkFTP.Checked;
-            //CameraControl.Camobject.ftp.intervalnew = ftpinterval;
-            //CameraControl.Camobject.ftp.filename = txtFTPFilename.Text;
-            //CameraControl.Camobject.ftp.text = txtFTPText.Text;
-            //int ftpmode = 0;
-            //if (rdoFTPAlerts.Checked)
-            //    ftpmode = 1;
-            //if (rdoFTPInterval.Checked)
-            //    ftpmode = 2;
-            //CameraControl.Camobject.ftp.mode = ftpmode;
-
             CameraControl.Camobject.recorder.timelapseframes = timelapseframes;
             CameraControl.Camobject.recorder.timelapse = timelapsemovie;
             CameraControl.Camobject.recorder.profile = ddlProfile.SelectedIndex;
-
-            //CameraControl.Camobject.settings.youtube.@public = chkPublic.Checked;
-            //CameraControl.Camobject.settings.youtube.tags = txtTags.Text;
-            //CameraControl.Camobject.settings.maxframeraterecord = numMaxFRRecording.Value;
-
             CameraControl.Camobject.settings.accessgroups = txtAccessGroups.Text;
             CameraControl.Camobject.detector.recordonalert = rdoRecordAlert.Checked;
             CameraControl.Camobject.detector.recordondetect = rdoRecordDetect.Checked;
-
             CameraControl.Camobject.settings.audiomodel = ddlTalkModel.SelectedItem.ToString();
             CameraControl.Camobject.settings.audioport = (int)numTalkPort.Value;
             CameraControl.Camobject.settings.audioip = txtAudioOutIP.Text.Trim();
             CameraControl.Camobject.settings.audiousername = txtTalkUsername.Text;
             CameraControl.Camobject.settings.audiopassword = txtTalkPassword.Text;
             CameraControl.Camobject.recorder.trigger = ((ListItem)ddlTriggerRecording.SelectedItem).Value;
-
-            //CameraControl.Camobject.recorder.ftpenabled = chkFTPRecordingsEnabled.Checked;
-            //CameraControl.Camobject.recorder.ftpfilename = txtFTPRecordingFilename.Text;
-            //CameraControl.Camobject.recorder.ftpcountermax = (int)numFTPRecordingCounterMax.Value;
-
-            //CameraControl.SetVideoSize();
-
-            //if (ddlFTPServer.Enabled)
-            //{
-            //    int i = ddlFTPServer.SelectedIndex;
-            //    if (i > -1)
-            //    {
-            //        var ftp = MainForm.Conf.FTPServers[i];
-            //        CameraControl.Camobject.ftp.ident = ftp.ident;
-            //    }
-            //}
-            //CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
-            //CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
 
             if (CameraControl != null && CameraControl.Camera != null && CameraControl.Camera.VideoSource != null)
             {
@@ -1279,14 +1128,6 @@ namespace iSpyApplication
                 }
             }
 
-            //if (ddlCloudProviders.SelectedIndex > 0)
-            //    CameraControl.Camobject.settings.cloudprovider.provider = ddlCloudProviders.SelectedItem.ToString();
-            //else
-            //    CameraControl.Camobject.settings.cloudprovider.provider = "";
-
-            //CameraControl.Camobject.settings.cloudprovider.images = chkUploadGrabs.Checked;
-            //CameraControl.Camobject.settings.cloudprovider.recordings = chkUploadRecordings.Checked;
-            //CameraControl.Camobject.settings.cloudprovider.path = txtCloudPath.Text;
             CameraControl.Camobject.settings.messaging = chkMessaging.Checked;
             CameraControl.Camobject.settings.encoder = comboBox1.SelectedItem.ToString();
 
@@ -1306,9 +1147,7 @@ namespace iSpyApplication
         {
             pnlMovement.Enabled = (chkMovement.Checked);
             CameraControl.Camobject.alerts.active = chkMovement.Checked;
-        }
-
-        
+        }  
         private void ChkScheduleCheckedChanged(object sender, EventArgs e)
         {
             scheduleEditor1.Enabled = chkSchedule.Checked;
@@ -1318,8 +1157,6 @@ namespace iSpyApplication
         {
             CameraControl.Camobject.name = txtCameraName.Text;
         }
-
-
         private void ChkActiveCheckedChanged(object sender, EventArgs e)
         {
             if (CameraControl.Camobject.settings.active != chkActive.Checked)
@@ -1347,7 +1184,6 @@ namespace iSpyApplication
         {
             CameraControl.Camobject.name = txtCameraName.Text;
         }
-
         private void AddCameraFormClosing(object sender, FormClosingEventArgs e)
         {
             if (IsNew)
@@ -1367,7 +1203,6 @@ namespace iSpyApplication
             if (CameraControl.VolumeControl != null)
                 CameraControl.VolumeControl.IsEdit = false;
         }
-
         private void DdlMovementDetectorSelectedIndexChanged1(object sender, EventArgs e)
         {
             ddlProcessor.Enabled = rdoMotion.Enabled = (string) _detectortypes[ddlMotionDetector.SelectedIndex] != "None";
@@ -1382,9 +1217,6 @@ namespace iSpyApplication
             
             CameraControl.Camobject.detector.type = (string) _detectortypes[ddlMotionDetector.SelectedIndex];
         }
-
-        
-
         private void ChkSuppressNoiseCheckedChanged(object sender, EventArgs e)
         {
             if (CameraControl.Camera != null && CameraControl.Camera.VideoSource != null)
@@ -1396,8 +1228,6 @@ namespace iSpyApplication
                 }
             }
         }
-
-
         private void Button2Click(object sender, EventArgs e)
         {
             GoPrevious();
@@ -1414,7 +1244,6 @@ namespace iSpyApplication
         {
             
         }
-
         private void DdlProcessorSelectedIndexChanged(object sender, EventArgs e)
         {
             if (CameraControl.Camera != null && CameraControl.Camera.VideoSource != null &&
@@ -1428,8 +1257,6 @@ namespace iSpyApplication
             }
             CameraControl.Camobject.detector.postprocessor = (string) _processortypes[ddlProcessor.SelectedIndex];
         }
-
-
         private void DdlHourStartSelectedIndexChanged(object sender, EventArgs e)
         {
         }
@@ -1437,19 +1264,11 @@ namespace iSpyApplication
         private void LinkLabel1LinkClicked1(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MainForm.OpenUrl(MainForm.Website + "/userguide-motion-detection.aspx#2");
-        }
-
-        
+        }      
         private void CheckBox1CheckedChanged(object sender, EventArgs e)
         {
 
         }
-
-        private void LinkLabel2LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MainForm.OpenUrl( MainForm.Website+"/userguide-ftp.aspx");
-        }
-
 
         private void Login()
         {
@@ -1458,8 +1277,6 @@ namespace iSpyApplication
         
         private void PnlPtzMouseDown(object sender, MouseEventArgs e)
         {
-            
-
             ProcessPtzInput(e.Location);
         }
 
@@ -1494,7 +1311,6 @@ namespace iSpyApplication
 
             
         }
-
         private void DdlPtzSelectedIndexChanged(object sender, EventArgs e)
         {
             if (ddlPTZ.SelectedItem is ListItem)
@@ -1513,8 +1329,6 @@ namespace iSpyApplication
 
             lbExtended.Items.Clear();
             btnAddPreset.Visible = btnDeletePreset.Visible = false;
-
-
 
             if (CameraControl.Camobject.ptz > -1)
             {
@@ -1582,7 +1396,6 @@ namespace iSpyApplication
             }
         }
 
-
         private void PnlPtzMouseUp(object sender, MouseEventArgs e)
         {
             CameraControl.PTZ.CheckSendStop();            
@@ -1606,7 +1419,6 @@ namespace iSpyApplication
                 MessageBox.Show(ex.Message, LocRm.GetString("Error"));
             }
         }
-
 
         private void PnlPtzMouseMove(object sender, MouseEventArgs e)
         {
@@ -1648,8 +1460,6 @@ namespace iSpyApplication
             if (lang != MainForm.Conf.Language)
                 RenderResources();
         }
-
-
         private void DdlTimestampKeyUp(object sender, KeyEventArgs e)
         {
             CameraControl.Camobject.settings.timestampformatter = ddlTimestamp.Text;
@@ -1689,31 +1499,10 @@ namespace iSpyApplication
             }
         }
 
-
-        //private void ChkFlipYCheckedChanged(object sender, EventArgs e)
-        //{
-        //    CameraControl.Camobject.flipy = chkFlipY.Checked;
-        //}
-
-        //private void ChkFlipXCheckedChanged(object sender, EventArgs e)
-        //{
-        //    CameraControl.Camobject.flipx = chkFlipX.Checked;
-        //}
-
         private void LinkLabel8LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MainForm.OpenUrl( MainForm.Website+"/userguide-pairing.aspx");
         }
-
-        private void RdoFtpIntervalCheckedChanged(object sender, EventArgs e)
-        {
-            txtUploadEvery.Enabled = rdoFTPInterval.Checked;
-        }
-
-        private void rdoFTPAlerts_CheckedChanged(object sender, EventArgs e)
-        {
-        }
-
         private void Button3Click3(object sender, EventArgs e)
         {
             if (Helper.HasFeature(Enums.Features.Motion_Detection))
@@ -1776,7 +1565,6 @@ namespace iSpyApplication
 
 
         }        
-
         private void DdlAlertModeSelectedIndexChanged(object sender, EventArgs e)
         {
             string last = CameraControl.Camobject.alerts.mode;
@@ -1936,9 +1724,7 @@ namespace iSpyApplication
                     url = MainForm.Website+"/userguide-ptz.aspx";
                     break;
                 case "tabPage7":
-                case "tabPage10":
-                    url = MainForm.Website+"/userguide-ftp.aspx";
-                    break;
+                
                 case "tabPage9":
                     url = MainForm.Website+"/userguide-youtube.aspx";
                     break;
@@ -2073,13 +1859,6 @@ namespace iSpyApplication
             }
             Process.Start(path);
         }
-
-        private void ddlProfile_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //not sure why i was doing this, must have been a reason...
-            //numMaxFRRecording.Enabled = ddlProfile.SelectedIndex < 3;
-        }
-
         private void btnAdvanced_Click(object sender, EventArgs e)
         {
             try
@@ -2134,9 +1913,7 @@ namespace iSpyApplication
             else
             {
                 lblMicSource.Text = LocRm.GetString("None");
-            }
-
-            
+            }   
         }
 
         private void ddlTimestamp_SelectedIndexChanged(object sender, EventArgs e)
@@ -2388,54 +2165,6 @@ namespace iSpyApplication
         {
 
         }
-
-        private void linkLabel5_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            ShowSettings(3);
-            //PopFTPServers();
-        }
-
-        //private void PopFTPServers()
-        //{
-        //    ddlFTPServer.Items.Clear();
-        //    ddlFTPServer.Enabled = true;
-        //    int i = -1, j=0;
-        //    foreach (var ftp in MainForm.Conf.FTPServers)
-        //    {
-        //        ddlFTPServer.Items.Add(ftp.name);
-        //        if (CameraControl.Camobject.ftp.ident == ftp.ident)
-        //        {
-        //            i = j;
-        //        }
-        //        j++;
-        //    }
-
-        //    if (i > -1)
-        //        ddlFTPServer.SelectedIndex = i;
-        //    else
-        //    {
-        //        if (ddlFTPServer.Items.Count > 0)
-        //            ddlFTPServer.SelectedIndex = 0;
-        //        else
-        //        {
-        //            ddlFTPServer.Items.Add(LocRm.GetString("None"));
-        //            ddlFTPServer.Enabled = false;
-        //        }
-        //    }
-            
-        //}
-
-        private void btnAuthorise_Click(object sender, EventArgs e)
-        {
-            Authorise(ddlCloudProviders.SelectedItem.ToString().ToLower());
-            
-        }
-
-        private void ddlCloudProviders_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            btnAuthorise.Enabled = ddlCloudProviders.SelectedIndex > 0;
-        }
-
         private void button6_Click(object sender, EventArgs e)
         {
             var t = new PTZTracking {CameraControl = CameraControl};
@@ -2475,58 +2204,6 @@ namespace iSpyApplication
                 }
             }
 
-        }
-
-        private void btnAuthoriseYouTube_Click(object sender, EventArgs e)
-        {
-            Authorise("youtube");
-            
-        }
-
-        private void Authorise(string provider)
-        {
-            string url = "";
-            var rurl = "https://www.ispyconnect.com";
-            switch (provider)
-            {
-                case "drive":
-                    url =("https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/drive.file&response_type=code&prompt=consent&client_id=648753488389-pombn5sftg8p13h3ul5foi9j1u1h3s93.apps.googleusercontent.com&access_type=offline&redirect_uri=https://www.ispyconnect.com/responsecode.aspx");
-                    break;
-                case "youtube":
-                    url =("https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/youtube.upload&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&client_id=648753488389.apps.googleusercontent.com&access_type=offline");
-                    break;
-                case "dropbox":
-                    url =("https://www.dropbox.com/oauth2/authorize?client_id=6k40bpqlz573mqt&redirect_uri=" + rurl + "/responsecode.aspx&response_type=code");
-                    break;
-                case "onedrive":
-                    url = ("https://login.live.com/oauth20_authorize.srf?client_id=000000004C193719&scope=wl.offline_access wl.skydrive_update&response_type=code&redirect_uri=" + rurl + "/responsecode.aspx");
-                    break;
-                case "box":
-                    url = ("https://account.box.com/api/oauth2/authorize?client_id=0uvr6c6kvl60p7725i62v9ua4k6bclpj&box_login=&response_type=code&redirect_uri=" + rurl + "/responsecode.aspx&state=" + new Random().NextDouble());
-                    break;
-            }
-
-
-            using (var auth = new Authorizer())
-            {
-                auth.URL = url;
-                auth.ShowDialog(this);
-
-                if (!string.IsNullOrEmpty(auth.AuthCode))
-                {
-                    bool b = false;
-                    switch (provider)
-                    {
-                        case "drive":
-                           // b = Drive.Authorise(auth.AuthCode);
-                            break;
-                    }
-                    if (b && provider!="youtube")
-                        CameraControl.Camobject.settings.cloudprovider.provider = ddlCloudProviders.SelectedItem.ToString().ToLower();
-
-                    MessageBox.Show(this, b ? LocRm.GetString("OK") : LocRm.GetString("Failed")+": Please ensure your login details are correct and you don't have two factor authentication switched on for your cloud provider.");
-                }
-            }
         }
 
         private void flowLayoutPanel11_Paint(object sender, PaintEventArgs e)

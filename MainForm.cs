@@ -265,7 +265,6 @@ namespace iSpyApplication
         private MenuItem _exitFileItem;
         private ToolStripMenuItem _exitToolStripMenuItem;
         private MenuItem _fileItem;
-        private ToolStripMenuItem _floorPlanToolStripMenuItem;
         private FileSystemWatcher _fsw;
         private MenuItem _helpItem;
         private ToolStripMenuItem _helpToolstripMenuItem;
@@ -1609,7 +1608,6 @@ namespace iSpyApplication
             _fileItem.Text = LocRm.GetString("file");
             fileMenuToolStripMenuItem.Text = LocRm.GetString("Filemenu");
             menuItem5.Text = LocRm.GetString("Filemenu");
-            _floorPlanToolStripMenuItem.Text = LocRm.GetString("FloorPlan");
             fullScreenToolStripMenuItem.Text = LocRm.GetString("fullScreen");
             fullScreenToolStripMenuItem1.Text = LocRm.GetString("fullScreen");
             _helpItem.Text = LocRm.GetString("help");
@@ -1772,8 +1770,6 @@ namespace iSpyApplication
             _iPCameraToolStripMenuItem.Visible =
                 iPCameraWithWizardToolStripMenuItem.Visible =
                     _addCameraToolStripMenuItem.Visible = (Helper.HasFeature(Enums.Features.IPCameras));
-            _floorPlanToolStripMenuItem.Visible =
-                _addFloorPlanToolStripMenuItem.Visible = (Helper.HasFeature(Enums.Features.Floorplans));
             videoFileToolStripMenuItem.Visible = (Helper.HasFeature(Enums.Features.Source_VLC)) ||
                                                  (Helper.HasFeature(Enums.Features.Source_FFmpeg));
             otherVideoSourceToolStripMenuItem.Visible = (Helper.HasFeature(Enums.Features.Source_Custom));
@@ -4697,7 +4693,6 @@ namespace iSpyApplication
             this._iPCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iPCameraWithWizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oNVIFCameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._floorPlanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.videoFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.otherVideoSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._microphoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -5678,7 +5673,6 @@ namespace iSpyApplication
             this._iPCameraToolStripMenuItem,
             this.iPCameraWithWizardToolStripMenuItem,
             this.oNVIFCameraToolStripMenuItem,
-            this._floorPlanToolStripMenuItem,
             this.videoFileToolStripMenuItem,
             this.otherVideoSourceToolStripMenuItem,
             this._microphoneToolStripMenuItem,
@@ -5697,7 +5691,7 @@ namespace iSpyApplication
             this._localCameraToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._localCameraToolStripMenuItem.Name = "_localCameraToolStripMenuItem";
             this._localCameraToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._localCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
+            this._localCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
             this._localCameraToolStripMenuItem.Text = "Local Camera";
             this._localCameraToolStripMenuItem.Click += new System.EventHandler(this.LocalCameraToolStripMenuItemClick);
             // 
@@ -5707,7 +5701,7 @@ namespace iSpyApplication
             this._iPCameraToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._iPCameraToolStripMenuItem.Name = "_iPCameraToolStripMenuItem";
             this._iPCameraToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._iPCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
+            this._iPCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
             this._iPCameraToolStripMenuItem.Text = "IP Camera";
             this._iPCameraToolStripMenuItem.Click += new System.EventHandler(this.IpCameraToolStripMenuItemClick);
             // 
@@ -5715,7 +5709,7 @@ namespace iSpyApplication
             // 
             this.iPCameraWithWizardToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.Computer;
             this.iPCameraWithWizardToolStripMenuItem.Name = "iPCameraWithWizardToolStripMenuItem";
-            this.iPCameraWithWizardToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
+            this.iPCameraWithWizardToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
             this.iPCameraWithWizardToolStripMenuItem.Text = "IP Camera With Wizard";
             this.iPCameraWithWizardToolStripMenuItem.Click += new System.EventHandler(this.iPCameraWithWizardToolStripMenuItem_Click);
             // 
@@ -5723,24 +5717,15 @@ namespace iSpyApplication
             // 
             this.oNVIFCameraToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.onvif;
             this.oNVIFCameraToolStripMenuItem.Name = "oNVIFCameraToolStripMenuItem";
-            this.oNVIFCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
+            this.oNVIFCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
             this.oNVIFCameraToolStripMenuItem.Text = "ONVIF Camera";
             this.oNVIFCameraToolStripMenuItem.Click += new System.EventHandler(this.oNVIFCameraToolStripMenuItem_Click);
-            // 
-            // _floorPlanToolStripMenuItem
-            // 
-            this._floorPlanToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.Default;
-            this._floorPlanToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this._floorPlanToolStripMenuItem.Name = "_floorPlanToolStripMenuItem";
-            this._floorPlanToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._floorPlanToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
-            this._floorPlanToolStripMenuItem.Text = "Floor Plan";
             // 
             // videoFileToolStripMenuItem
             // 
             this.videoFileToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.HardDrive;
             this.videoFileToolStripMenuItem.Name = "videoFileToolStripMenuItem";
-            this.videoFileToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
+            this.videoFileToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
             this.videoFileToolStripMenuItem.Text = "Video File";
             this.videoFileToolStripMenuItem.Click += new System.EventHandler(this.videoFileToolStripMenuItem_Click);
             // 
@@ -5748,7 +5733,7 @@ namespace iSpyApplication
             // 
             this.otherVideoSourceToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.Music;
             this.otherVideoSourceToolStripMenuItem.Name = "otherVideoSourceToolStripMenuItem";
-            this.otherVideoSourceToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
+            this.otherVideoSourceToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
             this.otherVideoSourceToolStripMenuItem.Text = "Other Video Source";
             this.otherVideoSourceToolStripMenuItem.Click += new System.EventHandler(this.otherVideoSourceToolStripMenuItem_Click);
             // 
@@ -5758,7 +5743,7 @@ namespace iSpyApplication
             this._microphoneToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._microphoneToolStripMenuItem.Name = "_microphoneToolStripMenuItem";
             this._microphoneToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._microphoneToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
+            this._microphoneToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
             this._microphoneToolStripMenuItem.Text = "Microphone";
             this._microphoneToolStripMenuItem.Click += new System.EventHandler(this.MicrophoneToolStripMenuItemClick);
             // 
@@ -5768,7 +5753,7 @@ namespace iSpyApplication
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Name = "_uSbCamerasAndMicrophonesOnOtherToolStripMenuItem";
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
+            this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Text = "Cameras and Microphones on Other Computers ";
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Click += new System.EventHandler(this.USbCamerasAndMicrophonesOnOtherToolStripMenuItemClick);
             // 
@@ -5786,7 +5771,7 @@ namespace iSpyApplication
             // manageToolStripMenuItem
             // 
             this.manageToolStripMenuItem.Name = "manageToolStripMenuItem";
-            this.manageToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
+            this.manageToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.manageToolStripMenuItem.Text = "Manage";
             this.manageToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
