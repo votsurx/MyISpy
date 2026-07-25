@@ -211,7 +211,6 @@ namespace iSpyApplication
                 toolTip1.SetToolTip(txtBuffer,"Change the buffer on the paired camera to update");
             }
 
-            actionEditor1.LoginRequested += ActionEditor1LoginRequested;
             chkArchive.Checked = VolumeLevel.Micobject.settings.storagemanagement.archive;
 
             LoadMediaDirectories();
@@ -232,12 +231,6 @@ namespace iSpyApplication
             _loaded = true;
 
         }
-
-        void ActionEditor1LoginRequested(object sender, EventArgs e)
-        {
-            Login();
-        }
-
         private void RenderResources()
         {
             btnBack.Text = LocRm.GetString("Back");
@@ -610,13 +603,6 @@ namespace iSpyApplication
 
             btnNext.Enabled = tcMicrophone.SelectedIndex != tcMicrophone.TabCount - 1;
         }
-
-
-        private void Login()
-        {
-            MainClass.Connect(MainForm.Website + "/subscribe.aspx", false);
-        }
-       
 
         #region Nested type: ListItem
 

@@ -445,7 +445,6 @@ namespace iSpyApplication
         private MenuItem menuItem25;
         private ToolStripMenuItem gridViewsToolStripMenuItem;
         private ToolStripMenuItem maximiseToolStripMenuItem;
-        private ToolStripMenuItem uploadToCloudToolStripMenuItem;
         private MediaPanelControl mediaPanelControl1;
         private ToolStripMenuItem viewLogFileToolStripMenuItem;
         private ToolStripMenuItem switchToolStripMenuItem;
@@ -1577,7 +1576,6 @@ namespace iSpyApplication
         internal void RenderResources()
         {
             Helper.SetTitle(this);
-            uploadToCloudToolStripMenuItem.Text = LocRm.GetString("UploadToCloud");
             archiveToolStripMenuItem.Text = LocRm.GetString("Archive");
             saveToToolStripMenuItem.Text = LocRm.GetString("SaveTo");
             deleteToolStripMenuItem.Text = LocRm.GetString("Delete");
@@ -4765,7 +4763,6 @@ namespace iSpyApplication
             this.defaultPlayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.websiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uploadToCloudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.archiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -6355,7 +6352,6 @@ namespace iSpyApplication
             this.defaultPlayerToolStripMenuItem,
             this.websiteToolStripMenuItem,
             this.showInFolderToolStripMenuItem,
-            this.uploadToCloudToolStripMenuItem,
             this.archiveToolStripMenuItem,
             this.saveToToolStripMenuItem,
             this.deleteToolStripMenuItem});
@@ -6390,13 +6386,6 @@ namespace iSpyApplication
             this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(218, 24);
             this.showInFolderToolStripMenuItem.Text = "Show in Folder";
             this.showInFolderToolStripMenuItem.Click += new System.EventHandler(this.showInFolderToolStripMenuItem_Click);
-            // 
-            // uploadToCloudToolStripMenuItem
-            // 
-            this.uploadToCloudToolStripMenuItem.Name = "uploadToCloudToolStripMenuItem";
-            this.uploadToCloudToolStripMenuItem.Size = new System.Drawing.Size(218, 24);
-            this.uploadToCloudToolStripMenuItem.Text = "Upload to Cloud";
-            this.uploadToCloudToolStripMenuItem.Click += new System.EventHandler(this.uploadToGoogleDriveToolStripMenuItem_Click);
             // 
             // archiveToolStripMenuItem
             // 
@@ -6613,11 +6602,6 @@ namespace iSpyApplication
         private void gridViewsToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void uploadToGoogleDriveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MediaUploadCloud();            
         }
 
         private void ctxtPlayer_Opening(object sender, CancelEventArgs e)

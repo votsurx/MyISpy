@@ -394,7 +394,6 @@ namespace iSpyApplication
             tblStorage.Enabled = chkStorageManagement.Checked = CameraControl.Camobject.settings.storagemanagement.enabled;
             numMaxAge.Value = CameraControl.Camobject.settings.storagemanagement.maxage;
             numMaxFolderSize.Value = CameraControl.Camobject.settings.storagemanagement.maxsize;
-            actionEditor1.LoginRequested += ActionEditor1LoginRequested;
             numAutoOff.Value = CameraControl.Camobject.detector.autooff;
             chkArchive.Checked = CameraControl.Camobject.settings.storagemanagement.archive;;
             chkMessaging.Checked = CameraControl.Camobject.settings.messaging;
@@ -426,12 +425,6 @@ namespace iSpyApplication
             if (ddlMediaDirectory.SelectedIndex == -1)
                 ddlMediaDirectory.SelectedIndex = 0;
         }
-
-        void ActionEditor1LoginRequested(object sender, EventArgs e)
-        {
-            Login();
-        }
-
         private void LoadAlertTypes()
         {
             ddlAlertMode.Items.Clear();
@@ -1270,11 +1263,6 @@ namespace iSpyApplication
 
         }
 
-        private void Login()
-        {
-            MainClass.Connect(MainForm.Website + "/subscribe.aspx", false);
-        }
-        
         private void PnlPtzMouseDown(object sender, MouseEventArgs e)
         {
             ProcessPtzInput(e.Location);
@@ -1605,11 +1593,6 @@ namespace iSpyApplication
 
         private void chkPublic_CheckedChanged(object sender, EventArgs e)
         {
-        }
-
-        private void LinkLabel9LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Login();
         }
 
         #region Nested type: ListItem
