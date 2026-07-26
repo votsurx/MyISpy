@@ -1353,6 +1353,10 @@ namespace iSpyApplication
 
             _updateTimer.Start();
             _houseKeepingTimer.Start();
+
+            // === ИНИЦИАЛИЗАЦИЯ MQTT ===
+            CameraWindow.InitMqtt();
+            // ===========================
         }
 
         public void CloseGridViewRemote(string index)

@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace iSpyApplication.Vision
+namespace iSpyApplication.Yolo
 {
     public class YoloTcpClient : IDisposable
     {

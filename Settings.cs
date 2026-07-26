@@ -1,4 +1,12 @@
+using iSpyApplication.Controls;
+using iSpyApplication.Joystick;
+using iSpyApplication.MQTT;
+using iSpyApplication.Server;
+using iSpyApplication.Utilities;
+using Microsoft.Win32;
+using NAudio.Wave;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,12 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using iSpyApplication.Server;
-using Microsoft.Win32;
-using NAudio.Wave;
-using iSpyApplication.Controls;
-using iSpyApplication.Joystick;
-using iSpyApplication.Utilities;
+using System.Xml.Serialization;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace iSpyApplication
@@ -28,10 +31,6 @@ namespace iSpyApplication
         {
             "Website", "iSpy", "Default"
         };
-        public static readonly object[] CloudProviders = 
-            {
-                "Drive","Dropbox","Flickr","OneDrive","Box"
-            };
 
         public static readonly object[] Priorities =
         {
@@ -48,11 +47,50 @@ namespace iSpyApplication
         private bool _loaded;
         public MainForm MainClass;
         public FolderSelectDialog Fsd = new FolderSelectDialog();
+        private MqttSettingsTab _mqttTab;
+        private MqttEngine _mqttEngine;
+        private static string MqttRulesPath => Program.AppDataPath + @"XML\mqtt_rules.xml";
 
         public Settings()
         {
             InitializeComponent();
             RenderResources();            
+        }
+
+        private void AddMqttTab()
+        {
+            _mqttTab = new MqttSettingsTab();
+            _mqttTab.Dock = DockStyle.Fill;
+
+            var tabPage = new TabPage("📡 MQTT");
+            tabPage.Controls.Add(_mqttTab);
+
+            tcTabs.TabPages.Add(tabPage);  // ← tcTabs (не tcSettings!)
+
+            // Загружаем сохранённые правила
+            LoadMqttRules();
+        }
+
+        private void LoadMqttRules()
+        {
+            var rules = MqttRulesStorage.Load();
+            _mqttTab.LoadRules(rules);
+        }
+
+        private void SaveMqttRules()
+        {
+            try
+            {
+                var rules = _mqttTab.GetRules();
+                MqttRulesStorage.Save(rules);
+
+                // Обновляем правила в CameraWindow
+                CameraWindow.ReloadMqttRules(rules);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MQTT: ошибка сохранения - {ex.Message}");
+            }
         }
 
         private void Button1Click(object sender, EventArgs e)
@@ -228,7 +266,10 @@ namespace iSpyApplication
             MainForm.Conf.Logging.Enabled = chkEnableLogging.Checked;
             MainForm.Conf.Logging.FileSize = (int)numMaxLogSize.Value;
             MainForm.Conf.Logging.KeepDays = (int)numKeepLogs.Value;
-          
+            // === СОХРАНЯЕМ MQTT ПРАВИЛА ===
+            SaveMqttRules();
+            // ==============================
+
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -493,7 +534,7 @@ namespace iSpyApplication
             numKeepLogs.Value = MainForm.Conf.Logging.KeepDays;
             chkIsSilentOnStartup.Checked = MainForm.Conf.Is_Silent_Startup_Check;
 
-
+            AddMqttTab();
             _loaded = true;
         }
 

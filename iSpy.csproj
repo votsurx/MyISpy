@@ -274,6 +274,9 @@
       <HintPath>$(SolutionDir)packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MQTTnet, Version=4.3.7.1207, Culture=neutral, PublicKeyToken=fdb7629f2e364a63, processorArchitecture=MSIL">
+      <HintPath>packages\MQTTnet.4.3.7.1207\lib\net461\MQTTnet.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLS\NAudio.dll</HintPath>
@@ -510,6 +513,15 @@
     </Compile>
     <Compile Include="Importer.Designer.cs">
       <DependentUpon>Importer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MQTT\MqttEngine.cs" />
+    <Compile Include="MQTT\MqttRule.cs" />
+    <Compile Include="MQTT\MqttRuleEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MQTT\MqttRulesStorage.cs" />
+    <Compile Include="MQTT\MqttSettingsTab.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Onvif\Behaviour\CustomAddressHeader.cs" />
     <Compile Include="Onvif\Behaviour\CustomEndpointBehavior.cs" />
