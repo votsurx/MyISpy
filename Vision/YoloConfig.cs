@@ -11,5 +11,9 @@ namespace iSpyApplication.Vision
         public bool UseGPU { get; set; } = false;
         public int InputWidth { get; set; } = 640;
         public int InputHeight { get; set; } = 640;
+
+        // === НОВЫЕ ПОЛЯ ДЛЯ PYTHON ===
+        public bool PythonEnabled { get; set; } = false;  // Включить Python YOLO
+        public string PythonScript { get; set; } = "yolo_worker.py";
     }
 }

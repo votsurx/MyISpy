@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-  <Import Project="packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props')" />
+  <Import Project="packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.props" Condition="Exists('packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.props')" />
   <Import Project="packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.props" Condition="Exists('packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.props')" />
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -262,9 +262,6 @@
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.10.0.9\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.ML.OnnxRuntime, Version=1.25.0.0, Culture=neutral, PublicKeyToken=f27f157f0a5b7bb6, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.ML.OnnxRuntime.Managed.1.25.0\lib\netstandard2.0\Microsoft.ML.OnnxRuntime.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
       <Private>True</Private>
@@ -290,6 +287,9 @@
     </Reference>
     <Reference Include="NSpeex">
       <HintPath>DLLS\NSpeex.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>packages\OpenCvSharp4.4.13.0.20260627\lib\netstandard2.0\OpenCvSharp.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet">
       <HintPath>DLLS\Renci.SshNet.dll</HintPath>
@@ -1165,13 +1165,14 @@
     <Compile Include="Vision\MotionAreaHighlighting.cs" />
     <Compile Include="Vision\MotionBorderHighlighting.cs" />
     <Compile Include="Vision\MotionDetector.cs" />
+    <Compile Include="Vision\PythonYoloDetector_BAK.cs" />
     <Compile Include="Vision\SimpleBackgroundModelingDetector.cs" />
     <Compile Include="Vision\SimpleColorBackgroundModelingDetector.cs" />
     <Compile Include="Vision\Tools.cs" />
     <Compile Include="Vision\TwoFramesColorDifferenceDetector.cs" />
     <Compile Include="Vision\TwoFramesDifferenceDetector.cs" />
     <Compile Include="Vision\YoloConfig.cs" />
-    <Compile Include="Vision\YoloDetector.cs" />
+    <Compile Include="Vision\YoloPipe.cs" />
     <Compile Include="Vision\YoloPrediction.cs" />
     <Compile Include="Web References\iSpyWS\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -1217,6 +1218,7 @@
     <Compile Include="XML\Translations.cs">
       <DependentUpon>Translations.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Yolo\YoloTcpClient.cs" />
     <Content Include="backgrounds\FloorPlan_House.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1224,6 +1226,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="backgrounds\FloorPlan_Planet.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Yolo\yolo_tcp_server.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="chk.png" />
@@ -2979,12 +2984,10 @@ if "$(ConfigurationName)" == "Release" (
     <Error Condition="!Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
     <Error Condition="!Exists('packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.props'))" />
     <Error Condition="!Exists('packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.targets'))" />
-    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.25.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.Managed.1.25.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets'))" />
-    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props'))" />
-    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets'))" />
+    <Error Condition="!Exists('packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.props'))" />
+    <Error Condition="!Exists('packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.targets'))" />
   </Target>
   <Import Project="packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Import Project="packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.targets" Condition="Exists('packages\Microsoft.AI.DirectML.1.15.4\build\Microsoft.AI.DirectML.targets')" />
-  <Import Project="packages\Microsoft.ML.OnnxRuntime.Managed.1.25.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.25.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" />
-  <Import Project="packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.24.4\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets')" />
+  <Import Project="packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.targets" Condition="Exists('packages\OpenCvSharp4.runtime.win.4.13.0.20260627\build\netstandard\OpenCvSharp4.runtime.win.targets')" />
 </Project>

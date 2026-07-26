@@ -72,6 +72,11 @@ namespace iSpyApplication.Controls
 
         private long _lastMovementDetected = DateTime.MinValue.Ticks;
         private long _lastAlerted = DateTime.MinValue.Ticks;
+        private PythonYoloDetector _pythonYoloDetector;
+        internal YoloTcpClient _yoloPipe;
+        internal Process _yoloProcess;
+        private DateTime _lastYoloCommand = DateTime.MinValue;
+        private int _frameCounter = 0;
 
         public DateTime LastMovementDetected
         {
@@ -664,7 +669,139 @@ namespace iSpyApplication.Controls
         }
         #endregion
 
+        private bool _isYoloProcessing = false;
 
+
+
+        public void StartYoloPipe()
+        {
+            // Проверяем, не запущен ли уже процесс
+            if (_yoloProcess != null && !_yoloProcess.HasExited)
+            {
+                Debug.WriteLine("YOLO: процесс уже запущен, пропускаем");
+                return;
+            }
+
+            // Проверяем, не подключены ли уже
+            if (_yoloPipe != null && _yoloPipe.IsConnected)
+            {
+                Debug.WriteLine("YOLO: уже подключены, пропускаем");
+                return;
+            }
+
+            try
+            {
+                float conf = Camobject.GetYoloConfidence();
+                int port = 5000 + Camobject.id;
+
+                var scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Yolo", "yolo_tcp_server.py");
+
+                if (!File.Exists(scriptPath))
+                {
+                    Debug.WriteLine($"YOLO: ФАЙЛ НЕ НАЙДЕН: {scriptPath}");
+                    return;
+                }
+
+                Debug.WriteLine($"YOLO: запуск Python сервера на порту {port}");
+
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "python",
+                    Arguments = $"\"{scriptPath}\" --port {port} --conf {conf.ToString(CultureInfo.InvariantCulture)}",
+                    WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Yolo"),
+                    UseShellExecute = true,
+                    CreateNoWindow = false
+                };
+
+                _yoloProcess = Process.Start(startInfo);  // Сохраняем процесс!
+                Debug.WriteLine($"YOLO: Python запущен (PID: {_yoloProcess.Id})");
+
+                // Ждём и подключаемся с повторными попытками
+                Task.Run(() => {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        try
+                        {
+                            Thread.Sleep(1000);
+                            Debug.WriteLine($"YOLO: попытка подключения {i + 1}...");
+
+                            if (_yoloPipe != null)
+                            {
+                                _yoloPipe.Dispose();
+                            }
+
+                            _yoloPipe = new YoloTcpClient(Camobject.id);
+                            _yoloPipe.Connect();
+
+                            Debug.WriteLine($"YOLO: TCP подключён к порту {port}!");
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"YOLO: попытка {i + 1} не удалась - {ex.Message}");
+                        }
+                    }
+                    Debug.WriteLine("YOLO: все попытки подключения не удались!");
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+                Debug.WriteLine($"YOLO: ошибка запуска - {ex.Message}");
+            }
+        }
+
+        public void StopYoloPipe()
+        {
+            // Отключаем TCP клиент
+            if (_yoloPipe != null)
+            {
+                try
+                {
+                    _yoloPipe.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"YOLO: ошибка отключения - {ex.Message}");
+                }
+                _yoloPipe = null;
+            }
+
+            // Убиваем Python процесс
+            if (_yoloProcess != null)
+            {
+                try
+                {
+                    if (!_yoloProcess.HasExited)
+                    {
+                        Debug.WriteLine($"YOLO: убиваем процесс (PID: {_yoloProcess.Id})");
+
+                        // Сначала пробуем закрыть мягко
+                        _yoloProcess.CloseMainWindow();
+                        if (!_yoloProcess.WaitForExit(2000))
+                        {
+                            // Если не закрылся - убиваем принудительно
+                            _yoloProcess.Kill();
+                            _yoloProcess.WaitForExit(3000);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"YOLO: ошибка остановки процесса - {ex.Message}");
+                }
+
+                try
+                {
+                    _yoloProcess.Dispose();
+                }
+                catch { }
+
+                _yoloProcess = null;
+            }
+
+            Debug.WriteLine("YOLO: pipe и процесс остановлены");
+        }
 
         public CameraWindow(objectsCamera cam, MainForm mainForm)
         {
@@ -1486,6 +1623,7 @@ namespace iSpyApplication.Controls
             {
                 Invalidate();
             }
+            StopYoloPipe();
             LocationChanged -= CameraWindowLocationChanged;
             Resize-=CameraWindowResize;
 
@@ -1813,20 +1951,6 @@ namespace iSpyApplication.Controls
             }
         }
 
-        private void CheckFTP()
-        {
-            if (Camobject.ftp.mode == 2 && Math.Abs(Camobject.ftp.intervalnew) > double.Epsilon)
-            {
-                if (Camobject.ftp.enabled && Camobject.ftp.ready)
-                {
-                    double d = (Helper.Now - _lastFrameUploaded).TotalSeconds;
-                    if (d >= Camobject.ftp.intervalnew && d > Camobject.ftp.minimumdelay)
-                    {
-                        FtpFrame();
-                    }
-                }
-            }
-        }
         private void CheckSaveFrame()
         {
             switch(Camobject.savelocal.mode)
@@ -2184,133 +2308,6 @@ namespace iSpyApplication.Controls
 
         }
 
-        private void FtpFrame(Bitmap bmp = null)
-        {
-            using (var imageStream = new MemoryStream())
-            {
-                Image myThumbnail = bmp;
-                Graphics g = null;
-                var strFormat = new StringFormat();
-                try
-                {
-                    if (myThumbnail==null)
-                        myThumbnail = LastFrame;
-                    if (myThumbnail != null)
-                    {
-                        g = Graphics.FromImage(myThumbnail);
-                        strFormat.Alignment = StringAlignment.Center;
-                        strFormat.LineAlignment = StringAlignment.Far;
-                        g.DrawString(Camobject.ftp.text, MainForm.Drawfont, MainForm.OverlayBrush,
-                            new RectangleF(0, 0, myThumbnail.Width, myThumbnail.Height), strFormat);
-
-                        int i = 0;
-                        string filename = Camobject.ftp.filename;
-                        filename = filename.Replace("{C}", ZeroPad(Camobject.ftp.ftpcounter, Camobject.ftp.countermax));
-                        Camobject.ftp.ftpcounter++;
-                        if (Camobject.ftp.ftpcounter > Camobject.ftp.countermax)
-                            Camobject.ftp.ftpcounter = 0;
-
-                        while (filename.IndexOf("{", StringComparison.Ordinal) != -1 && i < 20)
-                        {
-                            filename = string.Format(CultureInfo.InvariantCulture, filename, DateTime.Now);
-                            i++;
-                        }
-
-                        if (MainForm.Encoder != null)
-                        {
-                            //  Set the quality
-                            var parameters = new EncoderParameters(1)
-                                             {
-                                                 Param =
-                                                 {
-                                                     [0] =
-                                                         new EncoderParameter(
-                                                         Encoder.Quality,
-                                                         Camobject.ftp.quality)
-                                                 }
-                                             };
-                            myThumbnail.Save(imageStream, MainForm.Encoder, parameters);
-                        }
-
-                        var ftp = MainForm.Conf.FTPServers.FirstOrDefault(p => p.ident == Camobject.ftp.ident);
-                        if (ftp != null)
-                        {
-                            Camobject.ftp.ready = false;
-
-                            ThreadPool.QueueUserWorkItem((new AsynchronousFtpUpLoader()).FTP,
-                                new FTPTask(ftp.server, ftp.port,
-                                    ftp.usepassive, ftp.username,
-                                    ftp.password, filename,
-                                    "", Camobject.id, Camobject.ftp.counter, ftp.rename, ftp.sftp, imageStream.ToArray()));
-
-                            myThumbnail.Dispose();
-                        }
-                        myThumbnail.Dispose();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ErrorHandler?.Invoke(ex.Message);
-                    Camobject.ftp.ready = true;
-                }
-                _lastFrameUploaded = Helper.Now;
-
-                g?.Dispose();
-                strFormat.Dispose();
-            }
-
-        }
-
-        private void FtpRecording(string path)
-        {
-
-            try
-            {
-                int i = 0;
-                string filename = Camobject.recorder.ftpfilename;
-                if (filename != "")
-                {
-                    filename = filename.Replace("{C}",
-                        ZeroPad(Camobject.recorder.ftpcounter, Camobject.recorder.ftpcountermax));
-                    Camobject.recorder.ftpcounter++;
-                    if (Camobject.recorder.ftpcounter > Camobject.recorder.ftpcountermax)
-                        Camobject.recorder.ftpcounter = 0;
-
-                    while (filename.IndexOf("{", StringComparison.Ordinal) != -1 && i < 20)
-                    {
-                        filename = String.Format(CultureInfo.InvariantCulture, filename, DateTime.Now);
-                        i++;
-                    }
-
-                }
-                else
-                {
-                    var fp = path.Split('\\');
-                    filename = fp[fp.Length - 1];
-                }
-
-                configurationServer ftp = MainForm.Conf.FTPServers.FirstOrDefault(p => p.ident == Camobject.ftp.ident);
-                if (ftp != null)
-                {
-                    Camobject.ftp.ready = false;
-                    
-                    ThreadPool.QueueUserWorkItem((new AsynchronousFtpUpLoader()).FTP,
-                        new FTPTask(ftp.server, ftp.port,
-                            ftp.usepassive, ftp.username,
-                            ftp.password, filename,
-                            path,
-                            Camobject.id,
-                            Camobject.recorder.ftpcounter,
-                            ftp.rename, ftp.sftp,null));
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex);
-                Camobject.ftp.ready = true;
-            }
-        }
         private bool OpenTimeLapseWriter()
         {
             DateTime date = DateTime.Now;
@@ -3052,8 +3049,26 @@ namespace iSpyApplication.Controls
                 }
 
                 CheckSaveFrame();
-                CheckFTP();
 
+                // === ОТПРАВКА КАДРОВ В YOLO PIPE ===
+                if (_yoloPipe != null && _yoloPipe.IsConnected && Camobject.GetYoloEnabled())
+                {
+                    _frameCounter++;
+                    if (_frameCounter % 5 == 0) // каждый 5-й кадр
+                    {
+                        using var ms = new MemoryStream();
+                        e.Frame.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        var bytes = ms.ToArray();
+
+                        var lenBytes = BitConverter.GetBytes(bytes.Length);
+                        if (BitConverter.IsLittleEndian)
+                            Array.Reverse(lenBytes);
+
+                        var packet = lenBytes.Concat(bytes).ToArray();
+                        _yoloPipe.Send(packet);
+                        //Debug.WriteLine($"YOLO: кадр отправлен ({bytes.Length} байт)"); // ← ДОБАВЬ ЭТУ СТРОКУ
+                    }
+                }
 
                 NewFrame?.Invoke(this, e);
 
@@ -3396,10 +3411,6 @@ namespace iSpyApplication.Controls
                             MainForm.MasterFileAdd(new FilePreview(fn, dSeconds, Camobject.name, DateTime.Now.Ticks, 2,
                                 Camobject.id, ff.MaxAlarm, false, false));
                             MainForm.NeedsMediaRefresh = Helper.Now;
-                            if (Camobject.recorder.ftpenabled)
-                            {
-                                FtpRecording(path + CodecExtension);
-                            }
                         }
 
                     }
@@ -3486,34 +3497,66 @@ namespace iSpyApplication.Controls
                 fa.Dispose();
         }
 
-        
-        //Motion Detection
+
+        //Motion Detection + YOLO
         public void Detect(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("YOLO: Detect() вызван");
             LastActivity = DateTime.UtcNow;
-            
+
             if (!Calibrating)
             {
-                if (Camobject.detector.recordondetect)
+                // ЕСЛИ YOLO ВЫКЛЮЧЕН — СТАРОЕ ПОВЕДЕНИЕ
+                if (!Camobject.GetYoloEnabled())
                 {
-                    StartSaving();
+                    System.Diagnostics.Debug.WriteLine("YOLO: ВЫКЛЮЧЕН, запускаем запись сразу");
+                    if (Camobject.detector.recordondetect)
+                    {
+                        StartSaving();
+                    }
+                }
+                // ЕСЛИ YOLO ВКЛЮЧЁН — СПРАШИВАЕМ PYTHON
+                else
+                {
+                    // === ДИАГНОСТИКА ===
+                    System.Diagnostics.Debug.WriteLine($"YOLO: _yoloPipe={(_yoloPipe != null)}");
+                    System.Diagnostics.Debug.WriteLine($"YOLO: IsConnected={(_yoloPipe?.IsConnected)}");
+                    System.Diagnostics.Debug.WriteLine($"YOLO: _isYoloProcessing={_isYoloProcessing}");
+
+                    if (_yoloPipe != null && _yoloPipe.IsConnected && !_isYoloProcessing)
+                    {
+                        _isYoloProcessing = true;
+
+                        try
+                        {
+                            _yoloPipe.SendCommand("CHECK");
+                            var response = _yoloPipe.ReadResponse(2000);
+
+                            if (response == "RECORD")
+                            {
+                                Invoke((Action)(() => StartSaving()));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"YOLO: ошибка детекции - {ex.Message}");
+                        }
+                        finally
+                        {
+                            _isYoloProcessing = false;
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("YOLO: НЕ ГОТОВ К ПРОВЕРКЕ!");
+                    }
                 }
 
                 if (Camobject.ptzschedule.active && Camobject.ptzschedule.suspend)
                 {
                     _suspendPTZSchedule = true;
                 }
-                if (Camobject.ftp.mode == 0)
-                {
-                    if (Camobject.ftp.enabled && Camobject.ftp.ready)
-                    {
-                        if ((Helper.Now - _lastFrameUploaded).TotalSeconds > Camobject.ftp.minimumdelay)
-                        {
-                            FtpFrame();
-
-                        }
-                    }
-                }
+                
                 if (Camobject.savelocal.mode == 0 && Camobject.savelocal.motiontimeout == 0)
                 {
                     if (Camobject.savelocal.enabled)
@@ -3528,15 +3571,15 @@ namespace iSpyApplication.Controls
 
             if (sender is Camera)
             {
-                FlashCounter = Helper.Now.AddSeconds(10);                
+                FlashCounter = Helper.Now.AddSeconds(10);
                 if (Camera?.Plugin != null && !Calibrating)
                 {
                     var o = Camera.Plugin.GetType();
                     var m = o.GetMethod("MotionDetect");
-                    var r = (string) m?.Invoke(Camera.Plugin, null);
+                    var r = (string)m?.Invoke(Camera.Plugin, null);
                     if (!string.IsNullOrEmpty(r))
                     {
-                        ProcessAlertFromPlugin(r,"Motion Detected");
+                        ProcessAlertFromPlugin(r, "Motion Detected");
                     }
                 }
                 return;
@@ -3553,28 +3596,6 @@ namespace iSpyApplication.Controls
                 DoAlert("alert");
                 return;
             }
-
-            //if (sender is LocalServer || sender is VolumeLevel)
-            //{
-            //    FlashCounter = Helper.Now.AddSeconds(10);
-            //    DoAlert("alert");
-            //    return;
-            //}
-
-            //if (sender is string || sender is IVideoSource)
-            //{
-            //    if (Camobject.alerts.active && Camera != null)
-            //    {
-            //        FlashCounter = Helper.Now.AddSeconds(10);
-            //        string msg = "";
-            //        var s = sender as string;
-            //        if (s != null)
-            //            msg = s;
-            //        else
-
-            //            DoAlert("alert", msg);
-            //    }
-            //}
         }
 
         private void DoAlert(string type, string msg = "")
@@ -3600,9 +3621,6 @@ namespace iSpyApplication.Controls
                 {
                     StartSaving();
                 }
-                //var wss = MainForm.MWS.WebSocketServer;
-                //if (wss!=null)
-                //    wss.SendToAll("alert|" + ObjectName);
             }
 
             var t = new Thread(() => AlertThread(type, msg, Camobject.id)) { Name = type + " (" + Camobject.id + ")", IsBackground = true };
@@ -3673,17 +3691,6 @@ namespace iSpyApplication.Controls
 
             if (bmp != null)
             {
-                if (Camobject.ftp.mode == 1)
-                {
-                    if (Camobject.ftp.enabled && Camobject.ftp.ready)
-                    {
-                        if ((Helper.Now - _lastFrameUploaded).TotalSeconds > Camobject.ftp.minimumdelay)
-                        {
-                            FtpFrame(bmp);
-                        }
-                    }
-                        
-                }
                 if (Camobject.savelocal.mode == 1)   {
                     if (Camobject.savelocal.enabled)
                     {
@@ -4147,6 +4154,11 @@ namespace iSpyApplication.Controls
                 }
 
                 StopSaving();
+
+                // === ОСТАНАВЛИВАЕМ YOLO ===
+                StopYoloPipe();
+                // ==========================
+
                 if (Camera != null)
                 {
 
@@ -4595,6 +4607,13 @@ namespace iSpyApplication.Controls
                 }
 
                 SetVideoSize();
+
+                // === ИНИЦИАЛИЗАЦИЯ PYTHON YOLO ===
+                if (Camobject.GetYoloEnabled())
+                    StartYoloPipe();
+                else
+                    StopYoloPipe();
+                
 
                 CameraEnabled?.Invoke(this, EventArgs.Empty);
             }

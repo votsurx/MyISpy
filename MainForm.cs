@@ -79,6 +79,7 @@ namespace iSpyApplication
         public static DataTable IPTABLE;
         public static bool IPLISTED = true;
         public static bool IPRTSP = false, IPHTTP = true;
+        public static bool UseGPU { get; set; } = false;
         public static string IPADDR = "";
         public static string IPCHANNEL = "0";
         public static string IPMODEL = "";

@@ -48,8 +48,42 @@ namespace iSpyApplication
 
             AreaControl.BoundsChanged += AsBoundsChanged;
             AreaControl.Invalidate();
+            numYoloConfidenceNew.ValueChanged += numYoloConfidenceNew_ValueChanged;
+            chkYoloEnabled.CheckedChanged += chkYoloEnabled_CheckedChanged;
         }
 
+        // В AddCamera.cs, рядом с другими методами
+        private void numYoloConfidenceNew_ValueChanged(object sender, EventArgs e)
+        {
+            if (!_loaded) return;
+
+            float newConf = (float)numYoloConfidenceNew.Value;
+            CameraControl.Camobject.SetYoloConfidence(newConf);
+
+            // Отправляем новый порог через pipe
+            if (CameraControl._yoloPipe != null && CameraControl._yoloPipe.IsConnected)
+            {
+                CameraControl._yoloPipe.SendCommand($"CONF:{newConf.ToString(CultureInfo.InvariantCulture)}");
+                System.Diagnostics.Debug.WriteLine($"YOLO: порог изменён на {newConf}");
+            }
+
+            MainForm.NeedsSync = true;
+        }
+
+        private void chkYoloEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!_loaded) return;
+
+            bool enabled = chkYoloEnabled.Checked;
+            CameraControl.Camobject.SetYoloEnabled(enabled);
+
+            if (enabled)
+                CameraControl.StartYoloPipe();
+            else
+                CameraControl.StopYoloPipe();
+
+            MainForm.NeedsSync = true;
+        }
         private void AsBoundsChanged(object sender, EventArgs e)
         {
             if (CameraControl.Camera != null && CameraControl.Camera.MotionDetector != null)
