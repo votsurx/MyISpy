@@ -24,6 +24,28 @@
     </BootstrapperApplicationRef>
     <Variable Name="LaunchTarget" Value="[InstallFolder]\iSpy.exe"/>
     <Chain>
+    <!-- .NET Framework -->
+    <PackageGroupRef Id="NetFx452Web"/>
+    
+    <!-- Python -->
+    <ExePackage Id="Python" 
+                SourceFile="python-3.12.0-amd64.exe"
+                InstallCommand="/quiet InstallAllUsers=1 PrependPath=1"
+                DetectCondition="PYTHON_INSTALLED"/>
+    
+    <!-- Mosquitto MQTT -->
+    <ExePackage Id="Mosquitto" 
+                SourceFile="mosquitto-2.0.18-install-windows-x64.exe"
+                InstallCommand="/S"
+                DetectCondition="MOSQUITTO_INSTALLED"/>
+    
+    <!-- pip пакеты -->
+    <ExePackage Id="PipPackages"
+                SourceFile="cmd.exe"
+                InstallCommand="/C pip install ultralytics pywin32 pillow"
+                DetectCondition="PIP_PACKAGES_INSTALLED"/>
+</Chain>
+    <Chain>
       <PackageGroupRef Id="NetFx45Web"/>
       <PackageGroupRef Id="WindowsInstaller45"/>
       <RollbackBoundary />

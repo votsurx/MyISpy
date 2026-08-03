@@ -6868,7 +6868,26 @@ namespace iSpyApplication
     {
         private static readonly string YoloEnabledKey = "YoloEnabled";
         private static readonly string YoloConfidenceKey = "YoloConfidence";
+        private static readonly string YoloClassesKey = "YoloClasses";
 
+        public static string[] GetYoloClasses(this objectsCamera cam)
+        {
+            if (string.IsNullOrEmpty(cam.settings.namevaluesettings))
+                return new string[] { "person", "car", "cat", "dog" };
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            if (dict.TryGetValue(YoloClassesKey, out var val))
+                return val.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            return new string[] { "person", "car", "cat", "dog" };
+        }
+
+        public static void SetYoloClasses(this objectsCamera cam, string[] classes)
+        {
+            var dict = ParseNameValueSettings(cam.settings.namevaluesettings);
+            if (classes == null || classes.Length == 0)
+                classes = new string[] { "person", "car", "cat", "dog" };
+            dict[YoloClassesKey] = string.Join(";", classes);
+            cam.settings.namevaluesettings = SerializeNameValueSettings(dict);
+        }
         public static bool GetYoloEnabled(this objectsCamera cam)
         {
             if (string.IsNullOrEmpty(cam.settings.namevaluesettings)) return false;

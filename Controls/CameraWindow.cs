@@ -696,9 +696,17 @@ namespace iSpyApplication.Controls
             try
             {
                 float conf = Camobject.GetYoloConfidence();
+                string[] classes = Camobject.GetYoloClasses();
+                string classesStr = classes != null && classes.Length > 0
+                    ? string.Join(",", classes)
+                    : "person";
+
                 int port = 5000 + Camobject.id;
 
-                var scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Yolo", "yolo_tcp_server.py");
+                // === ОБЪЯВЛЯЕМ ПЕРЕМЕННЫЕ ПЕРЕД ИСПОЛЬЗОВАНИЕМ ===
+                string yoloDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Yolo");
+                string scriptPath = Path.Combine(yoloDir, "yolo_tcp_server.py");
+                // ==================================================
 
                 if (!File.Exists(scriptPath))
                 {
@@ -706,27 +714,29 @@ namespace iSpyApplication.Controls
                     return;
                 }
 
-                Debug.WriteLine($"YOLO: запуск Python сервера на порту {port}");
+                Debug.WriteLine($"YOLO: запуск Python на порту {port}, классы: {classesStr}");
 
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"\"{scriptPath}\" --port {port} --conf {conf.ToString(CultureInfo.InvariantCulture)}",
-                    WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Yolo"),
+                    Arguments = $"\"{scriptPath}\" --port {port} --conf {conf.ToString(CultureInfo.InvariantCulture)} --classes \"{classesStr}\"",
+                    WorkingDirectory = yoloDir,
                     UseShellExecute = true,
-                    CreateNoWindow = false
+                    CreateNoWindow = true
                 };
 
-                _yoloProcess = Process.Start(startInfo);  // Сохраняем процесс!
+                _yoloProcess = Process.Start(startInfo);
                 Debug.WriteLine($"YOLO: Python запущен (PID: {_yoloProcess.Id})");
 
                 // Ждём и подключаемся с повторными попытками
                 Task.Run(() => {
+                    // ДАЁМ PYTHON ВРЕМЯ НА ЗАГРУЗКУ МОДЕЛИ (10 секунд!)
+                    Thread.Sleep(15000);
+
                     for (int i = 0; i < 10; i++)
                     {
                         try
                         {
-                            Thread.Sleep(1000);
                             Debug.WriteLine($"YOLO: попытка подключения {i + 1}...");
 
                             if (_yoloPipe != null)
@@ -743,6 +753,7 @@ namespace iSpyApplication.Controls
                         catch (Exception ex)
                         {
                             Debug.WriteLine($"YOLO: попытка {i + 1} не удалась - {ex.Message}");
+                            Thread.Sleep(5000);  // Пауза 1 сек между попытками
                         }
                     }
                     Debug.WriteLine("YOLO: все попытки подключения не удались!");

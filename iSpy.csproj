@@ -514,14 +514,22 @@
     <Compile Include="Importer.Designer.cs">
       <DependentUpon>Importer.cs</DependentUpon>
     </Compile>
-    <Compile Include="MQTT\MqttEngine.cs" />
-    <Compile Include="MQTT\MqttRule.cs" />
+    <Compile Include="MQTT\MqttEngine.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="MQTT\MqttRule.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="MQTT\MqttRuleEditor.cs">
       <SubType>Form</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="MQTT\MqttRulesStorage.cs" />
+    <Compile Include="MQTT\MqttRulesStorage.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="MQTT\MqttSettingsTab.cs">
       <SubType>UserControl</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Onvif\Behaviour\CustomAddressHeader.cs" />
     <Compile Include="Onvif\Behaviour\CustomEndpointBehavior.cs" />
@@ -2976,9 +2984,10 @@
     </PreBuildEvent>
     <PostBuildEvent>xcopy "$(ProjectDir)dlls\$(PlatformName)\*.*" "$(ProjectDir)$(OutDir)" /Y
 if "$(ConfigurationName)" == "Release" (
-    del $(ProjectDir)$(OutDir)*.pdb"
-    del "$(ProjectDir)$(OutDir)*.vshost.exe"
-    call "$(SolutionDir)signing\iSpy$(PlatformName).bat"
+    del /F /Q "$(ProjectDir)$(OutDir)*.pdb" 2&gt;nul
+    del /F /Q "$(ProjectDir)$(OutDir)*.vshost.exe" 2&gt;nul
+    call "$(SolutionDir)signing\iSpy$(PlatformName).bat" 2&gt;nul
+    exit 0
 )</PostBuildEvent>
   </PropertyGroup>
   <Import Project="packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('packages\SharpDX.2.6.3\build\SharpDX.targets')" />

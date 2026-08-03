@@ -7,6 +7,9 @@ from PIL import Image
 import io
 import time
 import traceback
+import os
+script_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(script_dir, "yolov8n.onnx")
 
 # Парсим аргументы
 port = 5003
@@ -30,7 +33,7 @@ BUFFER_TIMEOUT = 3.0  # Удаляем кадры старше 3 секунд
 # Модель
 print("YOLO: загрузка модели...", flush=True)
 try:
-    model = YOLO("yolov8n.onnx")
+    model = YOLO(model_path)
     print("YOLO: модель загружена", flush=True)
 except Exception as e:
     print(f"YOLO: ОШИБКА загрузки модели - {e}", flush=True)
@@ -46,6 +49,15 @@ print(f"YOLO: ожидание подключения на порту {port}..."
 conn, addr = server.accept()
 print(f"YOLO: подключён {addr}", flush=True)
 
+
+target_classes = ["person"]  # По умолчанию
+
+for i, arg in enumerate(sys.argv):
+    if arg == "--classes":
+        target_classes = sys.argv[i + 1].split(",")
+
+print(f"YOLO: целевые классы: {target_classes}", flush=True)
+
 def cleanup_buffer():
     """Удаляет старые кадры из буфера"""
     global last_cleanup
@@ -57,66 +69,43 @@ def cleanup_buffer():
             while len(buffer) > 6:
                 buffer.popleft()
                 removed += 1
-            if removed > 0:
-                print(f"YOLO: очистка буфера - удалено {removed} старых кадров, осталось {len(buffer)}", flush=True)
+            #if removed > 0:
             last_cleanup = current_time
     except Exception as e:
         print(f"YOLO: ошибка очистки буфера - {e}", flush=True)
 
 def process_buffer():
-    """Проверяет буфер и ОЧИЩАЕТ его"""
     try:
         if len(buffer) == 0:
-            print(f"YOLO: буфер пуст!", flush=True)
             return "SKIP"
         
-        print(f"YOLO: проверка {len(buffer)} кадров...", flush=True)
-        
         frames_checked = 0
-        
         while buffer:
-            try:
-                img = buffer.popleft()
-            except IndexError:
-                break
-                
+            img = buffer.popleft()
             frames_checked += 1
             
-            try:
-                results = model(img, verbose=False, conf=confidence)
+            results = model(img, verbose=False, conf=confidence)
+            
+            if results and len(results) > 0 and len(results[0].boxes) > 0:
+                found = []
+                for box in results[0].boxes:
+                    cls_id = int(box.cls)
+                    if cls_id in model.names:
+                        class_name = model.names[cls_id]
+                        # ФИЛЬТРУЕМ ТОЛЬКО ВЫБРАННЫЕ КЛАССЫ!
+                        if class_name in target_classes:
+                            found.append((class_name, float(box.conf)))
                 
-                if results and len(results) > 0 and len(results[0].boxes) > 0:
-                    classes = []
-                    confidences = []
-                    
-                    for box in results[0].boxes:
-                        try:
-                            cls_id = int(box.cls)
-                            if cls_id in model.names:
-                                classes.append(model.names[cls_id])
-                                confidences.append(float(box.conf))
-                        except Exception:
-                            continue
-                    
-                    if classes:
-                        print(f"YOLO: НАЙДЕНЫ ОБЪЕКТЫ:", flush=True)
-                        for cls, conf_val in zip(classes, confidences):
-                            print(f"  - {cls}: {conf_val:.2%}", flush=True)
-                        
-                        buffer.clear()
-                        return "RECORD"
-                    
-            except Exception as e:
-                print(f"YOLO: ошибка обработки кадра - {e}", flush=True)
-                traceback.print_exc()
-                continue
+                if found:
+                    print(f"YOLO: НАЙДЕНЫ ОБЪЕКТЫ:", flush=True)
+                    for cls_name, conf_val in found:
+                        print(f"  - {cls_name}: {conf_val:.2%}", flush=True)
+                    buffer.clear()
+                    return "RECORD"
         
-        print(f"YOLO: проверено {frames_checked} кадров, объекты не найдены", flush=True)
         return "SKIP"
-        
     except Exception as e:
-        print(f"YOLO: КРИТИЧЕСКАЯ ошибка в process_buffer - {e}", flush=True)
-        traceback.print_exc()
+        print(f"YOLO: ошибка в process_buffer - {e}", flush=True)
         return "SKIP"
 
 def recv_all(sock, n):
@@ -186,7 +175,11 @@ while True:
                     print(f"YOLO: некорректный порог: {new_conf}", flush=True)
             except ValueError:
                 print(f"YOLO: ошибка парсинга порога", flush=True)
-            
+        
+        elif data.startswith(b"CLASSES:"):
+            target_classes = data[8:].decode().split(",")
+            print(f"YOLO: классы изменены на {target_classes}", flush=True)
+        
         # Обрабатываем JPEG кадр
         else:
             try:
@@ -195,8 +188,8 @@ while True:
                 buffer.append(img)
                 frame_count += 1
                 
-                if frame_count % 30 == 0:
-                    print(f"YOLO: получено кадров: {frame_count}, в буфере: {len(buffer)}", flush=True)
+                #if frame_count % 30 == 0:
+                    #print(f"YOLO: получено кадров: {frame_count}, в буфере: {len(buffer)}", flush=True)
                     
             except Exception as e:
                 print(f"YOLO: ошибка декодирования кадра - {e}", flush=True)

@@ -120,6 +120,10 @@ namespace iSpyApplication
             this.label18 = new System.Windows.Forms.Label();
             this.lblYoloConfidence = new System.Windows.Forms.Label();
             this.numYoloConfidenceNew = new System.Windows.Forms.NumericUpDown();
+            this.chkYoloPerson = new System.Windows.Forms.CheckBox();
+            this.chkYoloCar = new System.Windows.Forms.CheckBox();
+            this.chkYoloDog = new System.Windows.Forms.CheckBox();
+            this.chkYoloCat = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
@@ -1261,6 +1265,10 @@ namespace iSpyApplication
             this.numYoloConfidence.Controls.Add(this.label18, 0, 5);
             this.numYoloConfidence.Controls.Add(this.lblYoloConfidence, 0, 6);
             this.numYoloConfidence.Controls.Add(this.numYoloConfidenceNew, 1, 6);
+            this.numYoloConfidence.Controls.Add(this.chkYoloPerson, 2, 5);
+            this.numYoloConfidence.Controls.Add(this.chkYoloCar, 3, 5);
+            this.numYoloConfidence.Controls.Add(this.chkYoloDog, 2, 6);
+            this.numYoloConfidence.Controls.Add(this.chkYoloCat, 3, 6);
             this.numYoloConfidence.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numYoloConfidence.Location = new System.Drawing.Point(6, 21);
             this.numYoloConfidence.Name = "numYoloConfidence";
@@ -1301,7 +1309,7 @@ namespace iSpyApplication
             this.chkSuppressNoise.AutoSize = true;
             this.chkSuppressNoise.Checked = true;
             this.chkSuppressNoise.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSuppressNoise.Location = new System.Drawing.Point(517, 6);
+            this.chkSuppressNoise.Location = new System.Drawing.Point(562, 6);
             this.chkSuppressNoise.Margin = new System.Windows.Forms.Padding(6);
             this.chkSuppressNoise.Name = "chkSuppressNoise";
             this.chkSuppressNoise.Size = new System.Drawing.Size(118, 20);
@@ -1371,7 +1379,7 @@ namespace iSpyApplication
             this.flowLayoutPanel4.Location = new System.Drawing.Point(155, 117);
             this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(625, 31);
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(670, 31);
             this.flowLayoutPanel4.TabIndex = 59;
             // 
             // button5
@@ -1426,7 +1434,7 @@ namespace iSpyApplication
             // label51
             // 
             this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(402, 156);
+            this.label51.Location = new System.Drawing.Point(447, 156);
             this.label51.Margin = new System.Windows.Forms.Padding(6, 8, 6, 0);
             this.label51.Name = "label51";
             this.label51.Size = new System.Drawing.Size(103, 16);
@@ -1438,7 +1446,7 @@ namespace iSpyApplication
             this.flowLayoutPanel17.Controls.Add(this.numProcessInterval);
             this.flowLayoutPanel17.Controls.Add(this.label64);
             this.flowLayoutPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel17.Location = new System.Drawing.Point(511, 148);
+            this.flowLayoutPanel17.Location = new System.Drawing.Point(556, 148);
             this.flowLayoutPanel17.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel17.Name = "flowLayoutPanel17";
             this.flowLayoutPanel17.Size = new System.Drawing.Size(269, 44);
@@ -1576,6 +1584,50 @@ namespace iSpyApplication
             0,
             65536});
             this.numYoloConfidenceNew.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // chkYoloPerson
+            // 
+            this.chkYoloPerson.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkYoloPerson.AutoSize = true;
+            this.chkYoloPerson.Location = new System.Drawing.Point(361, 238);
+            this.chkYoloPerson.Name = "chkYoloPerson";
+            this.chkYoloPerson.Size = new System.Drawing.Size(64, 20);
+            this.chkYoloPerson.TabIndex = 69;
+            this.chkYoloPerson.Text = "Люди";
+            this.chkYoloPerson.UseVisualStyleBackColor = true;
+            // 
+            // chkYoloCar
+            // 
+            this.chkYoloCar.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkYoloCar.AutoSize = true;
+            this.chkYoloCar.Location = new System.Drawing.Point(444, 238);
+            this.chkYoloCar.Name = "chkYoloCar";
+            this.chkYoloCar.Size = new System.Drawing.Size(82, 20);
+            this.chkYoloCar.TabIndex = 70;
+            this.chkYoloCar.Text = "Машины";
+            this.chkYoloCar.UseVisualStyleBackColor = true;
+            // 
+            // chkYoloDog
+            // 
+            this.chkYoloDog.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkYoloDog.AutoSize = true;
+            this.chkYoloDog.Location = new System.Drawing.Point(361, 285);
+            this.chkYoloDog.Name = "chkYoloDog";
+            this.chkYoloDog.Size = new System.Drawing.Size(77, 20);
+            this.chkYoloDog.TabIndex = 71;
+            this.chkYoloDog.Text = "Собаки";
+            this.chkYoloDog.UseVisualStyleBackColor = true;
+            // 
+            // chkYoloCat
+            // 
+            this.chkYoloCat.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkYoloCat.AutoSize = true;
+            this.chkYoloCat.Location = new System.Drawing.Point(444, 285);
+            this.chkYoloCat.Name = "chkYoloCat";
+            this.chkYoloCat.Size = new System.Drawing.Size(69, 20);
+            this.chkYoloCat.TabIndex = 72;
+            this.chkYoloCat.Text = "Кошки";
+            this.chkYoloCat.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
@@ -4476,5 +4528,9 @@ namespace iSpyApplication
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label lblYoloConfidence;
         private System.Windows.Forms.NumericUpDown numYoloConfidenceNew;
+        private System.Windows.Forms.CheckBox chkYoloPerson;
+        private System.Windows.Forms.CheckBox chkYoloCar;
+        private System.Windows.Forms.CheckBox chkYoloDog;
+        private System.Windows.Forms.CheckBox chkYoloCat;
     }
 }

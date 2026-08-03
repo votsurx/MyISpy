@@ -73,138 +73,197 @@ namespace iSpyApplication
 
         private void LoadMqttRules()
         {
-            var rules = MqttRulesStorage.Load();
-            _mqttTab.LoadRules(rules);
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "iSpy", "XML", "mqtt_debug.log");
+            try
+            {
+                File.AppendAllText(logPath, $"[{DateTime.Now}] LoadMqttRules: _mqttTab = {(_mqttTab != null ? "OK" : "NULL")}\n");
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Путь к файлу: {MqttRulesStorage.FilePath}\n");
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Файл существует: {File.Exists(MqttRulesStorage.FilePath)}\n");
+
+                var rules = MqttRulesStorage.Load();
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Загружено правил: {rules?.Count ?? 0}\n");
+                if (rules != null)
+                {
+                    foreach (var rule in rules)
+                        File.AppendAllText(logPath, $"[{DateTime.Now}]   {rule.Name}\n");
+                }
+
+                if (_mqttTab != null)
+                {
+                    _mqttTab.LoadRules(rules ?? new List<MqttRule>());
+                    File.AppendAllText(logPath, $"[{DateTime.Now}] _mqttTab.LoadRules выполнен\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                File.AppendAllText(logPath, $"[{DateTime.Now}] ОШИБКА в LoadMqttRules: {ex.Message}\n{ex.StackTrace}\n");
+            }
         }
 
         private void SaveMqttRules()
         {
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "iSpy", "XML", "mqtt_debug.log");
             try
             {
-                var rules = _mqttTab.GetRules();
-                MqttRulesStorage.Save(rules);
+                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: _mqttTab = {(_mqttTab != null ? "OK" : "NULL")}\n");
+                if (_mqttTab == null) return;
 
-                // Обновляем правила в CameraWindow
-                CameraWindow.ReloadMqttRules(rules);
+                var rules = _mqttTab.GetRules();
+                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: получено {rules?.Count ?? 0} правил\n");
+                if (rules != null)
+                {
+                    foreach (var rule in rules)
+                        File.AppendAllText(logPath, $"[{DateTime.Now}]   Правило: {rule.Name}\n");
+                }
+
+                MqttRulesStorage.Save(rules);
+                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: сохранено в {MqttRulesStorage.FilePath}\n");
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Файл существует: {File.Exists(MqttRulesStorage.FilePath)}\n");
+                if (File.Exists(MqttRulesStorage.FilePath))
+                {
+                    var content = File.ReadAllText(MqttRulesStorage.FilePath);
+                    File.AppendAllText(logPath, $"[{DateTime.Now}] Содержимое файла ({content.Length} байт):\n{content}\n");
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"MQTT: ошибка сохранения - {ex.Message}");
+                File.AppendAllText(logPath, $"[{DateTime.Now}] ОШИБКА в SaveMqttRules: {ex.Message}\n{ex.StackTrace}\n");
             }
         }
 
         private void Button1Click(object sender, EventArgs e)
         {
-            string err = "";
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "iSpy", "XML", "mqtt_debug.log");
 
-            foreach (var s in mediaDirectoryEditor1.Directories)
+            try
             {
-                if (!Directory.Exists(s.Entry))
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Button1Click START\n");
+
+                string err = "";
+
+                foreach (var s in mediaDirectoryEditor1.Directories)
                 {
-                    err += LocRm.GetString("Validate_MediaDirectory") + " ("+s.Entry+")\n";
-                    break;
-                }
-            }
-            
-            if (err != "")
-            {
-                MessageBox.Show(err, LocRm.GetString("Error"));
-                return;
-            }
-
-            if (numJPEGQuality.Value != MainForm.Conf.JPEGQuality)
-            {
-                MainForm.EncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, (int) numJPEGQuality.Value);
-            }
-            MainForm.Conf.Enable_Error_Reporting = chkErrorReporting.Checked;
-            MainForm.Conf.Enable_Update_Check = chkCheckForUpdates.Checked;
-            MainForm.Conf.Enable_Password_Protect = chkPasswordProtect.Checked;
-
-            MainForm.Conf.Is_Silent_Startup_Check = chkIsSilentOnStartup.Checked;
-
-            MainForm.Conf.NoActivityColor = btnNoDetectColor.BackColor.ToRGBString();
-            MainForm.Conf.ActivityColor = btnDetectColor.BackColor.ToRGBString();
-            MainForm.Conf.TrackingColor = btnColorTracking.BackColor.ToRGBString();
-            MainForm.Conf.VolumeLevelColor = btnColorVolume.BackColor.ToRGBString();
-            MainForm.Conf.MainColor = btnColorMain.BackColor.ToRGBString();
-            MainForm.Conf.AreaColor = btnColorArea.BackColor.ToRGBString();
-            MainForm.Conf.BackColor = btnColorBack.BackColor.ToRGBString();
-            MainForm.Conf.BorderHighlightColor = btnBorderHighlight.BackColor.ToRGBString();
-            MainForm.Conf.BorderDefaultColor = btnBorderDefault.BackColor.ToRGBString();
-
-            MainForm.Conf.Enabled_ShowGettingStarted = chkShowGettingStarted.Checked;
-            MainForm.Conf.Opacity = tbOpacity.Value;
-            MainForm.Conf.OpenGrabs = chkOpenGrabs.Checked;
-            MainForm.Conf.BalloonTips = chkBalloon.Checked;
-            MainForm.Conf.TrayIconText = txtTrayIcon.Text;
-            MainForm.Conf.IPCameraTimeout = Convert.ToInt32(txtIPCameraTimeout.Value);
-            MainForm.Conf.ServerReceiveTimeout = Convert.ToInt32(txtServerReceiveTimeout.Value);
-            MainForm.Conf.ServerName = txtServerName.Text;
-            MainForm.Conf.AutoSchedule = chkAutoSchedule.Checked;
-            MainForm.Conf.CPUMax = Convert.ToInt32(numMaxCPU.Value);
-            MainForm.Conf.MaxRecordingThreads = (int)numMaxRecordingThreads.Value;
-            MainForm.Conf.CreateAlertWindows = chkAlertWindows.Checked;
-            MainForm.Conf.MaxRedrawRate = (int)numRedraw.Value;
-            MainForm.Conf.Priority = ddlPriority.SelectedIndex + 1;
-            MainForm.Conf.Monitor = chkMonitor.Checked;
-            MainForm.Conf.ScreensaverWakeup = chkInterrupt.Checked;
-            MainForm.Conf.PlaybackMode = ddlPlayback.SelectedIndex;
-            MainForm.Conf.PreviewItems = (int)numMediaPanelItems.Value;
-            MainForm.Conf.BigButtons = chkBigButtons.Checked;
-            MainForm.Conf.DeleteToRecycleBin = chkRecycle.Checked;
-            MainForm.Conf.SpeechRecognition = chkSpeechRecognition.Checked;
-            MainForm.Conf.StartupForm = ddlStartUpForm.SelectedItem.ToString();
-            MainForm.Conf.TrayOnMinimise = chkMinimiseToTray.Checked;
-            MainForm.Conf.MJPEGStreamInterval = (int)numMJPEGStreamInterval.Value;
-            MainForm.Conf.AlertOnDisconnect = txtAlertOnDisconnect.Text;
-            MainForm.Conf.AlertOnReconnect = txtAlertOnReconnect.Text;
-            MainForm.Conf.StartupMode = ddlStartupMode.SelectedIndex;
-            MainForm.Conf.EnableGZip = chkGZip.Checked;
-            MainForm.Conf.DisconnectNotificationDelay = (int)numDisconnectNotification.Value;
-            var l = mediaDirectoryEditor1.Directories.ToList();
-            MainForm.Conf.MediaDirectories = l.ToArray();
-            MainForm.Conf.ArchiveNew = txtArchive.Text.Trim();
-            if (!string.IsNullOrEmpty(MainForm.Conf.ArchiveNew))
-            {
-                if (!MainForm.Conf.ArchiveNew.EndsWith(@"\"))
-                    MainForm.Conf.ArchiveNew += @"\";
-            }
-
-            MainForm.Iconfont = new Font(FontFamily.GenericSansSerif, MainForm.Conf.BigButtons ? 22 : 15, FontStyle.Bold, GraphicsUnit.Pixel);
-            
-            MainForm.Conf.TalkMic = "";
-            if (ddlTalkMic.Enabled)
-            {
-                if (ddlTalkMic.SelectedIndex>0)
-                    MainForm.Conf.TalkMic = ddlTalkMic.SelectedItem.ToString();
-            }
-
-            MainForm.Conf.MinimiseOnClose = chkMinimise.Checked;
-            MainForm.Conf.JPEGQuality = (int) numJPEGQuality.Value;
-            MainForm.Conf.IPv6Disabled = !chkEnableIPv6.Checked;
-            MainForm.SetPriority();            
-            MainForm.Conf.ShowOverlayControls = chkOverlay.Checked;
-
-            string lang = ((ListItem) ddlLanguage.SelectedItem).Value[0];
-            if (lang != MainForm.Conf.Language)
-            {
-                ReloadResources = true;
-                LocRm.Reset();
-            }
-            MainForm.Conf.Language = lang;
-            if (chkStartup.Checked)
-            {
-                if (chkIsSilentOnStartup.Checked)
-                {
-                    try
+                    if (!Directory.Exists(s.Entry))
                     {
-                        _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                        _rkApp?.SetValue("iSpy", "\"" + Application.ExecutablePath + "\" -silent", RegistryValueKind.String);
+                        err += LocRm.GetString("Validate_MediaDirectory") + " (" + s.Entry + ")\n";
+                        break;
                     }
-                    catch (Exception ex)
+                }
+
+                if (err != "")
+                {
+                    MessageBox.Show(err, LocRm.GetString("Error"));
+                    File.AppendAllText(logPath, $"[{DateTime.Now}] Ошибка валидации: {err}\n");
+                    return;
+                }
+
+                if (numJPEGQuality.Value != MainForm.Conf.JPEGQuality)
+                {
+                    MainForm.EncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, (int)numJPEGQuality.Value);
+                }
+                MainForm.Conf.Enable_Error_Reporting = chkErrorReporting.Checked;
+                MainForm.Conf.Enable_Update_Check = chkCheckForUpdates.Checked;
+                MainForm.Conf.Enable_Password_Protect = chkPasswordProtect.Checked;
+
+                MainForm.Conf.Is_Silent_Startup_Check = chkIsSilentOnStartup.Checked;
+
+                MainForm.Conf.NoActivityColor = btnNoDetectColor.BackColor.ToRGBString();
+                MainForm.Conf.ActivityColor = btnDetectColor.BackColor.ToRGBString();
+                MainForm.Conf.TrackingColor = btnColorTracking.BackColor.ToRGBString();
+                MainForm.Conf.VolumeLevelColor = btnColorVolume.BackColor.ToRGBString();
+                MainForm.Conf.MainColor = btnColorMain.BackColor.ToRGBString();
+                MainForm.Conf.AreaColor = btnColorArea.BackColor.ToRGBString();
+                MainForm.Conf.BackColor = btnColorBack.BackColor.ToRGBString();
+                MainForm.Conf.BorderHighlightColor = btnBorderHighlight.BackColor.ToRGBString();
+                MainForm.Conf.BorderDefaultColor = btnBorderDefault.BackColor.ToRGBString();
+
+                MainForm.Conf.Enabled_ShowGettingStarted = chkShowGettingStarted.Checked;
+                MainForm.Conf.Opacity = tbOpacity.Value;
+                MainForm.Conf.OpenGrabs = chkOpenGrabs.Checked;
+                MainForm.Conf.BalloonTips = chkBalloon.Checked;
+                MainForm.Conf.TrayIconText = txtTrayIcon.Text;
+                MainForm.Conf.IPCameraTimeout = Convert.ToInt32(txtIPCameraTimeout.Value);
+                MainForm.Conf.ServerReceiveTimeout = Convert.ToInt32(txtServerReceiveTimeout.Value);
+                MainForm.Conf.ServerName = txtServerName.Text;
+                MainForm.Conf.AutoSchedule = chkAutoSchedule.Checked;
+                MainForm.Conf.CPUMax = Convert.ToInt32(numMaxCPU.Value);
+                MainForm.Conf.MaxRecordingThreads = (int)numMaxRecordingThreads.Value;
+                MainForm.Conf.CreateAlertWindows = chkAlertWindows.Checked;
+                MainForm.Conf.MaxRedrawRate = (int)numRedraw.Value;
+                MainForm.Conf.Priority = ddlPriority.SelectedIndex + 1;
+                MainForm.Conf.Monitor = chkMonitor.Checked;
+                MainForm.Conf.ScreensaverWakeup = chkInterrupt.Checked;
+                MainForm.Conf.PlaybackMode = ddlPlayback.SelectedIndex;
+                MainForm.Conf.PreviewItems = (int)numMediaPanelItems.Value;
+                MainForm.Conf.BigButtons = chkBigButtons.Checked;
+                MainForm.Conf.DeleteToRecycleBin = chkRecycle.Checked;
+                MainForm.Conf.SpeechRecognition = chkSpeechRecognition.Checked;
+                MainForm.Conf.StartupForm = ddlStartUpForm.SelectedItem.ToString();
+                MainForm.Conf.TrayOnMinimise = chkMinimiseToTray.Checked;
+                MainForm.Conf.MJPEGStreamInterval = (int)numMJPEGStreamInterval.Value;
+                MainForm.Conf.AlertOnDisconnect = txtAlertOnDisconnect.Text;
+                MainForm.Conf.AlertOnReconnect = txtAlertOnReconnect.Text;
+                MainForm.Conf.StartupMode = ddlStartupMode.SelectedIndex;
+                MainForm.Conf.EnableGZip = chkGZip.Checked;
+                MainForm.Conf.DisconnectNotificationDelay = (int)numDisconnectNotification.Value;
+                var l = mediaDirectoryEditor1.Directories.ToList();
+                MainForm.Conf.MediaDirectories = l.ToArray();
+                MainForm.Conf.ArchiveNew = txtArchive.Text.Trim();
+                if (!string.IsNullOrEmpty(MainForm.Conf.ArchiveNew))
+                {
+                    if (!MainForm.Conf.ArchiveNew.EndsWith(@"\"))
+                        MainForm.Conf.ArchiveNew += @"\";
+                }
+
+                MainForm.Iconfont = new Font(FontFamily.GenericSansSerif, MainForm.Conf.BigButtons ? 22 : 15, FontStyle.Bold, GraphicsUnit.Pixel);
+
+                MainForm.Conf.TalkMic = "";
+                if (ddlTalkMic.Enabled)
+                {
+                    if (ddlTalkMic.SelectedIndex > 0)
+                        MainForm.Conf.TalkMic = ddlTalkMic.SelectedItem.ToString();
+                }
+
+                MainForm.Conf.MinimiseOnClose = chkMinimise.Checked;
+                MainForm.Conf.JPEGQuality = (int)numJPEGQuality.Value;
+                MainForm.Conf.IPv6Disabled = !chkEnableIPv6.Checked;
+                MainForm.SetPriority();
+                MainForm.Conf.ShowOverlayControls = chkOverlay.Checked;
+
+                string lang = ((ListItem)ddlLanguage.SelectedItem).Value[0];
+                if (lang != MainForm.Conf.Language)
+                {
+                    ReloadResources = true;
+                    LocRm.Reset();
+                }
+                MainForm.Conf.Language = lang;
+                if (chkStartup.Checked)
+                {
+                    if (chkIsSilentOnStartup.Checked)
                     {
-                        MessageBox.Show(ex.Message);
-                        Logger.LogException(ex);
+                        try
+                        {
+                            _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                            _rkApp?.SetValue("iSpy", "\"" + Application.ExecutablePath + "\" -silent", RegistryValueKind.String);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                            Logger.LogException(ex);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                            _rkApp?.SetValue("iSpy", "\"" + Application.ExecutablePath + "\" ", RegistryValueKind.String);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                            Logger.LogException(ex);
+                        }
                     }
                 }
                 else
@@ -212,7 +271,7 @@ namespace iSpyApplication
                     try
                     {
                         _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                        _rkApp?.SetValue("iSpy", "\"" + Application.ExecutablePath + "\" ", RegistryValueKind.String);
+                        _rkApp?.DeleteValue("iSpy", false);
                     }
                     catch (Exception ex)
                     {
@@ -220,58 +279,52 @@ namespace iSpyApplication
                         Logger.LogException(ex);
                     }
                 }
-            }
-            else
-            {
-                try
+
+                MainForm.ReloadColors();
+
+                if (ddlJoystick.SelectedIndex > 0)
                 {
-                    _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                    _rkApp?.DeleteValue("iSpy", false);
+                    string nameid = _sticks[ddlJoystick.SelectedIndex - 1];
+                    MainForm.Conf.Joystick.id = nameid.Split('|')[1];
+                    MainForm.Conf.Joystick.XAxis = jaxis1.ID;
+                    MainForm.Conf.Joystick.InvertXAxis = jaxis1.Invert;
+                    MainForm.Conf.Joystick.YAxis = jaxis2.ID;
+                    MainForm.Conf.Joystick.InvertYAxis = jaxis2.Invert;
+                    MainForm.Conf.Joystick.ZAxis = jaxis3.ID;
+                    MainForm.Conf.Joystick.InvertZAxis = jaxis3.Invert;
+                    MainForm.Conf.Joystick.Record = jbutton1.ID;
+                    MainForm.Conf.Joystick.Snapshot = jbutton2.ID;
+                    MainForm.Conf.Joystick.Talk = jbutton3.ID;
+                    MainForm.Conf.Joystick.Listen = jbutton4.ID;
+                    MainForm.Conf.Joystick.Play = jbutton5.ID;
+                    MainForm.Conf.Joystick.Next = jbutton6.ID;
+                    MainForm.Conf.Joystick.Previous = jbutton7.ID;
+                    MainForm.Conf.Joystick.Stop = jbutton8.ID;
+                    MainForm.Conf.Joystick.MaxMin = jbutton9.ID;
+                    MainForm.Conf.Joystick.PTSpeedProfile = jbutton10.ID;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    Logger.LogException(ex);
-                }
+                else
+                    MainForm.Conf.Joystick.id = "";
+
+                MainForm.Conf.Logging.Enabled = chkEnableLogging.Checked;
+                MainForm.Conf.Logging.FileSize = (int)numMaxLogSize.Value;
+                MainForm.Conf.Logging.KeepDays = (int)numKeepLogs.Value;
+
+                // === СОХРАНЯЕМ MQTT ПРАВИЛА ===
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Вызов SaveMqttRules...\n");
+                SaveMqttRules();
+                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules выполнен успешно\n");
+                // ==============================
+
+                File.AppendAllText(logPath, $"[{DateTime.Now}] Button1Click OK, закрываю окно\n");
+                DialogResult = DialogResult.OK;
+                Close();
             }
-
-            //SetStorageOptions();
-
-            MainForm.ReloadColors();
-
-            if (ddlJoystick.SelectedIndex > 0)
+            catch (Exception ex)
             {
-                string nameid = _sticks[ddlJoystick.SelectedIndex - 1];
-                MainForm.Conf.Joystick.id = nameid.Split('|')[1];
-                MainForm.Conf.Joystick.XAxis = jaxis1.ID;
-                MainForm.Conf.Joystick.InvertXAxis = jaxis1.Invert;
-                MainForm.Conf.Joystick.YAxis = jaxis2.ID;
-                MainForm.Conf.Joystick.InvertYAxis = jaxis2.Invert;
-                MainForm.Conf.Joystick.ZAxis = jaxis3.ID;
-                MainForm.Conf.Joystick.InvertZAxis = jaxis3.Invert;
-                MainForm.Conf.Joystick.Record = jbutton1.ID;
-                MainForm.Conf.Joystick.Snapshot = jbutton2.ID;
-                MainForm.Conf.Joystick.Talk = jbutton3.ID;
-                MainForm.Conf.Joystick.Listen = jbutton4.ID;
-                MainForm.Conf.Joystick.Play = jbutton5.ID;
-                MainForm.Conf.Joystick.Next = jbutton6.ID;
-                MainForm.Conf.Joystick.Previous = jbutton7.ID;
-                MainForm.Conf.Joystick.Stop = jbutton8.ID;
-                MainForm.Conf.Joystick.MaxMin = jbutton9.ID;
-                MainForm.Conf.Joystick.PTSpeedProfile = jbutton10.ID;
+                File.AppendAllText(logPath, $"[{DateTime.Now}] КРИТИЧЕСКАЯ ОШИБКА: {ex.Message}\n{ex.StackTrace}\n");
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка");
             }
-            else
-                MainForm.Conf.Joystick.id = "";
-
-            MainForm.Conf.Logging.Enabled = chkEnableLogging.Checked;
-            MainForm.Conf.Logging.FileSize = (int)numMaxLogSize.Value;
-            MainForm.Conf.Logging.KeepDays = (int)numKeepLogs.Value;
-            // === СОХРАНЯЕМ MQTT ПРАВИЛА ===
-            SaveMqttRules();
-            // ==============================
-
-            DialogResult = DialogResult.OK;
-            Close();
         }
 
         private jbutton _curButton;

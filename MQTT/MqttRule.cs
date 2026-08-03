@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace iSpyApplication.MQTT
@@ -24,39 +25,44 @@ namespace iSpyApplication.MQTT
         ExactlyOnce = 2   // Ровно один раз
     }
 
+    [DataContract]
     public class MqttRule
     {
+        [DataMember]
         public string Id { get; set; } = Guid.NewGuid().ToString("N").Substring(0, 8);
+        [DataMember]
         public bool Enabled { get; set; } = true;
+        [DataMember]
         public string Name { get; set; } = "Новое правило";
+        [DataMember]
         public MqttEventType EventType { get; set; } = MqttEventType.Motion;
-
+        [DataMember]
         public string Topic { get; set; } = "ispy/{event_type}/{camera_name}";
-
-        // Фильтр камер (пустой массив = все камеры)
-        public List<string> CameraIds { get; set; } = new();
-
-        // Фильтр объектов YOLO (пустой массив = все объекты)
-        public List<string> ObjectFilter { get; set; } = new();
-
+        [DataMember]
+        public List<string> CameraIds { get; set; } = new List<string>();
+        [DataMember]
+        public List<string> ObjectFilter { get; set; } = new List<string>();
+        [DataMember]
         public float MinConfidence { get; set; } = 0.5f;
-
-        // Что отправлять
+        [DataMember]
         public bool IncludeJson { get; set; } = true;
+        [DataMember]
         public bool IncludeSnapshot { get; set; } = false;
+        [DataMember]
         public bool SnapshotAsUrl { get; set; } = true;
-
-        // Параметры снапшота
+        [DataMember]
         public int SnapshotQuality { get; set; } = 70;
+        [DataMember]
         public int SnapshotWidth { get; set; } = 320;
+        [DataMember]
         public int SnapshotHeight { get; set; } = 240;
-
-        // Для периодических событий
+        [DataMember]
         public int IntervalSeconds { get; set; } = 30;
-
-        // MQTT флаги
+        [DataMember]
         public bool Retain { get; set; } = false;
+        [DataMember]
         public MqttQoS QoS { get; set; } = MqttQoS.AtLeastOnce;
+    
 
         // Вспомогательные методы
         public bool MatchesCamera(string cameraId)

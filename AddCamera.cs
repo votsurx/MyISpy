@@ -231,8 +231,20 @@ namespace iSpyApplication
             // === ЗАГРУЗКА YOLO-НАСТРОЕК ===
             chkYoloEnabled.Checked = CameraControl.Camobject.GetYoloEnabled();
             float conf = CameraControl.Camobject.GetYoloConfidence();
-            if (conf < 0.1f) conf = 0.5f; // защита от некорректных значений
+            if (conf < 0.1f) conf = 0.5f;
             numYoloConfidenceNew.Value = (decimal)conf;
+
+            // === ЗАГРУЗКА YOLO-КЛАССОВ ===
+            string[] savedClasses = CameraControl.Camobject.GetYoloClasses();
+            chkYoloPerson.Checked = savedClasses.Contains("person");
+            chkYoloCar.Checked = savedClasses.Contains("car");
+            chkYoloCat.Checked = savedClasses.Contains("cat");
+            chkYoloDog.Checked = savedClasses.Contains("dog");
+            // ==============================
+            chkYoloPerson.CheckedChanged += YoloClassCheckbox_Changed;
+            chkYoloCar.CheckedChanged += YoloClassCheckbox_Changed;
+            chkYoloCat.CheckedChanged += YoloClassCheckbox_Changed;
+            chkYoloDog.CheckedChanged += YoloClassCheckbox_Changed;
 
             CameraControl.NewFrame -= CameraNewFrame;
             CameraControl.NewFrame += CameraNewFrame;
@@ -454,6 +466,32 @@ namespace iSpyApplication
             _loaded = true;
         }
 
+        private void YoloClassCheckbox_Changed(object sender, EventArgs e)
+        {
+            if (!_loaded) return;
+
+            // Собираем выбранные классы
+            var classes = new List<string>();
+            if (chkYoloPerson.Checked) classes.Add("person");
+            if (chkYoloCar.Checked) classes.Add("car");
+            if (chkYoloCat.Checked) classes.Add("cat");
+            if (chkYoloDog.Checked) classes.Add("dog");
+
+            if (classes.Count == 0) classes.AddRange(new[] { "person", "car", "cat", "dog" });
+
+            // Сохраняем в настройки
+            CameraControl.Camobject.SetYoloClasses(classes.ToArray());
+
+            // Отправляем в Python через TCP
+            if (CameraControl._yoloPipe != null && CameraControl._yoloPipe.IsConnected)
+            {
+                string classesStr = string.Join(",", classes);
+                CameraControl._yoloPipe.SendCommand($"CLASSES:{classesStr}");
+                Debug.WriteLine($"YOLO: классы изменены на {classesStr}");
+            }
+
+            MainForm.NeedsSync = true;
+        }
         private void LoadMediaDirectories()
         {
             ddlMediaDirectory.Items.Clear();
@@ -1174,9 +1212,23 @@ namespace iSpyApplication
                 MainForm.NeedsMediaRefresh = Helper.Now;
             }
 
-            // === СОХРАНЕНИЕ YOLO-НАСТРОЕК ===
+            // === СОХРАНЕНИЕ YOLO НАСТРОЕК ===
             CameraControl.Camobject.SetYoloEnabled(chkYoloEnabled.Checked);
             CameraControl.Camobject.SetYoloConfidence((float)numYoloConfidenceNew.Value);
+
+            // Сохраняем выбранные классы
+            var selectedClasses = new List<string>();
+            if (chkYoloPerson.Checked) selectedClasses.Add("person");
+            if (chkYoloCar.Checked) selectedClasses.Add("car");
+            if (chkYoloCat.Checked) selectedClasses.Add("cat");
+            if (chkYoloDog.Checked) selectedClasses.Add("dog");
+            // Если ничего не выбрано — выбираем всё
+            if (selectedClasses.Count == 0)
+            {
+                selectedClasses.AddRange(new[] { "person", "car", "cat", "dog" });
+            }
+            CameraControl.Camobject.SetYoloClasses(selectedClasses.ToArray());
+            // ================================
 
             return true;
         }

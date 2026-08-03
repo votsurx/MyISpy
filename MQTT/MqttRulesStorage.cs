@@ -1,17 +1,17 @@
-﻿// Файл: MQTT/MqttRulesStorage.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace iSpyApplication.MQTT
 {
     public static class MqttRulesStorage
     {
-        private static string FilePath => Path.Combine(
+        public static string FilePath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "iSpy", "XML", "mqtt_rules.xml");
+            "iSpy", "XML", "mqtt_rules.json");
 
         public static List<MqttRule> Load()
         {
@@ -19,9 +19,16 @@ namespace iSpyApplication.MQTT
             {
                 if (File.Exists(FilePath))
                 {
-                    var serializer = new XmlSerializer(typeof(List<MqttRule>));
-                    using var fs = new FileStream(FilePath, FileMode.Open);
-                    return (List<MqttRule>)serializer.Deserialize(fs) ?? new List<MqttRule>();
+                    var json = File.ReadAllText(FilePath);
+                    if (!string.IsNullOrWhiteSpace(json))
+                    {
+                        using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                        {
+                            var serializer = new DataContractJsonSerializer(typeof(List<MqttRule>));
+                            var rules = serializer.ReadObject(ms) as List<MqttRule>;
+                            return rules ?? new List<MqttRule>();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -39,14 +46,24 @@ namespace iSpyApplication.MQTT
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                var serializer = new XmlSerializer(typeof(List<MqttRule>));
-                using var fs = new FileStream(FilePath, FileMode.Create);
-                serializer.Serialize(fs, rules);
+                using (var ms = new MemoryStream())
+                {
+                    var serializer = new DataContractJsonSerializer(typeof(List<MqttRule>));
+                    serializer.WriteObject(ms, rules ?? new List<MqttRule>());
+                    var json = Encoding.UTF8.GetString(ms.ToArray());
+                    File.WriteAllText(FilePath, FormatJson(json));
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"MQTT: ошибка сохранения - {ex.Message}");
             }
+        }
+
+        private static string FormatJson(string json)
+        {
+            // Просто возвращаем как есть, но можно добавить форматирование при желании
+            return json;
         }
     }
 }
