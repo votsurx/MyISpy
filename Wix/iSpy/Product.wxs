@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?if $(var.Platform) = x64 ?>
-<?define ProductName = "iSpy (64 bit)" ?>
+<?define ProductName = "MyiSpy (64 bit)" ?>
 <?define Win64 = "yes" ?>
 <?define Bits = "64" ?>
 <?define UpgradeCode = "70D791FD-67B0-444B-BDC1-ADF592557E88" ?>
 <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
 <?else ?>
-<?define ProductName = "iSpy (32 bit)" ?>
+<?define ProductName = "MyiSpy (32 bit)" ?>
 <?define Win64 = "no" ?>
 <?define Bits = "32" ?>
 <?define UpgradeCode = "B70B8F0F-48E1-4149-AD58-636704EA8215" ?>
@@ -48,6 +48,7 @@
       <ComponentGroupRef Id="sounds" />
       <ComponentGroupRef Id="webserverroot" />
       <ComponentGroupRef Id="masks" />
+      <ComponentGroupRef Id="MosquittoFiles" />
       <ComponentGroupRef Id="data" />
       <ComponentGroupRef Id="api" />
       <ComponentGroupRef Id="commands" />
@@ -108,6 +109,7 @@
             <Directory Id="Masks" Name="Masks" />
             <Directory Id="Commands" Name="Commands" />
             <Directory Id="VLC" Name="VLC" />
+            <Directory Id="MosquittoFolder" Name="Mosquitto" />
           </Directory>
         </Directory>
       </Directory>
@@ -288,6 +290,53 @@
       <Component Win64="$(var.Win64)" Id="Component131" Guid="{519CB7CE-645D-4235-9CDE-2DFC4B5F70FC}">
         <File Id="Translations.xml" Source="D:\MyiSpy\bin\x64\Release\\XML\Translations.xml" KeyPath="yes" Checksum="yes" />
       </Component>
+      </ComponentGroup>
+    <ComponentGroup Id="MosquittoFiles" Directory="MosquittoFolder">
+    <Component Id="MosquittoExe" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto.exe" KeyPath="yes" />
+    </Component>
+    <Component Id="MosquittoDll" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="cjson" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\cjson.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="libcrypto" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\libcrypto-3-x64.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="libmicrohttpd" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\libmicrohttpd-dll.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="libssl" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\libssl-3-x64.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_acl_file" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_acl_file.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_common" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_common.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_dynamic_security" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_dynamic_security.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_password_file" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_password_file.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_persist_sqlite" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_persist_sqlite.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquitto_sparkplug_aware" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquitto_sparkplug_aware.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="mosquittopp" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\mosquittopp.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="pthreadVC" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\pthreadVC3.dll" KeyPath="yes" />
+    </Component>
+    <Component Id="sqlite3" Guid="*">
+        <File Source="D:\MyiSpy\Mosquitto\sqlite3.dll" KeyPath="yes" />
+    </Component>
     </ComponentGroup>
     <ComponentGroup Id="ispyserver" Directory="iSpyServer">
     <Component Win64="$(var.Win64)" Id="iSpyServer" Guid="{CF42C96F-478F-4DEB-BF0B-D456CA88A742}">

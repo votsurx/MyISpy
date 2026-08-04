@@ -34,6 +34,7 @@ using NETWORKLIST;
 using SharpDX.DirectInput;
 using PictureBox = iSpyApplication.Controls.PictureBox;
 using Timer = System.Timers.Timer;
+using iSpyApplication.MQTT;
 
 namespace iSpyApplication
 {
@@ -847,6 +848,8 @@ namespace iSpyApplication
         private void MainFormLoad(object sender, EventArgs e)
         {
             MainInit();
+            MosquittoLauncher.Start(1883);
+            CameraWindow.InitMqtt();
         }
 
         private void MainInit()
@@ -1355,7 +1358,7 @@ namespace iSpyApplication
             _houseKeepingTimer.Start();
 
             // === ИНИЦИАЛИЗАЦИЯ MQTT ===
-            CameraWindow.InitMqtt();
+            //CameraWindow.InitMqtt();
             // ===========================
         }
 
@@ -2470,6 +2473,8 @@ namespace iSpyApplication
                     // ignored
                 }
             }
+            MosquittoLauncher.Stop();
+
             Exit();
         }
 

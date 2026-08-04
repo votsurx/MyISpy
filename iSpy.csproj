@@ -514,6 +514,7 @@
     <Compile Include="Importer.Designer.cs">
       <DependentUpon>Importer.cs</DependentUpon>
     </Compile>
+    <Compile Include="MQTT\MosquittoLauncher.cs" />
     <Compile Include="MQTT\MqttEngine.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

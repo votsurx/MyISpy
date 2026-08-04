@@ -3654,7 +3654,7 @@ namespace iSpyApplication.Controls
             {
                 Debug.WriteLine($"MQTT: загружено {_mqttRules.Count} правил, {_mqttRules.Count(r => r.Enabled)} активных");
 
-                _mqttEngine = new MqttEngine("localhost", 1884);
+                _mqttEngine = new MqttEngine("localhost", 1883);
                 Task.Run(async () => {
                     var connected = await _mqttEngine.ConnectAsync();
                     Debug.WriteLine($"MQTT: подключение к брокеру - {(connected ? "УСПЕШНО" : "ОШИБКА")}");
