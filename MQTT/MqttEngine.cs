@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace iSpyApplication.MQTT
@@ -102,89 +101,56 @@ namespace iSpyApplication.MQTT
         }
 
         public async Task<bool> PublishDetectionAsync(MqttRule rule, int cameraId, string cameraName,
-            List<YoloDetection> detections, byte[] snapshotData = null)
+    List<YoloDetection> detections, byte[] snapshotData = null)
         {
             var topic = rule.GetProcessedTopic(cameraId.ToString(), cameraName);
-
-            string payload = null;
+            string payload = "ON";
 
             if (rule.IncludeJson)
             {
-                var detectionEvent = new
+                // Формируем JSON вручную
+                var objectsJson = new StringBuilder();
+                objectsJson.Append("[");
+                for (int i = 0; i < detections.Count; i++)
                 {
-                    camera_id = cameraId,
-                    camera_name = cameraName,
-                    event_type = "detection",
-                    timestamp = DateTime.UtcNow.ToString("o"),
-                    objects = detections,
-                    snapshot_available = rule.IncludeSnapshot
-                };
-                payload = JsonSerializer.Serialize(detectionEvent);
-            }
-            else
-            {
-                payload = "ON"; // Простой формат для датчиков
-            }
-
-            var result = await PublishAsync(topic, payload, rule.Retain,
-                (MqttQualityOfServiceLevel)rule.QoS);
-
-            // Отправляем снапшот отдельным сообщением
-            if (rule.IncludeSnapshot && snapshotData != null)
-            {
-                var snapshotTopic = topic + "/snapshot";
-
-                if (rule.SnapshotAsUrl)
-                {
-                    // URL на снапшот (заглушка)
-                    var snapshotUrl = $"http://localhost:8080/snapshot/{cameraId}";
-                    await PublishAsync(snapshotTopic, snapshotUrl, false,
-                        MqttQualityOfServiceLevel.AtMostOnce);
+                    if (i > 0) objectsJson.Append(",");
+                    objectsJson.Append("{");
+                    objectsJson.Append($"\"Class\":\"{detections[i].Class}\",");
+                    objectsJson.Append($"\"Confidence\":{detections[i].Confidence.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+                    objectsJson.Append("}");
                 }
-                else
-                {
-                    // Base64 снапшот
-                    var snapshotPayload = JsonSerializer.Serialize(new
-                    {
-                        camera_id = cameraId,
-                        timestamp = DateTime.UtcNow.ToString("o"),
-                        format = "jpeg",
-                        width = rule.SnapshotWidth,
-                        height = rule.SnapshotHeight,
-                        data = Convert.ToBase64String(snapshotData)
-                    });
-                    await PublishAsync(snapshotTopic, snapshotPayload, false,
-                        MqttQualityOfServiceLevel.AtMostOnce);
-                }
+                objectsJson.Append("]");
+
+                payload = "{";
+                payload += $"\"camera_id\":{cameraId},";
+                payload += $"\"camera_name\":\"{cameraName}\",";
+                payload += $"\"event_type\":\"detection\",";
+                payload += $"\"timestamp\":\"{DateTime.UtcNow.ToString("o")}\",";
+                payload += $"\"objects\":{objectsJson},";
+                payload += $"\"snapshot_available\":{rule.IncludeSnapshot.ToString().ToLower()}";
+                payload += "}";
             }
 
-            return result;
+            return await PublishAsync(topic, payload, rule.Retain, (MqttQualityOfServiceLevel)rule.QoS);
         }
 
-        public async Task<bool> PublishMotionAsync(MqttRule rule, int cameraId, string cameraName,
-            float motionLevel)
+        public async Task<bool> PublishMotionAsync(MqttRule rule, int cameraId, string cameraName, float motionLevel)
         {
             var topic = rule.GetProcessedTopic(cameraId.ToString(), cameraName);
+            string payload = "ON";
 
-            string payload;
             if (rule.IncludeJson)
             {
-                payload = JsonSerializer.Serialize(new
-                {
-                    camera_id = cameraId,
-                    camera_name = cameraName,
-                    event_type = "motion",
-                    timestamp = DateTime.UtcNow.ToString("o"),
-                    motion_level = motionLevel
-                });
-            }
-            else
-            {
-                payload = "ON";
+                payload = "{";
+                payload += $"\"camera_id\":{cameraId},";
+                payload += $"\"camera_name\":\"{cameraName}\",";
+                payload += $"\"event_type\":\"motion\",";
+                payload += $"\"timestamp\":\"{DateTime.UtcNow.ToString("o")}\",";
+                payload += $"\"motion_level\":{motionLevel.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+                payload += "}";
             }
 
-            return await PublishAsync(topic, payload, rule.Retain,
-                (MqttQualityOfServiceLevel)rule.QoS);
+            return await PublishAsync(topic, payload, rule.Retain, (MqttQualityOfServiceLevel)rule.QoS);
         }
 
         public async Task<bool> PublishCameraStatusAsync(MqttRule rule, int cameraId, string cameraName,
@@ -192,18 +158,16 @@ namespace iSpyApplication.MQTT
         {
             var topic = rule.GetProcessedTopic(cameraId.ToString(), cameraName);
 
-            var payload = JsonSerializer.Serialize(new
-            {
-                camera_id = cameraId,
-                camera_name = cameraName,
-                online,
-                recording,
-                fps,
-                timestamp = DateTime.UtcNow.ToString("o")
-            });
+            var payload = "{";
+            payload += $"\"camera_id\":{cameraId},";
+            payload += $"\"camera_name\":\"{cameraName}\",";
+            payload += $"\"online\":{online.ToString().ToLower()},";
+            payload += $"\"recording\":{recording.ToString().ToLower()},";
+            payload += $"\"fps\":{fps.ToString(System.Globalization.CultureInfo.InvariantCulture)},";
+            payload += $"\"timestamp\":\"{DateTime.UtcNow.ToString("o")}\"";
+            payload += "}";
 
-            return await PublishAsync(topic, payload, rule.Retain,
-                (MqttQualityOfServiceLevel)rule.QoS);
+            return await PublishAsync(topic, payload, rule.Retain, (MqttQualityOfServiceLevel)rule.QoS);
         }
 
         private Task OnConnected(MqttClientConnectedEventArgs args)
@@ -226,7 +190,6 @@ namespace iSpyApplication.MQTT
         }
     }
 
-    // Вспомогательный класс для детекций
     public class YoloDetection
     {
         public string Class { get; set; }

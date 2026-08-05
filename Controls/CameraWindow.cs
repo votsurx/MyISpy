@@ -3148,54 +3148,23 @@ namespace iSpyApplication.Controls
                                    };
                 _recordingThread.Start();
             }
-        }
-
-        public void OpenWebInterface()
-        {
-            if (SupportsWebInterface) { 
-                try
-                {
-                    var uri = new Uri(Camobject.settings.videosourcestring);
-                    var url = uri.AbsoluteUri.Replace(uri.PathAndQuery, "");
-                    if (!uri.Scheme.StartsWith("http"))
-                    {
-                        url = url.ReplaceFirst(uri.Scheme, "http");
-                        url = url.ReplaceFirst(":" + uri.Port, ":80");
-                    }
-                    url = url.Replace(uri.UserInfo+"@", "");
-
-                    MainForm.OpenUrl(url);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex,"open web browser");
-                }
-            }
-        }
-
-        public bool SupportsWebInterface
-        {
-            get
+            // === MQTT: Отправляем событие начала записи ===
+            if (_mqttEngine != null && _mqttEngine.IsConnected)
             {
-                switch (Camobject.settings.sourceindex)
+                var rules = GetActiveMqttRules(MqttEventType.RecordingStart);
+                foreach (var rule in rules)
                 {
-                    default:
-                        Uri uri;
-                        if (Uri.TryCreate(Camobject.settings.videosourcestring, UriKind.Absolute, out uri))
+                    if (rule.MatchesCamera(Camobject.id.ToString()))
+                    {
+                        Task.Run(async () =>
                         {
-                            return !uri.IsFile;
-                        }
-                        return false;
-                    case 3:
-                    case 4:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 10:
-                        return false;
+                            await _mqttEngine.PublishCameraStatusAsync(rule, Camobject.id, Camobject.name, true, true, 0);
+                        });
+                    }
                 }
             }
         }
+
         [HandleProcessCorruptedStateExceptions]
         private void Record()
         {
@@ -3551,14 +3520,27 @@ namespace iSpyApplication.Controls
                                 StartSaving();
                                 System.Diagnostics.Debug.WriteLine("YOLO: запись запущена!");
 
-                                // === MQTT: Отправляем событие детекции ===
+                                // === MQTT ОТПРАВКА С ЛОГИРОВАНИЕМ ===
+                                string mqttLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "iSpy", "XML", "mqtt_detect.log");
+                                File.AppendAllText(mqttLog, $"[{DateTime.Now}] RECORD! _mqttEngine={_mqttEngine != null}, IsConnected={_mqttEngine?.IsConnected}\n");
+
                                 if (_mqttEngine != null && _mqttEngine.IsConnected)
                                 {
+                                    File.AppendAllText(mqttLog, $"[{DateTime.Now}] Engine OK, getting rules...\n");
+
+                                    var rules = GetActiveMqttRules(MqttEventType.Detection);
+                                    File.AppendAllText(mqttLog, $"[{DateTime.Now}] Rules found: {rules?.Count ?? 0}\n");
+
+                                    foreach (var rule in rules ?? new List<MqttRule>())
+                                    {
+                                        bool matches = rule.MatchesCamera(Camobject.id.ToString());
+                                        File.AppendAllText(mqttLog, $"[{DateTime.Now}] Rule '{rule.Name}' matches camera {Camobject.id}: {matches}\n");
+                                    }
+
                                     Task.Run(async () =>
                                     {
                                         try
                                         {
-                                            var rules = GetActiveMqttRules(MqttEventType.Detection);
                                             foreach (var rule in rules)
                                             {
                                                 if (rule.MatchesCamera(Camobject.id.ToString()))
@@ -3567,18 +3549,22 @@ namespace iSpyApplication.Controls
                                             {
                                                 new YoloDetection { Class = "person", Confidence = 0.92 }
                                             };
-                                                    await _mqttEngine.PublishDetectionAsync(
-                                                        rule, Camobject.id, Camobject.name, detections);
-                                                    Debug.WriteLine($"MQTT: отправлено в {rule.GetProcessedTopic(Camobject.id.ToString(), Camobject.name)}");
+                                                    await _mqttEngine.PublishDetectionAsync(rule, Camobject.id, Camobject.name, detections);
+                                                    File.AppendAllText(mqttLog, $"[{DateTime.Now}] Published to {rule.Topic}\n");
                                                 }
                                             }
                                         }
                                         catch (Exception ex)
                                         {
-                                            Debug.WriteLine($"MQTT: ошибка отправки - {ex.Message}");
+                                            File.AppendAllText(mqttLog, $"[{DateTime.Now}] PUBLISH ERROR: {ex.Message}\n");
                                         }
                                     });
                                 }
+                                else
+                                {
+                                    File.AppendAllText(mqttLog, $"[{DateTime.Now}] Engine not ready!\n");
+                                }
+                                // =========================================
                             }
                             else
                             {
@@ -3646,30 +3632,37 @@ namespace iSpyApplication.Controls
 
         public static void InitMqtt()
         {
-            Debug.WriteLine("MQTT: инициализация...");
-
             _mqttRules = MqttRulesStorage.Load();
 
             if (_mqttRules != null && _mqttRules.Any(r => r.Enabled))
             {
-                Debug.WriteLine($"MQTT: загружено {_mqttRules.Count} правил, {_mqttRules.Count(r => r.Enabled)} активных");
-
                 _mqttEngine = new MqttEngine("localhost", 1883);
-                Task.Run(async () => {
-                    var connected = await _mqttEngine.ConnectAsync();
-                    Debug.WriteLine($"MQTT: подключение к брокеру - {(connected ? "УСПЕШНО" : "ОШИБКА")}");
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _mqttEngine.ConnectAsync();
+                    }
+                    catch { }
                 });
-            }
-            else
-            {
-                Debug.WriteLine("MQTT: нет активных правил, движок не запущен");
             }
         }
 
         public static void ReloadMqttRules(List<MqttRule> rules)
         {
             _mqttRules = rules ?? new List<MqttRule>();
-            Debug.WriteLine($"MQTT: правила обновлены ({_mqttRules.Count})");
+
+            // Если движок уже запущен и подключён — не трогаем его
+            // Новые правила подхватятся через GetActiveMqttRules при следующей отправке
+            if (_mqttEngine != null && _mqttEngine.IsConnected)
+                return;
+
+            // Если движок не запущен, но есть активные правила — запускаем
+            if (_mqttEngine == null && _mqttRules.Any(r => r.Enabled))
+            {
+                InitMqtt();
+            }
         }
 
         public void Alert(object sender, EventArgs e)
@@ -3684,6 +3677,50 @@ namespace iSpyApplication.Controls
             }
         }
 
+        public bool SupportsWebInterface
+        {
+            get
+            {
+                switch (Camobject.settings.sourceindex)
+                {
+                    default:
+                        Uri uri;
+                        if (Uri.TryCreate(Camobject.settings.videosourcestring, UriKind.Absolute, out uri))
+                            return !uri.IsFile;
+                        return false;
+                    case 3:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 10:
+                        return false;
+                }
+            }
+        }
+
+        public void OpenWebInterface()
+        {
+            if (SupportsWebInterface)
+            {
+                try
+                {
+                    var uri = new Uri(Camobject.settings.videosourcestring);
+                    var url = uri.AbsoluteUri.Replace(uri.PathAndQuery, "");
+                    if (!uri.Scheme.StartsWith("http"))
+                    {
+                        url = url.ReplaceFirst(uri.Scheme, "http");
+                        url = url.ReplaceFirst(":" + uri.Port, ":80");
+                    }
+                    url = url.Replace(uri.UserInfo + "@", "");
+                    MainForm.OpenUrl(url);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, "open web browser");
+                }
+            }
+        }
         private void DoAlert(string type, string msg = "")
         {
             if (IsEdit)
@@ -5344,6 +5381,23 @@ namespace iSpyApplication.Controls
         {
             if (Recording)
             {
+                // === MQTT: Отправляем событие остановки записи ДО остановки ===
+                if (_mqttEngine != null && _mqttEngine.IsConnected)
+                {
+                    var rules = GetActiveMqttRules(MqttEventType.RecordingStop);
+                    foreach (var rule in rules)
+                    {
+                        if (rule.MatchesCamera(Camobject.id.ToString()))
+                        {
+                            Task.Run(async () =>
+                            {
+                                await _mqttEngine.PublishCameraStatusAsync(rule, Camobject.id, Camobject.name, true, false, 0);
+                            });
+                        }
+                    }
+                }
+                // ============================================================
+
                 _stopWrite.Set();
             }
         }

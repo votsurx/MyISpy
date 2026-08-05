@@ -102,32 +102,16 @@ namespace iSpyApplication
 
         private void SaveMqttRules()
         {
-            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "iSpy", "XML", "mqtt_debug.log");
             try
             {
-                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: _mqttTab = {(_mqttTab != null ? "OK" : "NULL")}\n");
                 if (_mqttTab == null) return;
-
                 var rules = _mqttTab.GetRules();
-                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: получено {rules?.Count ?? 0} правил\n");
-                if (rules != null)
-                {
-                    foreach (var rule in rules)
-                        File.AppendAllText(logPath, $"[{DateTime.Now}]   Правило: {rule.Name}\n");
-                }
-
                 MqttRulesStorage.Save(rules);
-                File.AppendAllText(logPath, $"[{DateTime.Now}] SaveMqttRules: сохранено в {MqttRulesStorage.FilePath}\n");
-                File.AppendAllText(logPath, $"[{DateTime.Now}] Файл существует: {File.Exists(MqttRulesStorage.FilePath)}\n");
-                if (File.Exists(MqttRulesStorage.FilePath))
-                {
-                    var content = File.ReadAllText(MqttRulesStorage.FilePath);
-                    File.AppendAllText(logPath, $"[{DateTime.Now}] Содержимое файла ({content.Length} байт):\n{content}\n");
-                }
+                CameraWindow.ReloadMqttRules(rules);
             }
             catch (Exception ex)
             {
-                File.AppendAllText(logPath, $"[{DateTime.Now}] ОШИБКА в SaveMqttRules: {ex.Message}\n{ex.StackTrace}\n");
+                Logger.LogException(ex);
             }
         }
 

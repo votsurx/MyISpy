@@ -145,6 +145,12 @@
       <Component Win64="$(var.Win64)" Id="SystemTextJson" Guid="*">
       <File Id="System.Text.Json.dll" Source="D:\MyiSpy\bin\x64\Release\System.Text.Json.dll" KeyPath="yes" Checksum="yes" />
       </Component>
+      <Component Win64="$(var.Win64)" Id="SystemThreadingTasksExtensions" Guid="*">
+      <File Id="System.Threading.Tasks.Extensions.dll" Source="D:\MyiSpy\bin\x64\Release\System.Threading.Tasks.Extensions.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Win64="$(var.Win64)" Id="MqttNetDll" Guid="*">
+      <File Id="MQTTnet.dll" Source="D:\MyiSpy\bin\x64\Release\MQTTnet.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
       <Component Win64="$(var.Win64)" Id="Component1" Guid="{B5528455-B6B5-426D-B5FB-5BB98634B563}">
         <File Id="AForge.dll" Source="D:\MyiSpy\bin\x64\Release\\AForge.dll" KeyPath="yes" Checksum="yes" />
       </Component>
