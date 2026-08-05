@@ -42,7 +42,6 @@
       <ComponentGroupRef Id="FFMPEG" />
       <ComponentGroupRef Id="YoloFiles" />
       <ComponentGroupRef Id="XML" />
-      <ComponentGroupRef Id="ispyserver" />
       <ComponentGroupRef Id="backgrounds" />
       <ComponentGroupRef Id="plugins" />
       <ComponentGroupRef Id="sounds" />
@@ -104,7 +103,6 @@
             </Directory>
             <Directory Id="Sounds" Name="Sounds" />
             <Directory Id="Plugins" Name="Plugins" />
-            <Directory Id="iSpyServer" Name="iSpyServer" />
             <Directory Id="Backgrounds" Name="Backgrounds" />
             <Directory Id="Masks" Name="Masks" />
             <Directory Id="Commands" Name="Commands" />
@@ -342,11 +340,6 @@
     </Component>
     <Component Id="sqlite3" Guid="*">
         <File Source="D:\MyiSpy\Mosquitto\sqlite3.dll" KeyPath="yes" />
-    </Component>
-    </ComponentGroup>
-    <ComponentGroup Id="ispyserver" Directory="iSpyServer">
-    <Component Win64="$(var.Win64)" Id="iSpyServer" Guid="{CF42C96F-478F-4DEB-BF0B-D456CA88A742}">
-        <File Id="ispyserver" Source="D:\MyiSpy\iSpyServer\iSpyServerSetup.msi" KeyPath="yes" Checksum="yes" />
     </Component>
     </ComponentGroup>
     <ComponentGroup Id="backgrounds" Directory="Backgrounds">

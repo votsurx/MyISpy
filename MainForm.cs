@@ -998,22 +998,22 @@ namespace iSpyApplication
 //            MWS.ServerRoot = Program.AppPath + @"WebServerRoot\";
 //#endif
 
-            if (Conf.Monitor)
-            {
-                Process[] w = Process.GetProcessesByName("ispymonitor");
-                if (w.Length == 0)
-                {
-                    try
-                    {
-                        var si = new ProcessStartInfo(Program.AppPath + "/ispymonitor.exe", "ispy");
-                        Process.Start(si);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            }
+            //if (Conf.Monitor)
+            //{
+            //    Process[] w = Process.GetProcessesByName("ispymonitor");
+            //    if (w.Length == 0)
+            //    {
+            //        try
+            //        {
+            //            var si = new ProcessStartInfo(Program.AppPath + "/ispymonitor.exe", "ispy");
+            //            Process.Start(si);
+            //        }
+            //        catch
+            //        {
+            //            // ignored
+            //        }
+            //    }
+            //}
 
             SetBackground();
 
