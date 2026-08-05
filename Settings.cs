@@ -145,8 +145,8 @@ namespace iSpyApplication
                 {
                     MainForm.EncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, (int)numJPEGQuality.Value);
                 }
-                MainForm.Conf.Enable_Error_Reporting = chkErrorReporting.Checked;
-                MainForm.Conf.Enable_Update_Check = chkCheckForUpdates.Checked;
+               // MainForm.Conf.Enable_Error_Reporting = chkErrorReporting.Checked;
+               // MainForm.Conf.Enable_Update_Check = chkCheckForUpdates.Checked;
                 MainForm.Conf.Enable_Password_Protect = chkPasswordProtect.Checked;
 
                 MainForm.Conf.Is_Silent_Startup_Check = chkIsSilentOnStartup.Checked;
@@ -373,8 +373,8 @@ namespace iSpyApplication
 
             UISync.Init(this);
             tcTabs.SelectedIndex = InitialTab;
-            chkErrorReporting.Checked = MainForm.Conf.Enable_Error_Reporting;
-            chkCheckForUpdates.Checked = MainForm.Conf.Enable_Update_Check;
+           // chkErrorReporting.Checked = MainForm.Conf.Enable_Error_Reporting;
+           // chkCheckForUpdates.Checked = MainForm.Conf.Enable_Update_Check;
             
             chkShowGettingStarted.Checked = MainForm.Conf.Enabled_ShowGettingStarted;
             _rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false);
@@ -597,8 +597,8 @@ namespace iSpyApplication
             button1.Text = LocRm.GetString("Ok");
             button2.Text = LocRm.GetString("Cancel");
             chkBalloon.Text = LocRm.GetString("ShowBalloonTips");
-            chkCheckForUpdates.Text = LocRm.GetString("AutomaticallyCheckForUpda");
-            chkErrorReporting.Text = LocRm.GetString("AnonymousErrorReporting");
+            //chkCheckForUpdates.Text = LocRm.GetString("AutomaticallyCheckForUpda");
+           // chkErrorReporting.Text = LocRm.GetString("AnonymousErrorReporting");
             chkPasswordProtect.Text = LocRm.GetString("PasswordProtectWhenMinimi");
             chkShowGettingStarted.Text = LocRm.GetString("ShowGettingStarted");
             chkStartup.Text = LocRm.GetString("RunOnStartupthisUserOnly");

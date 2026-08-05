@@ -249,7 +249,6 @@ namespace iSpyApplication
 
         internal CameraWindow TalkCamera;
 
-        private MenuItem _aboutHelpItem;
         private ToolStripMenuItem _addCameraToolStripMenuItem;
         private ToolStripMenuItem _addFloorPlanToolStripMenuItem;
         private ToolStripMenuItem _addMicrophoneToolStripMenuItem;
@@ -263,7 +262,6 @@ namespace iSpyApplication
         private ToolStripMenuItem _exitToolStripMenuItem;
         private MenuItem _fileItem;
         private FileSystemWatcher _fsw;
-        private MenuItem _helpItem;
         private ToolStripMenuItem _helpToolstripMenuItem;
         private Timer _houseKeepingTimer;
         private ToolStripMenuItem _iPCameraToolStripMenuItem;
@@ -346,7 +344,6 @@ namespace iSpyApplication
         private ToolStripButton _toolStripButton8;
         private ToolStripDropDownButton _toolStripDropDownButton2;
         private ToolStripMenuItem _viewMediaToolStripMenuItem;
-        private ToolStripStatusLabel _tsslStats;
         private ToolStripMenuItem _uSbCamerasAndMicrophonesOnOtherToolStripMenuItem;
         private ToolStripMenuItem _unlockToolstripMenuItem;
         private Thread _updateChecker;
@@ -429,7 +426,6 @@ namespace iSpyApplication
         private ToolTip toolTip1;
         private ToolStripStatusLabel tsslMediaInfo;
         private ToolStripStatusLabel tsslMonitor;
-        private ToolStripStatusLabel tsslPerformance;
         private ToolStripMenuItem videoFileToolStripMenuItem;
         private ToolStripMenuItem viewControllerToolStripMenuItem;
         private MenuItem menuItem27;
@@ -457,7 +453,6 @@ namespace iSpyApplication
         private MenuItem menuItem32;
         private MenuItem menuItem33;
         private ToolStripMenuItem gridViewsToolStripMenuItem1;
-        private ToolStripStatusLabel tsslPRO;
         private MenuItem menuItem35;
         private MenuItem menuItem36;
         private ToolStripMenuItem websiteToolStripMenuItem;
@@ -740,14 +735,6 @@ namespace iSpyApplication
             Close();
         }
 
-        // On "Help->About"
-        private void AboutHelpItemClick(object sender, EventArgs e)
-        {
-            var form = new AboutForm();
-            form.ShowDialog(this);
-            form.Dispose();
-        }
-
         private void VolumeControlDoubleClick(object sender, EventArgs e)
         {
             _pnlCameras.Maximise(sender);
@@ -984,11 +971,11 @@ namespace iSpyApplication
             //_fsw.Changed += FswChanged;
             //_fsw.EnableRaisingEvents = true;
 
-            tsslPRO.Visible = !Conf.Subscribed;
+            //tsslPRO.Visible = !Conf.Subscribed;
 
-            Menu = mainMenu;
-            notifyIcon1.ContextMenuStrip = ctxtTaskbar;
-            Identifier = Guid.NewGuid().ToString();
+            //Menu = mainMenu;
+            //notifyIcon1.ContextMenuStrip = ctxtTaskbar;
+            //Identifier = Guid.NewGuid().ToString();
 //            MWS = new LocalServer
 //                  {
 //                      ServerRoot = Program.AppDataPath + @"WebServerRoot\"
@@ -1581,7 +1568,6 @@ namespace iSpyApplication
             deleteToolStripMenuItem.Text = LocRm.GetString("Delete");
             showInFolderToolStripMenuItem.Text = LocRm.GetString("ShowInFolder");
             maximiseToolStripMenuItem.Text = LocRm.GetString("Maximise");
-            _aboutHelpItem.Text = LocRm.GetString("About");
             switchToolStripMenuItem.Text = LocRm.GetString("Switch");
             onToolStripMenuItem.Text = LocRm.GetString("On");
             offToolStripMenuItem.Text = LocRm.GetString("Off");
@@ -1608,7 +1594,6 @@ namespace iSpyApplication
             menuItem5.Text = LocRm.GetString("Filemenu");
             fullScreenToolStripMenuItem.Text = LocRm.GetString("fullScreen");
             fullScreenToolStripMenuItem1.Text = LocRm.GetString("fullScreen");
-            _helpItem.Text = LocRm.GetString("help");
             _helpToolstripMenuItem.Text = LocRm.GetString("help");
             _iPCameraToolStripMenuItem.Text = LocRm.GetString("IpCamera");
             _menuItem24.Text = LocRm.GetString("ShowGettingStarted");
@@ -1619,7 +1604,6 @@ namespace iSpyApplication
             _menuItem13.Text = "-";
             _menuItem15.Text = LocRm.GetString("ResetAllRecordingCounters");
             _menuItem16.Text = LocRm.GetString("View");
-            //_menuItem17.Text = inExplorerToolStripMenuItem.Text = LocRm.GetString("files");
             _menuItem18.Text = LocRm.GetString("clearCaptureDirectories");
             _menuItem19.Text = LocRm.GetString("saveObjectList");
             _menuItem2.Text = LocRm.GetString("help");
@@ -1697,7 +1681,7 @@ namespace iSpyApplication
             _viewMediaToolStripMenuItem.Text = LocRm.GetString("Viewmedia");
             toolStripToolStripMenuItem.Text = LocRm.GetString("toolStrip");
             menuItem6.Text = LocRm.GetString("toolStrip");
-            _tsslStats.Text = LocRm.GetString("Loading");
+            //_tsslStats.Text = LocRm.GetString("Loading");
             _unlockToolstripMenuItem.Text = LocRm.GetString("unlock");
             _viewMediaOnAMobileDeviceToolStripMenuItem.Text = LocRm.GetString("ViewMediaOnAMobiledevice");
             _websiteToolstripMenuItem.Text = LocRm.GetString("website");
@@ -1732,7 +1716,7 @@ namespace iSpyApplication
             LocRm.SetString(menuItem19, "Right");
             LocRm.SetString(menuItem18, "PTZController");
             LocRm.SetString(menuItem52, "PTZCommandButtons");
-            LocRm.SetString(tsslPerformance, "PerfTips");
+            //LocRm.SetString(tsslPerformance, "PerfTips");
             LocRm.SetString(menuItem21, "Optimised");
             LocRm.SetString(_menuItem29, "Current");
             LocRm.SetString(menuItem1, "Native");
@@ -1813,7 +1797,7 @@ namespace iSpyApplication
 
             _resetSizeToolStripMenuItem.Visible = Helper.HasFeature(Enums.Features.High_Level_User);
 
-            _menuItem26.Visible = tsslPerformance.Visible = tsslPRO.Visible = Helper.HasFeature(Enums.Features.View_Ispy_Links);
+           // _menuItem26.Visible = tsslPerformance.Visible = tsslPRO.Visible = Helper.HasFeature(Enums.Features.View_Ispy_Links);
 
             statusStrip1.Visible = Conf.ShowStatus && Helper.HasFeature(Enums.Features.View_Status_Bar);
             menuItem38.Visible = menuItem15.Visible = Helper.HasFeature(Enums.Features.View_Layout_Options);
@@ -4650,8 +4634,6 @@ namespace iSpyApplication
             this._menuItem35 = new System.Windows.Forms.MenuItem();
             this.menuItem30 = new System.Windows.Forms.MenuItem();
             this.menuItem25 = new System.Windows.Forms.MenuItem();
-            this._helpItem = new System.Windows.Forms.MenuItem();
-            this._aboutHelpItem = new System.Windows.Forms.MenuItem();
             this._menuItem30 = new System.Windows.Forms.MenuItem();
             this._menuItem2 = new System.Windows.Forms.MenuItem();
             this._menuItem24 = new System.Windows.Forms.MenuItem();
@@ -4746,11 +4728,8 @@ namespace iSpyApplication
             this.viewLogFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this._tsslStats = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslMonitor = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsslPerformance = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslMediaInfo = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsslPRO = new System.Windows.Forms.ToolStripStatusLabel();
             this._pnlContent = new System.Windows.Forms.Panel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.flowPreview = new iSpyApplication.Controls.MediaPanel();
@@ -4791,9 +4770,9 @@ namespace iSpyApplication
             this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this._fileItem,
             this._menuItem36,
-            this._menuItem16,
-            this._menuItem9,
-            this._helpItem});
+            this._menuItem16});
+            //this._menuItem9});
+            //this._helpItem});
             // 
             // _fileItem
             // 
@@ -5348,27 +5327,7 @@ namespace iSpyApplication
             this.menuItem25.Index = 13;
             this.menuItem25.Text = "Default &Device Manager";
             this.menuItem25.Click += new System.EventHandler(this.menuItem25_Click);
-            // 
-            // _helpItem
-            // 
-            this._helpItem.Index = 4;
-            this._helpItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this._aboutHelpItem,
-            this._menuItem30,
-            this._menuItem2,
-            this._menuItem24,
-            this._menuItem10,
-            this._menuItem38,
-            this._menuItem5,
-            this._menuItem27,
-            this._menuItem26});
-            this._helpItem.Text = "&Help";
-            // 
-            // _aboutHelpItem
-            // 
-            this._aboutHelpItem.Index = 0;
-            this._aboutHelpItem.Text = "&About";
-            this._aboutHelpItem.Click += new System.EventHandler(this.AboutHelpItemClick);
+
             // 
             // _menuItem30
             // 
@@ -5690,7 +5649,7 @@ namespace iSpyApplication
             this._localCameraToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._localCameraToolStripMenuItem.Name = "_localCameraToolStripMenuItem";
             this._localCameraToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._localCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+            this._localCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
             this._localCameraToolStripMenuItem.Text = "Local Camera";
             this._localCameraToolStripMenuItem.Click += new System.EventHandler(this.LocalCameraToolStripMenuItemClick);
             // 
@@ -5700,7 +5659,7 @@ namespace iSpyApplication
             this._iPCameraToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._iPCameraToolStripMenuItem.Name = "_iPCameraToolStripMenuItem";
             this._iPCameraToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._iPCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+            this._iPCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
             this._iPCameraToolStripMenuItem.Text = "IP Camera";
             this._iPCameraToolStripMenuItem.Click += new System.EventHandler(this.IpCameraToolStripMenuItemClick);
             // 
@@ -5708,7 +5667,7 @@ namespace iSpyApplication
             // 
             this.iPCameraWithWizardToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.Computer;
             this.iPCameraWithWizardToolStripMenuItem.Name = "iPCameraWithWizardToolStripMenuItem";
-            this.iPCameraWithWizardToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
+            this.iPCameraWithWizardToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
             this.iPCameraWithWizardToolStripMenuItem.Text = "IP Camera With Wizard";
             this.iPCameraWithWizardToolStripMenuItem.Click += new System.EventHandler(this.iPCameraWithWizardToolStripMenuItem_Click);
             // 
@@ -5716,7 +5675,7 @@ namespace iSpyApplication
             // 
             this.oNVIFCameraToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.onvif;
             this.oNVIFCameraToolStripMenuItem.Name = "oNVIFCameraToolStripMenuItem";
-            this.oNVIFCameraToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
+            this.oNVIFCameraToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
             this.oNVIFCameraToolStripMenuItem.Text = "ONVIF Camera";
             this.oNVIFCameraToolStripMenuItem.Click += new System.EventHandler(this.oNVIFCameraToolStripMenuItem_Click);
             // 
@@ -5724,7 +5683,7 @@ namespace iSpyApplication
             // 
             this.videoFileToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.HardDrive;
             this.videoFileToolStripMenuItem.Name = "videoFileToolStripMenuItem";
-            this.videoFileToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
+            this.videoFileToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
             this.videoFileToolStripMenuItem.Text = "Video File";
             this.videoFileToolStripMenuItem.Click += new System.EventHandler(this.videoFileToolStripMenuItem_Click);
             // 
@@ -5732,7 +5691,7 @@ namespace iSpyApplication
             // 
             this.otherVideoSourceToolStripMenuItem.Image = global::iSpyApplication.Properties.Resources.Music;
             this.otherVideoSourceToolStripMenuItem.Name = "otherVideoSourceToolStripMenuItem";
-            this.otherVideoSourceToolStripMenuItem.Size = new System.Drawing.Size(422, 38);
+            this.otherVideoSourceToolStripMenuItem.Size = new System.Drawing.Size(410, 26);
             this.otherVideoSourceToolStripMenuItem.Text = "Other Video Source";
             this.otherVideoSourceToolStripMenuItem.Click += new System.EventHandler(this.otherVideoSourceToolStripMenuItem_Click);
             // 
@@ -5742,7 +5701,7 @@ namespace iSpyApplication
             this._microphoneToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._microphoneToolStripMenuItem.Name = "_microphoneToolStripMenuItem";
             this._microphoneToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._microphoneToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+            this._microphoneToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
             this._microphoneToolStripMenuItem.Text = "Microphone";
             this._microphoneToolStripMenuItem.Click += new System.EventHandler(this.MicrophoneToolStripMenuItemClick);
             // 
@@ -5752,7 +5711,7 @@ namespace iSpyApplication
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Name = "_uSbCamerasAndMicrophonesOnOtherToolStripMenuItem";
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Padding = new System.Windows.Forms.Padding(0);
-            this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+            this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Size = new System.Drawing.Size(410, 24);
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Text = "Cameras and Microphones on Other Computers ";
             this._uSbCamerasAndMicrophonesOnOtherToolStripMenuItem.Click += new System.EventHandler(this.USbCamerasAndMicrophonesOnOtherToolStripMenuItemClick);
             // 
@@ -5770,7 +5729,7 @@ namespace iSpyApplication
             // manageToolStripMenuItem
             // 
             this.manageToolStripMenuItem.Name = "manageToolStripMenuItem";
-            this.manageToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.manageToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
             this.manageToolStripMenuItem.Text = "Manage";
             this.manageToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -6172,26 +6131,12 @@ namespace iSpyApplication
             this.statusStrip1.AutoSize = false;
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._tsslStats,
             this.tsslMonitor,
-            this.tsslPerformance,
-            this.tsslMediaInfo,
-            this.tsslPRO});
+            this.tsslMediaInfo});
             this.statusStrip1.Location = new System.Drawing.Point(0, 533);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(887, 30);
             this.statusStrip1.TabIndex = 0;
-            // 
-            // _tsslStats
-            // 
-            this._tsslStats.ForeColor = System.Drawing.Color.Blue;
-            this._tsslStats.IsLink = true;
-            this._tsslStats.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
-            this._tsslStats.LinkColor = System.Drawing.Color.Blue;
-            this._tsslStats.Name = "_tsslStats";
-            this._tsslStats.Size = new System.Drawing.Size(72, 24);
-            this._tsslStats.Text = "Loading...";
-            this._tsslStats.VisitedLinkColor = System.Drawing.Color.Blue;
             // 
             // tsslMonitor
             // 
@@ -6199,32 +6144,10 @@ namespace iSpyApplication
             this.tsslMonitor.Size = new System.Drawing.Size(92, 24);
             this.tsslMonitor.Text = "Monitoring...";
             // 
-            // tsslPerformance
-            // 
-            this.tsslPerformance.ForeColor = System.Drawing.Color.Blue;
-            this.tsslPerformance.IsLink = true;
-            this.tsslPerformance.LinkColor = System.Drawing.Color.Blue;
-            this.tsslPerformance.Name = "tsslPerformance";
-            this.tsslPerformance.Size = new System.Drawing.Size(68, 24);
-            this.tsslPerformance.Text = "Perf. Tips";
-            this.tsslPerformance.VisitedLinkColor = System.Drawing.Color.Blue;
-            this.tsslPerformance.Click += new System.EventHandler(this.toolStripStatusLabel1_Click);
-            // 
             // tsslMediaInfo
             // 
             this.tsslMediaInfo.Name = "tsslMediaInfo";
             this.tsslMediaInfo.Size = new System.Drawing.Size(0, 24);
-            // 
-            // tsslPRO
-            // 
-            this.tsslPRO.ForeColor = System.Drawing.Color.Blue;
-            this.tsslPRO.IsLink = true;
-            this.tsslPRO.LinkColor = System.Drawing.Color.Blue;
-            this.tsslPRO.Name = "tsslPRO";
-            this.tsslPRO.Size = new System.Drawing.Size(72, 24);
-            this.tsslPRO.Text = "Try Agent";
-            this.tsslPRO.VisitedLinkColor = System.Drawing.Color.Blue;
-            this.tsslPRO.Click += new System.EventHandler(this.tsslPRO_Click);
             // 
             // _pnlContent
             // 
@@ -6358,7 +6281,7 @@ namespace iSpyApplication
             this.saveToToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.ctxtPlayer.Name = "ctxPlayer";
-            this.ctxtPlayer.Size = new System.Drawing.Size(219, 196);
+            this.ctxtPlayer.Size = new System.Drawing.Size(219, 172);
             this.ctxtPlayer.Opening += new System.ComponentModel.CancelEventHandler(this.ctxtPlayer_Opening);
             // 
             // iSpyToolStripMenuItem
@@ -6515,7 +6438,7 @@ namespace iSpyApplication
                 }
             }
             _houseKeepingTimer.Stop();
-            _tsslStats.Text = LocRm.GetString("Loading");
+            //_tsslStats.Text = LocRm.GetString("Loading");
             Application.DoEvents();
             RemoveObjects();
             flowPreview.Loading = true;

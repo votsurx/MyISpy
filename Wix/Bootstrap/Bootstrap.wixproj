@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>{833f6888-a557-48a9-83a8-fa6d0bf691a3}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>iSpySetup</OutputName>
+    <OutputName>MyiSpySetup</OutputName>
     <OutputType>Bundle</OutputType>
     
     <Name>Bootstrap</Name>
