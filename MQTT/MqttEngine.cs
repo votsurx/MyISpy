@@ -61,7 +61,10 @@ namespace iSpyApplication.MQTT
             {
                 var builder = new MqttClientOptionsBuilder()
                     .WithTcpServer(_brokerAddress, _brokerPort)
-                    .WithClientId($"MyiSpy_{Environment.MachineName}_{Guid.NewGuid():N}");
+                    .WithClientId($"MyiSpy_{Environment.MachineName}_{Guid.NewGuid():N}")
+                    // === LWT: если отключился — брокер опубликует "offline" ===
+
+                    .WithWillRetain(true);
 
                 if (!string.IsNullOrEmpty(_username))
                 {
@@ -144,7 +147,7 @@ namespace iSpyApplication.MQTT
                 payload += $"\"camera_id\":{cameraId},";
                 payload += $"\"camera_name\":\"{cameraName}\",";
                 payload += $"\"event_type\":\"detection\",";
-                payload += $"\"timestamp\":\"{DateTime.UtcNow.ToString("o")}\",";
+                payload += $"\"timestamp\":\"{DateTime.Now.ToString("o")}\",";
                 payload += $"\"objects\":{objectsJson},";
                 payload += $"\"snapshot_available\":{rule.IncludeSnapshot.ToString().ToLower()}";
                 payload += "}";

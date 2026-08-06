@@ -3640,6 +3640,7 @@ namespace iSpyApplication.Controls
                         await _mqttEngine.ConnectAsync();
                         // Подписываемся на топик команд
                         await _mqttEngine.SubscribeAsync("ispy/command/sync");
+                        StartHeartbeat();
                     }
                     catch { }
                 });
@@ -3681,7 +3682,8 @@ namespace iSpyApplication.Controls
             var mainForm = MainForm.InstanceReference;
             if (mainForm != null)
             {
-                foreach (Control c in mainForm.Controls)
+                // Камеры находятся в _pnlCameras, а не в Controls!
+                foreach (Control c in mainForm._pnlCameras.Controls)
                 {
                     if (c is CameraWindow cw)
                     {
@@ -3689,6 +3691,7 @@ namespace iSpyApplication.Controls
                     }
                 }
             }
+            Debug.WriteLine($"MQTT: Найдено камер для heartbeat: {result.Count}");
             return result;
         }
 
@@ -4858,6 +4861,56 @@ namespace iSpyApplication.Controls
             }
         }
 
+        public void PublishCameraStatus()
+        {
+            if (_mqttEngine == null || !_mqttEngine.IsConnected) return;
+
+            var status = new
+            {
+                camera_id = Camobject.id,
+                camera_name = Camobject.name,
+                online = IsEnabled,
+                recording = Recording,
+                yolo_enabled = Camobject.GetYoloEnabled()
+            };
+
+            string json = "{";
+            json += $"\"camera_id\":{Camobject.id},";
+            json += $"\"camera_name\":\"{Camobject.name}\",";
+            json += $"\"online\":{IsEnabled.ToString().ToLower()},";
+            json += $"\"recording\":{Recording.ToString().ToLower()},";
+            json += $"\"yolo_enabled\":{Camobject.GetYoloEnabled().ToString().ToLower()}";
+            json += "}";
+
+            Task.Run(async () =>
+            {
+                await _mqttEngine.PublishAsync(
+                    $"ispy/camera/{Camobject.id}/status",
+                    json,
+                    retain: true
+                );
+            });
+        }
+
+        private static System.Timers.Timer _heartbeatTimer;
+
+        public static void StartHeartbeat()
+        {
+            _heartbeatTimer = new System.Timers.Timer(30000);
+            _heartbeatTimer.Elapsed += async (s, e) =>
+            {
+                if (_mqttEngine != null && _mqttEngine.IsConnected)
+                {
+                    // Отправляем статус КАЖДОЙ камеры отдельно
+                    foreach (var cameraWindow in GetAllCameraWindows())
+                    {
+                        cameraWindow.PublishCameraStatus();
+                    }
+                }
+            };
+            _heartbeatTimer.AutoReset = true;
+            _heartbeatTimer.Start();
+        }
         private string GetConfigHash()
         {
             var data = new StringBuilder();
