@@ -1,3 +1,17 @@
+using FFmpeg.AutoGen;
+using iSpyApplication.MQTT;   // Для MQTT правил
+using iSpyApplication.Onvif;
+using iSpyApplication.Pelco;
+using iSpyApplication.Realtime;
+using iSpyApplication.Server;
+using iSpyApplication.Sources;
+using iSpyApplication.Sources.Audio;
+using iSpyApplication.Sources.Video;
+using iSpyApplication.Utilities;
+using iSpyApplication.Vision;
+using iSpyApplication.Yolo;   // Для YoloTcpClient
+using iSpyPRO.DirectShow;
+using iSpyPRO.DirectShow.Internals;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,22 +33,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using FFmpeg.AutoGen;
-using iSpyApplication.Onvif;
-using iSpyApplication.Pelco;
-using iSpyApplication.Realtime;
-using iSpyApplication.Server;
-using iSpyApplication.Sources;
-using iSpyApplication.Sources.Audio;
-using iSpyApplication.Sources.Video;
-using iSpyApplication.Utilities;
-using iSpyApplication.Vision;
-using iSpyPRO.DirectShow;
-using iSpyPRO.DirectShow.Internals;
 using Encoder = System.Drawing.Imaging.Encoder;
 using Image = System.Drawing.Image;
-using iSpyApplication.Yolo;   // Для YoloTcpClient
-using iSpyApplication.MQTT;   // Для MQTT правил
 
 namespace iSpyApplication.Controls
 {
@@ -3485,7 +3485,6 @@ namespace iSpyApplication.Controls
         //Motion Detection + YOLO
         public void Detect(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("YOLO: Detect() вызван");
             LastActivity = DateTime.UtcNow;
 
             if (!Calibrating)
@@ -3493,7 +3492,6 @@ namespace iSpyApplication.Controls
                 // ЕСЛИ YOLO ВЫКЛЮЧЕН — СТАРОЕ ПОВЕДЕНИЕ
                 if (!Camobject.GetYoloEnabled())
                 {
-                    System.Diagnostics.Debug.WriteLine("YOLO: ВЫКЛЮЧЕН, запускаем запись сразу");
                     if (Camobject.detector.recordondetect)
                     {
                         StartSaving();
@@ -3503,8 +3501,6 @@ namespace iSpyApplication.Controls
                 else
                 {
                     System.Diagnostics.Debug.WriteLine($"YOLO: _yoloPipe={(_yoloPipe != null)}");
-                    System.Diagnostics.Debug.WriteLine($"YOLO: IsConnected={(_yoloPipe?.IsConnected)}");
-                    System.Diagnostics.Debug.WriteLine($"YOLO: _isYoloProcessing={_isYoloProcessing}");
 
                     if (_yoloPipe != null && _yoloPipe.IsConnected && !_isYoloProcessing)
                     {
@@ -3568,7 +3564,6 @@ namespace iSpyApplication.Controls
                             }
                             else
                             {
-                                System.Diagnostics.Debug.WriteLine("YOLO: объект не найден, запись не запущена");
                             }
                         }
                         catch (Exception ex)
@@ -3643,10 +3638,58 @@ namespace iSpyApplication.Controls
                     try
                     {
                         await _mqttEngine.ConnectAsync();
+                        // Подписываемся на топик команд
+                        await _mqttEngine.SubscribeAsync("ispy/command/sync");
                     }
                     catch { }
                 });
             }
+        }
+
+        // Обработчик команд MQTT
+        private static void OnMqttCommandReceived(string topic, string payload)
+        {
+            if (topic == "ispy/command/sync")
+            {
+                Debug.WriteLine("MQTT: получена команда синхронизации");
+
+                // Отправляем конфиги всех камер
+                foreach (var cameraWindow in GetAllCameraWindows())
+                {
+                    cameraWindow.PublishCameraConfig();
+                }
+
+                // Отправляем подтверждение
+                Task.Run(async () =>
+                {
+                    if (_mqttEngine != null && _mqttEngine.IsConnected)
+                    {
+                        await _mqttEngine.PublishAsync(
+                            "ispy/command/sync/complete",
+                            "{\"status\":\"ok\",\"cameras_count\":" + MainForm.Cameras.Count + "}",
+                            retain: false
+                        );
+                    }
+                });
+            }
+        }
+
+        // Получить все CameraWindow
+        private static List<CameraWindow> GetAllCameraWindows()
+        {
+            var result = new List<CameraWindow>();
+            var mainForm = MainForm.InstanceReference;
+            if (mainForm != null)
+            {
+                foreach (Control c in mainForm.Controls)
+                {
+                    if (c is CameraWindow cw)
+                    {
+                        result.Add(cw);
+                    }
+                }
+            }
+            return result;
         }
 
         public static void ReloadMqttRules(List<MqttRule> rules)
@@ -4747,7 +4790,6 @@ namespace iSpyApplication.Controls
                     StartYoloPipe();
                 else
                     StopYoloPipe();
-                
 
                 CameraEnabled?.Invoke(this, EventArgs.Empty);
 
@@ -4768,6 +4810,76 @@ namespace iSpyApplication.Controls
             _enabling = false;
         }
 
+        // При изменении настроек — отправляем обновлённый конфиг
+        public void PublishCameraConfig()
+        {
+            if (_mqttEngine == null || !_mqttEngine.IsConnected) return;
+
+            try
+            {
+                string hash = GetConfigHash();
+                string json = "{";
+                json += $"\"camera_id\":{Camobject.id},";
+                json += $"\"camera_name\":\"{Camobject.name}\",";
+                json += $"\"rtsp_url\":\"{Camobject.settings.videosourcestring}\",";
+                json += $"\"yolo_enabled\":{Camobject.GetYoloEnabled().ToString().ToLower()},";
+                json += $"\"yolo_confidence\":{Camobject.GetYoloConfidence().ToString(System.Globalization.CultureInfo.InvariantCulture)},";
+
+                // Классы YOLO
+                var classes = Camobject.GetYoloClasses();
+                var classesJson = new StringBuilder("[");
+                if (classes != null && classes.Length > 0)
+                {
+                    for (int i = 0; i < classes.Length; i++)
+                    {
+                        if (i > 0) classesJson.Append(",");
+                        classesJson.Append($"\"{classes[i]}\"");
+                    }
+                }
+                classesJson.Append("]");
+                json += $"\"yolo_classes\":{classesJson},";
+
+                json += $"\"hash\":\"{hash}\"";
+                json += "}";
+
+                Task.Run(async () =>
+                {
+                    await _mqttEngine.PublishAsync(
+                        $"ispy/camera/{Camobject.id}/config",
+                        json,
+                        retain: true
+                    );
+                    Debug.WriteLine($"MQTT: конфиг камеры {Camobject.id} отправлен (hash: {hash})");
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MQTT: ошибка отправки конфига - {ex.Message}");
+            }
+        }
+
+        private string GetConfigHash()
+        {
+            var data = new StringBuilder();
+            data.Append(Camobject.name);                           // 1. Имя камеры
+            data.Append("|");
+            data.Append(Camobject.settings.videosourcestring);    // 2. RTSP URL
+            data.Append("|");
+            data.Append(Camobject.GetYoloEnabled());               // 4. YOLO статус
+            data.Append("|");
+            data.Append(Camobject.GetYoloConfidence());            // 7. Порог YOLO
+            data.Append("|");
+            // 8. Классы YOLO
+            var classes = Camobject.GetYoloClasses();
+            if (classes != null && classes.Length > 0)
+            {
+                data.Append(string.Join(",", classes.OrderBy(c => c)));
+            }
+
+            using var md5 = System.Security.Cryptography.MD5.Create();
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(data.ToString()));
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
         public void SetVideoSourceProperties()
         {
             var videoSource = Camera.VideoSource as VideoCaptureDevice;

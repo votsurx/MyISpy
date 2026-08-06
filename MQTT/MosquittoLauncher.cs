@@ -19,17 +19,31 @@ namespace iSpyApplication.MQTT
 
             try
             {
+                // Создаём временный конфиг в TEMP папке (везде есть права на запись!)
+                string configPath = Path.Combine(Path.GetTempPath(), "mosquitto_ispy.conf");
+                File.WriteAllText(configPath,
+                    $"listener {port} 0.0.0.0\n" +
+                    "allow_anonymous true\n");
+
+                Debug.WriteLine($"MQTT: конфиг создан: {configPath}");
+
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = MosquittoPath,
-                    Arguments = $"-p {port}",
+                    Arguments = $"-c \"{configPath}\"",
                     WorkingDirectory = Path.GetDirectoryName(MosquittoPath),
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 };
+
                 _mosquittoProcess = Process.Start(startInfo);
+                Debug.WriteLine($"MQTT: Mosquitto запущен с конфигом {configPath}");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MQTT: ошибка запуска - {ex.Message}");
+            }
         }
 
         public static void Stop()

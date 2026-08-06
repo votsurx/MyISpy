@@ -34,7 +34,26 @@ namespace iSpyApplication.MQTT
 
             _client.ConnectedAsync += OnConnected;
             _client.DisconnectedAsync += OnDisconnected;
+
+            _client.ApplicationMessageReceivedAsync += e =>
+            {
+                var topic = e.ApplicationMessage.Topic;
+                var payload = e.ApplicationMessage.ConvertPayloadToString();
+                OnMessageReceived?.Invoke(topic, payload);
+                return Task.CompletedTask;
+            };
         }
+
+        public async Task SubscribeAsync(string topic)
+        {
+            if (!_isConnected) return;
+
+            await _client.SubscribeAsync(topic, MqttQualityOfServiceLevel.AtLeastOnce);
+            Debug.WriteLine($"MQTT: подписан на {topic}");
+        }
+
+        // Событие при получении сообщения
+        public event Action<string, string> OnMessageReceived;
 
         public async Task<bool> ConnectAsync()
         {

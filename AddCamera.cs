@@ -1230,6 +1230,12 @@ namespace iSpyApplication
             CameraControl.Camobject.SetYoloClasses(selectedClasses.ToArray());
             // ================================
 
+            // Если камера активна — отправляем обновлённый конфиг
+            if (CameraControl.Camobject.settings.active)
+            {
+                CameraControl.PublishCameraConfig();
+            }
+
             return true;
         }
 
